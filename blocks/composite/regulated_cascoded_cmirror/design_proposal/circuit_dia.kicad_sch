@@ -853,7 +853,7 @@
 	)
 	(text "OTA2"
 		(exclude_from_sim no)
-		(at 185.166 27.178 0)
+		(at 227.33 29.21 0)
 		(effects
 			(font
 				(size 2.54 2.54)
@@ -883,7 +883,7 @@
 	)
 	(text "OTA1"
 		(exclude_from_sim no)
-		(at 74.422 26.416 0)
+		(at 114.3 27.94 0)
 		(effects
 			(font
 				(size 2.54 2.54)

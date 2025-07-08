@@ -2,4 +2,5 @@
 
 > 🚧 **Under Construction** 
 
-![](./dia/circuit_dia.png)
+- [Design proposal](./design_proposal/README.md) 
+![](./design_proposal/circuit_dia.png)

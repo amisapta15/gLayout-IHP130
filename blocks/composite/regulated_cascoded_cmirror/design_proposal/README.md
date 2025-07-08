@@ -1,3 +1,3 @@
 ## Team gLayout-mahowalders
 
-![](./circuit_dia.pdf)
+![](./circuit_dia.png)
