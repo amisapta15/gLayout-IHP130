@@ -851,7 +851,7 @@
 		)
 		(uuid "3ac8571f-8309-4d21-bc17-4ba0a916b0eb")
 	)
-	(text "Power"
+	(text "OTA2"
 		(exclude_from_sim no)
 		(at 185.166 27.178 0)
 		(effects
@@ -881,7 +881,7 @@
 		)
 		(uuid "78b7d018-dc34-4473-b588-4c60a55e02ce")
 	)
-	(text "Power"
+	(text "OTA1"
 		(exclude_from_sim no)
 		(at 74.422 26.416 0)
 		(effects
