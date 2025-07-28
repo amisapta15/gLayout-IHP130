@@ -38,26 +38,26 @@ N -930 -170 -930 -120 {lab=GND}
 N -930 -120 -750 -120 {lab=GND}
 N -750 -290 -750 -230 {lab=#net3}
 N -750 -290 -700 -290 {lab=#net3}
-N -860 -200 -790 -200 {lab=#net4}
-N -930 -260 -930 -230 {lab=#net4}
-N -860 -260 -860 -200 {lab=#net4}
-N -890 -200 -860 -200 {lab=#net4}
-N -930 -260 -860 -260 {lab=#net4}
-N -930 -340 -930 -260 {lab=#net4}
-N -1020 -760 -880 -760 {lab=#net5}
+N -860 -200 -790 -200 {lab=tau}
+N -930 -260 -930 -230 {lab=tau}
+N -860 -260 -860 -200 {lab=tau}
+N -890 -200 -860 -200 {lab=tau}
+N -930 -260 -860 -260 {lab=tau}
+N -930 -340 -930 -260 {lab=tau}
+N -1020 -760 -880 -760 {lab=inp}
 N -840 -600 -700 -600 {lab=#net1}
-N -840 -730 -840 -700 {lab=#net6}
+N -840 -730 -840 -700 {lab=#net4}
 N -840 -640 -840 -600 {lab=#net1}
 N -950 -600 -840 -600 {lab=#net1}
 N -700 -350 -700 -290 {lab=#net3}
 N -700 -470 -700 -410 {lab=#net2}
 N -1080 -800 -1080 -790 {lab=VDD}
 N -840 -800 -840 -790 {lab=VDD}
-N -1080 -700 -1080 -680 {lab=#net5}
-N -1020 -760 -1020 -700 {lab=#net5}
-N -1040 -760 -1020 -760 {lab=#net5}
-N -1080 -700 -1020 -700 {lab=#net5}
-N -1080 -730 -1080 -700 {lab=#net5}
+N -1080 -700 -1080 -680 {lab=inp}
+N -1020 -760 -1020 -700 {lab=inp}
+N -1040 -760 -1020 -760 {lab=inp}
+N -1080 -700 -1020 -700 {lab=inp}
+N -1080 -730 -1080 -700 {lab=inp}
 N -1150 -760 -1080 -760 {lab=VDD}
 N -1150 -800 -1150 -760 {lab=VDD}
 N -1150 -800 -1080 -800 {lab=VDD}
@@ -66,18 +66,25 @@ N -840 -760 -760 -760 {lab=VDD}
 N -840 -800 -760 -800 {lab=VDD}
 N -840 -810 -840 -800 {lab=VDD}
 N -760 -800 -760 -760 {lab=VDD}
-N -1030 -520 -990 -520 {lab=#net7}
-N -1110 -520 -1090 -520 {lab=#net8}
-N -1170 -570 -1170 -550 {lab=#net8}
-N -1110 -570 -1110 -520 {lab=#net8}
-N -1130 -520 -1110 -520 {lab=#net8}
-N -1170 -570 -1110 -570 {lab=#net8}
-N -1170 -600 -1170 -570 {lab=#net8}
+N -1030 -520 -990 -520 {lab=#net5}
+N -1110 -520 -1090 -520 {lab=th}
+N -1170 -570 -1170 -550 {lab=th}
+N -1110 -570 -1110 -520 {lab=th}
+N -1130 -520 -1110 -520 {lab=th}
+N -1170 -570 -1110 -570 {lab=th}
+N -1170 -600 -1170 -570 {lab=th}
 N -1170 -490 -1170 -480 {lab=GND}
 N -1280 -520 -1170 -520 {lab=GND}
 N -1280 -520 -1280 -480 {lab=GND}
 N -1280 -480 -1170 -480 {lab=GND}
 N -1170 -480 -1170 -470 {lab=GND}
+N -590 -530 -350 -530 {lab=#net2}
+N -290 -530 -230 -530 {lab=#net6}
+N -230 -530 -230 -520 {lab=#net6}
+N -230 -460 -230 -440 {lab=GND}
+N -950 -520 -840 -520 {lab=VDD}
+N -840 -530 -840 -520 {lab=VDD}
+N -840 -530 -700 -530 {lab=VDD}
 C {devices/title.sym} 250 550 0 0 {name=l5 author="Copyright 2023 IHP PDK Authors"}
 C {devices/launcher.sym} 530 -290 0 0 {name=h1
 descr="OP annotate" 
@@ -114,7 +121,7 @@ write_data [save_params] $netlist_dir/[file rootname [file tail [xschem get curr
 xschem netlist
 simulate
 "}
-C {devices/code_shown.sym} -1170 80 0 0 {name=NGSPICE only_toplevel=true 
+C {devices/code_shown.sym} -440 50 0 0 {name=NGSPICE only_toplevel=true 
 value="
 .options savecurrrents
 .include DPI_try_1.save
@@ -130,14 +137,14 @@ dc vds 0 -1.2 -0.01 Vgs -0.35 -1.1 -0.05
 write DPI_try_1.raw
 .endc
 "}
-C {devices/code_shown.sym} -1480 110 0 0 {name=MODEL only_toplevel=true
+C {devices/code_shown.sym} -750 80 0 0 {name=MODEL only_toplevel=true
 format="tcleval( @value )"
 value=".lib cornerMOSlv.lib mos_tt
 "}
-C {sg13g2_pr/annotate_fet_params.sym} -580 70 0 0 {name=annot2 ref=M3}
-C {devices/vsource.sym} -1780 -650 0 0 {name=Vgs value=-0.75}
-C {devices/ammeter.sym} -1630 -680 1 0 {name=Vd}
-C {devices/gnd.sym} -1860 -540 0 0 {name=l1 lab=GND}
+C {sg13g2_pr/annotate_fet_params.sym} -1650 -570 0 0 {name=annot2 ref=M3}
+C {devices/vsource.sym} -230 -490 0 0 {name=Vload value=0}
+C {devices/ammeter.sym} -320 -530 3 0 {name=mem_pot}
+C {devices/gnd.sym} -230 -440 0 0 {name=l1 lab=GND}
 C {sg13g2_pr/sg13_lv_pmos.sym} -970 -520 0 0 {name=M1
 l=0.45u
 w=1.0u
@@ -154,8 +161,6 @@ m=1
 model=sg13_lv_pmos
 spiceprefix=X
 }
-C {lab_pin.sym} -1520 -570 0 0 {name=p1 sig_type=std_logic lab=VDD}
-C {lab_pin.sym} -1540 -520 0 0 {name=p2 sig_type=std_logic lab=VTh}
 C {devices/gnd.sym} -950 -450 0 0 {name=l2 lab=GND}
 C {sg13g2_pr/sg13_lv_nmos.sym} -770 -200 0 0 {name=M4
 l=0.13u
@@ -192,7 +197,6 @@ spiceprefix=X
 }
 C {devices/ammeter.sym} -840 -670 0 0 {name=Vin}
 C {devices/ammeter.sym} -700 -380 2 0 {name=Vtau}
-C {vdd.sym} -1360 -860 0 0 {name=l4 lab=VDD}
 C {vdd.sym} -1080 -820 0 0 {name=l6 lab=VDD}
 C {vdd.sym} -840 -810 0 0 {name=l7 lab=VDD}
 C {devices/gnd.sym} -1170 -470 0 0 {name=l8 lab=GND}
@@ -205,3 +209,25 @@ model=sg13_lv_nmos
 spiceprefix=X
 }
 C {devices/ammeter.sym} -1060 -520 3 0 {name=VTh}
+C {capa.sym} -410 -500 0 0 {name=C1
+m=1
+value=5p
+footprint=1206
+device="ceramic capacitor"}
+C {devices/gnd.sym} -410 -470 0 0 {name=l9 lab=GND}
+C {devices/vsource.sym} -1250 -780 0 0 {name=Vdd value=1.2}
+C {vdd.sym} -1250 -810 0 0 {name=l10 lab=VDD}
+C {devices/gnd.sym} -1250 -750 0 0 {name=l11 lab=GND}
+C {isource.sym} -1030 -840 0 0 {name=Iin value="pulse(0 10n 0 1n 1n 10n 20n)"}
+C {isource.sym} -1440 -770 0 0 {name=Ith value="dc 16p"}
+C {isource.sym} -1330 -770 0 0 {name=Itau value="10p"}
+C {vdd.sym} -1030 -870 0 0 {name=l4 lab=VDD}
+C {vdd.sym} -1440 -800 0 0 {name=l12 lab=VDD}
+C {vdd.sym} -1330 -800 0 0 {name=l13 lab=VDD}
+C {lab_pin.sym} -1030 -810 0 0 {name=p1 sig_type=std_logic lab=inp}
+C {lab_pin.sym} -1440 -740 0 0 {name=p3 sig_type=std_logic lab=th}
+C {lab_pin.sym} -1330 -740 0 0 {name=p4 sig_type=std_logic lab=tau}
+C {lab_pin.sym} -1080 -680 0 0 {name=p5 sig_type=std_logic lab=inp}
+C {lab_pin.sym} -1170 -600 0 0 {name=p7 sig_type=std_logic lab=th}
+C {lab_pin.sym} -930 -340 0 0 {name=p8 sig_type=std_logic lab=tau}
+C {vdd.sym} -840 -530 0 0 {name=l14 lab=VDD}
