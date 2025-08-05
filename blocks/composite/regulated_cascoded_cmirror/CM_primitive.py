@@ -14,6 +14,22 @@ from glayout.util.comp_utils import evaluate_bbox, prec_center, prec_ref_center,
 from glayout.util.snap_to_grid import component_snap_to_grid
 from typing import Optional, Union 
 
+###### Only Required for IIC-OSIC Docker
+import os
+import subprocess
+
+# Run a shell, source .bashrc, then printenv
+cmd = 'bash -c "source ~/.bashrc && printenv"'
+result = subprocess.run(cmd, shell=True, text=True, capture_output=True)
+env_vars = {}
+for line in result.stdout.splitlines():
+    if '=' in line:
+        key, value = line.split('=', 1)
+        env_vars[key] = value
+
+# Now, update os.environ with these
+os.environ.update(env_vars)
+
 
 # @validate_arguments
 def generate_current_mirror_netlist(
@@ -130,7 +146,6 @@ def current_mirror_base(
 	"""
     pdk.activate()
     maxmet_sep = pdk.util_max_metal_seperation()
-    psize=(0.35,0.35)
     # Create the current mirror component
     CurrentMirror = Component(name="CurrentMirror")
     Length = Length if Length is not None else pdk.get_grule('poly')['min_width']
@@ -151,34 +166,27 @@ def current_mirror_base(
     CurrentMirror.add(currm_ref)
     CurrentMirror.add_ports(currm_ref.get_ports_list(),prefix="currm_")
     
-    # for absc in CurrentMirror.ports.keys():
-    #     if len(absc.split("_")) <= 5:
-    #         if set(["currm","A","W"]).issubset(set(absc.split("_"))):
-    #             print(absc+"\n")
-    
     #Routing
     viam2m3 = via_stack(pdk, "met2", "met3", centered=True)
     drain_A_via  = CurrentMirror << viam2m3
     drain_A_via.move(CurrentMirror.ports["currm_A_0_drain_W"].center).movex(-1)
-    source_A_via  = CurrentMirror << viam2m3
-    source_A_via.move(CurrentMirror.ports[f"currm_A_{num_cols-1:d}_source_E"].center).movex(0.5*(num_cols))
+        
+    drain_B_via  = CurrentMirror << viam2m3
+    drain_B_via.move(CurrentMirror.ports[f"currm_B_{num_cols - 1}_drain_E"].center).movex(+1)
+
     gate_A_via  = CurrentMirror << viam2m3
     gate_A_via.move(CurrentMirror.ports["currm_A_0_gate_W"].center).movex(-1-2*Length)
-    
-    drain_B_via  = CurrentMirror << viam2m3
-    drain_B_via.move(drain_A_via.center).movex(-1+Length).movey(+1+maxmet_sep-Length)
-    source_B_via  = CurrentMirror << viam2m3
-    source_B_via.move(source_A_via.center).movey(1+maxmet_sep-Length)
     gate_B_via  = CurrentMirror << viam2m3
     gate_B_via.move(gate_A_via.center).movey(-1-maxmet_sep+Length)
     #####################
     CurrentMirror << straight_route(pdk,currm_ref.ports["A_0_drain_E"], drain_A_via.ports["bottom_met_W"])
-    CurrentMirror << straight_route(pdk,currm_ref.ports["B_0_drain_E"], drain_B_via.ports["bottom_met_W"])
+    CurrentMirror << straight_route(pdk,currm_ref.ports[f"B_{num_cols-1}_drain_E"], drain_B_via.ports["bottom_met_W"])
     ##################### 
-    CurrentMirror << straight_route(pdk,currm_ref.ports["A_0_source_E"], source_A_via.ports["bottom_met_W"])
-    CurrentMirror << straight_route(pdk,currm_ref.ports["B_0_source_E"], source_B_via.ports["bottom_met_W"])
-    
-    source_short =  CurrentMirror << straight_route(pdk, source_A_via.ports["top_met_N"], source_B_via.ports["top_met_S"])
+    #CurrentMirror << straight_route(pdk,currm_ref.ports["A_0_source_E"], source_A_via.ports["bottom_met_W"])
+    #CurrentMirror << straight_route(pdk,currm_ref.ports["B_0_source_E"], source_B_via.ports["bottom_met_W"])
+
+    source_short = CurrentMirror << c_route(pdk, currm.ports['A_source_E'], currm.ports['B_source_E'],extension=4*maxmet_sep, viaoffset=False)
+    #source_short =  CurrentMirror << straight_route(pdk, source_A_via.ports["top_met_N"], source_B_via.ports["top_met_S"])
     #,extension=1.2*max(Width,Width), width1=psize[0], width2=ps, cwidth=0.32, e1glayer="met3", e2glayer="met3", cglayer="met2")
     #####################
     CurrentMirror << straight_route(pdk,currm_ref.ports["A_0_gate_W"], gate_A_via.ports["bottom_met_W"])
@@ -203,15 +211,21 @@ def current_mirror_base(
         )
         tie_ref = CurrentMirror << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = sdglayer, horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
         CurrentMirror.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
+
         
+        # for absc in CurrentMirror.ports.keys():
+        #     if len(absc.split("_")) <= 10:
+        #         #if set(["dummy","A","gsdcon"]).issubset(set(absc.split("_"))):
+        #             print(absc+"\n")
+    
         try:
-            CurrentMirror << straight_route(pdk, CurrentMirror.ports["A_0_dummy_L_gsdcon_top_met_W"],CurrentMirror.ports["welltie_W_top_met_W"],glayer2="met1")
+            CurrentMirror << straight_route(pdk, CurrentMirror.ports["currm_A_0_dummy_L_gsdcon_top_met_W"],CurrentMirror.ports["welltie_W_top_met_W"])
             
-            CurrentMirror << straight_route(pdk, CurrentMirror.ports[f"fet_B_{numcols - 1}_dummy_R_gsdcon_top_met_E"],CurrentMirror.ports["welltie_E_top_met_E"],glayer2="met1")
+            CurrentMirror << straight_route(pdk, CurrentMirror.ports[f"currm_B_{num_cols - 1}_dummy_R_gsdcon_top_met_E"],CurrentMirror.ports["welltie_E_top_met_E"])
         except KeyError:
             pass
         try:
-            CurrentMirror << straight_route(pdk, CurrentMirror.ports[f'B_{num_cols - 1}_dummy_R_gdscon_top_met_E'], CurrentMirror.ports["welltie_E_top_met_E"], glayer2="met1")
+            CurrentMirror << straight_route(pdk, CurrentMirror.ports[f'currm_B_{num_cols - 1}_dummy_R_gdscon_top_met_E'], CurrentMirror.ports["welltie_E_top_met_E"], glayer2="met1")
         except KeyError:
             pass
     
@@ -250,10 +264,6 @@ def current_mirror_base(
     CurrentMirror.add_ports(drain_B_via.get_ports_list(), prefix="B_drain_")
     CurrentMirror.add_ports(gate_short.get_ports_list(), prefix="gateshortports_")
     CurrentMirror.add_ports(source_short.get_ports_list(), prefix="sourceshortports_")
-    # CurrentMirror.add_ports(src2bulk.get_ports_list(), prefix="purposegndport_")
-    # CurrentMirror.add_ports(Irefpin.get_ports_list(), prefix="refport_")
-    # CurrentMirror.add_ports(Icopypin.get_ports_list(), prefix="copyport_")
-    # CurrentMirror.add_ports(bulkpin.get_ports_list(), prefix="bulkport_")
 
     CurrentMirror = component_snap_to_grid(rename_ports_by_orientation(CurrentMirror))
 
@@ -265,10 +275,9 @@ def current_mirror_base(
                                     drain_net_ref="VREF",  # Input drain connected to IREF
                                     drain_net_copy="VCOPY", # Output drain connected to ICOPY
                                     gate_net="VREF",      # Gate connected to VREF 
-                                    
                                     source_net_ref="VSS" if type.lower()=="nfet" else "VDD",    # Source connected to VSS
                                     source_net_copy="VSS" if type.lower()=="nfet" else "VDD",    # Source connected to VSS
-                                    bulk_net= "VB" if type.lower()=="nfet" else "VDD", #Proposed ground should also change
+                                    bulk_net= "VB",
                                     subckt_only=True,
                                     show_netlist=show_netlist,
                                     )
@@ -281,28 +290,30 @@ def add_cm_labels(cm_in: Component,
 	
     cm_in.unlock()
 
+    psize=(0.35,0.35)
     # list that will contain all port/comp info
     move_info = list()
     # create labels and append to info list
+    
     # vss
-    vsslabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
+    vsslabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=psize,centered=True).copy()
     vsslabel.add_label(text="VSS",layer=pdk.get_glayer("met2_label"))
-    move_info.append((vsslabel,cm_in.ports["A_source_E"],None))
+    move_info.append((vsslabel,cm_in.ports["sourceshortports_con_N"],None))
     
     # vref
-    vreflabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
+    vreflabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=psize,centered=True).copy()
     vreflabel.add_label(text="VREF",layer=pdk.get_glayer("met2_label"))
-    move_info.append((vreflabel,cm_in.ports["A_drain_N"],None))
+    move_info.append((vreflabel,cm_in.ports["A_drain_top_met_N"],None))
     
     # vcopy
-    vcopylabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.27,0.27),centered=True).copy()
+    vcopylabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=psize,centered=True).copy()
     vcopylabel.add_label(text="VCOPY",layer=pdk.get_glayer("met2_label"))
-    move_info.append((vcopylabel,cm_in.ports["B_drain_N"],None))
+    move_info.append((vcopylabel,cm_in.ports["B_drain_top_met_N"],None))
     
     # VB
-    vblabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=(0.5,0.5),centered=True).copy()
+    vblabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=psize,centered=True).copy()
     vblabel.add_label(text="VB",layer=pdk.get_glayer("met2_label"))
-    move_info.append((vblabel,cm_in.ports["welltie_S_top_met_S"], None))
+    move_info.append((vblabel,cm_in.ports["welltie_N_top_met_N"], None))
     
     # move everything to position
     for comp, prt, alignment in move_info:
@@ -316,9 +327,9 @@ def add_cm_labels(cm_in: Component,
 # from current_mirror import current_mirror, current_mirror_netlist
 
 if __name__ == "__main__":
-	comp = current_mirror_base(gf180, num_cols=4, Width=3, device='nfet',show_netlist=False)
+	comp = current_mirror_base(gf180, num_cols=2, Width=1, device='nfet',show_netlist=True)
 	#comp.pprint_ports()
-	#comp = add_cm_labels(comp, pdk=gf180)
+	comp = add_cm_labels(comp, pdk=gf180)
 
 
 	# # # Write the current mirror layout to a GDS file
@@ -335,13 +346,13 @@ if __name__ == "__main__":
 	# # # DRC Checks
 	# # #delete_files_in_directory("DRC/")
 	#print("\n...Running DRC...")
-	#drc_result = sky130.drc_magic(comp, "CM")
 	drc_result = gf180.drc_magic(comp, "CM")
+	#drc_result = gf180.drc_magic(comp, "CM")
 	# print(drc_result['result_str'])
 	# # # LVS Checks
 	# # #delete_files_in_directory("LVS/")
 	#print("\n...Running LVS...")
 	#netgen_lvs_result = sky130.lvs_netgen(comp, "CM")  
-	# # #netgen_lvs_result = sky130.lvs_netgen(comp, "CM",output_file_path="LVS/")        
+	netgen_lvs_result = gf180.lvs_netgen(comp, "CM")        
 	# # # print(netgen_lvs_result['result_str'])
 
