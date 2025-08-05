@@ -4,6 +4,28 @@ K {}
 V {}
 S {}
 E {}
+B 2 1120 -1310 1920 -910 {flags=graph
+y1=0
+ypos1=0
+ypos2=2
+divy=5
+subdivy=1
+unity=1
+x2=0.62977536
+divx=5
+subdivx=1
+xlabmag=1.0
+ylabmag=1.0
+node="i(viout2)
+i(viout3)
+i(viout1)"
+color="4 5 6"
+dataset=-1
+unitx=1
+logx=0
+logy=0
+y2=5e-6
+x1=-0.1038868}
 N 970 -120 970 -100 {lab=GND}
 N 970 -190 1010 -190 {lab=GND}
 N 1010 -190 1010 -140 {lab=GND}
@@ -488,3 +510,10 @@ model=pfet_03v3
 spiceprefix=X
 }
 C {lab_wire.sym} 1800 -770 0 0 {name=p6 sig_type=std_logic lab=V_aux}
+C {devices/launcher.sym} 365 -1245 0 0 {name=h1
+descr="Click left mouse button here with control key
+pressed to load/unload waveforms in graph."
+tclcommand="
+xschem raw_read $netlist_dir/[file tail [file rootname [xschem get current_name]]].raw
+"
+}
