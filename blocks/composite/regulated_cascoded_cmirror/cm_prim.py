@@ -17,7 +17,8 @@ from typing import Optional, Union
 ###### Only Required for IIC-OSIC Docker
 import os
 import subprocess
-
+from typing import ClassVar, Optional, Any, Union, Literal, Iterable, TypedDict
+from pathlib import Path
 # Run a shell, source .bashrc, then printenv
 cmd = 'bash -c "source ~/.bashrc && printenv"'
 result = subprocess.run(cmd, shell=True, text=True, capture_output=True)
@@ -101,7 +102,6 @@ def generate_current_mirror_netlist(
 		except:
 			print(f"Verify the file availability and type: ", generated_netlist_for_lvs, type(generated_netlist_for_lvs))
 	return topnet
-
 
 # @validate_arguments
 def current_mirror_base(
@@ -196,9 +196,6 @@ def current_mirror_base(
 
     # #connecting the Drian of A to gate short
     CurrentMirror << straight_route(pdk,drain_A_via.ports["top_met_S"],gate_short.ports["route_N"])
-   
-   #Connecting the source of the fets to the bulk ???
-    # src2bulk=CurrentMirror << straight_route(pdk, source_short.ports["route_N"],CurrentMirror.ports["currm_welltie_N_top_met_E"], glayer2="met2")
     
 	# Adding tapring
     if with_tie:
@@ -242,6 +239,9 @@ def current_mirror_base(
     # add well
     CurrentMirror.add_padding(default=pdk.get_grule(well, "active_tap")["min_enclosure"],layers=[pdk.get_glayer(well)])
     CurrentMirror = add_ports_perimeter(CurrentMirror, layer = pdk.get_glayer(well), prefix="well_")
+
+     #Connecting the source of the fets to the bulk ???
+    src2bulk=CurrentMirror << straight_route(pdk, source_short.ports["con_N"],CurrentMirror.ports["welltie_N_top_met_N"])
     
     ##The default naming scheme of ports in GDSFactory
     ##e1=West, e2=North, e3=East, e4=South. The default naming scheme of ports in GDSFactory
@@ -327,32 +327,19 @@ def add_cm_labels(cm_in: Component,
 # from current_mirror import current_mirror, current_mirror_netlist
 
 if __name__ == "__main__":
-	comp = current_mirror_base(gf180, num_cols=2, Width=1, device='nfet',show_netlist=True)
-	#comp.pprint_ports()
-	comp = add_cm_labels(comp, pdk=gf180)
-
-
-	# # # Write the current mirror layout to a GDS file
-	comp.name = "CM"
-	# # delete_files_in_directory("GDS/")
-	# # tmpdirname = Path("GDS/").resolve()
-	# # delete_files_in_directory("GDS/")
-	# # tmp_gds_path = Path(comp.write_gds(gdsdir=tmpdirname)).resolve()
-	# comp.write_gds("./CM.gds")
-	comp.show()
-	# #Generate the netlist for the current mirror
-	# print("\n...Generating Netlist...")
-	# print(comp.info["netlist"].generate_netlist())
-	# # # DRC Checks
-	# # #delete_files_in_directory("DRC/")
-	#print("\n...Running DRC...")
-	drc_result = gf180.drc_magic(comp, "CM")
-	#drc_result = gf180.drc_magic(comp, "CM")
-	# print(drc_result['result_str'])
-	# # # LVS Checks
-	# # #delete_files_in_directory("LVS/")
-	#print("\n...Running LVS...")
-	#netgen_lvs_result = sky130.lvs_netgen(comp, "CM")  
-	netgen_lvs_result = gf180.lvs_netgen(comp, "CM")        
-	# # # print(netgen_lvs_result['result_str'])
-
+    comp = current_mirror_base(gf180, num_cols=2, Width=1, device='nfet',show_netlist=False)
+    #comp.pprint_ports()
+    comp = add_cm_labels(comp, pdk=gf180)
+    comp.name = "CM"
+    comp.show()
+    ##Write the current mirror layout to a GDS file
+    # comp.write_gds("./CM.gds")
+    
+    # #Generate the netlist for the current mirror
+    print("\n...Generating Netlist...")
+    print(comp.info["netlist"].generate_netlist())
+    # #DRC Checks
+    #drc_result = gf180.drc_magic(comp, comp.name)
+    # #LVS Checks
+    #print("\n...Running LVS...")
+    netgen_lvs_result = gf180.lvs_netgen(comp, comp.name,output_file_path=Path("LVS/"),copy_intermediate_files=True)        
