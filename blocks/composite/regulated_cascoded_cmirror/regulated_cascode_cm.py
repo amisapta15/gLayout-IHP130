@@ -1,41 +1,35 @@
-import sys
-from os import path, rename, environ , listdir, remove, chmod
-# environ['OPENBLAS_NUM_THREADS'] = '1'
-from pathlib import Path
-# # path to glayout
-# sys.path.append(path.join(str(Path(__file__).resolve().parents[2])))
+from glayout import MappedPDK, sky130,gf180
+from glayout import nmos, pmos, tapring,via_stack
 
-from glayout.flow.pdk.mappedpdk import MappedPDK
-from glayout.flow.pdk.sky130_mapped import sky130_mapped_pdk as sky130
-from glayout.flow.pdk.gf180_mapped import gf180_mapped_pdk as gf180
-
-from glayout.flow.primitives.guardring import tapring
-from glayout.flow.routing.smart_route import smart_route
-from glayout.flow.routing.straight_route import straight_route
-from glayout.flow.routing.c_route import c_route
-from glayout.flow.routing.L_route import L_route
-from glayout.flow.primitives.via_gen import via_stack
-from glayout.flow.primitives.via_gen import via_stack
-
-
-from glayout.flow.placement.two_transistor_interdigitized import two_nfet_interdigitized, two_pfet_interdigitized
-
-from glayout.flow.pdk.util.snap_to_grid import component_snap_to_grid
-from glayout.flow.pdk.util.comp_utils import evaluate_bbox, prec_center, prec_array, movey, align_comp_to_port, prec_ref_center
-from glayout.flow.pdk.util.port_utils import rename_ports_by_orientation, rename_ports_by_list, add_ports_perimeter, print_ports, set_port_orientation, rename_component_ports
-
+from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized, two_pfet_interdigitized
+from gdsfactory import cell
+from gdsfactory.component import Component
 from gdsfactory.components import text_freetype, rectangle
-from gdsfactory import Component
-from gdsfactory.routing.route_quad import route_quad
-from glayout.flow.spice.netlist import Netlist
+
+from glayout.routing import c_route,L_route,straight_route
+from glayout.spice.netlist import Netlist
+
+from glayout.util.port_utils import add_ports_perimeter,rename_ports_by_orientation
+from glayout.util.comp_utils import evaluate_bbox, prec_center, prec_ref_center, align_comp_to_port
+from glayout.util.snap_to_grid import component_snap_to_grid
 from typing import Optional, Union 
 
+###### Only Required for IIC-OSIC Docker
+import os
+import subprocess
 
-global PDK_ROOT
-if 'PDK_ROOT' in environ:
-	PDK_ROOT = str(Path(environ['PDK_ROOT']).resolve())
-else:
-	PDK_ROOT = "/usr/bin/miniconda3/share/pdk/"
+# Run a shell, source .bashrc, then printenv
+cmd = 'bash -c "source ~/.bashrc && printenv"'
+result = subprocess.run(cmd, shell=True, text=True, capture_output=True)
+env_vars = {}
+for line in result.stdout.splitlines():
+    if '=' in line:
+        key, value = line.split('=', 1)
+        env_vars[key] = value
+
+# Now, update os.environ with these
+os.environ.update(env_vars)
+
  
 from CM_primitive import current_mirror_base, generate_current_mirror_netlist
 
