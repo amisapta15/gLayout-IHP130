@@ -169,15 +169,12 @@ def current_mirror_base(
     #Routing
     viam2m3 = via_stack(pdk, "met2", "met3", centered=True)
     drain_A_via  = CurrentMirror << viam2m3
-    drain_A_via.move(CurrentMirror.ports["currm_A_0_drain_W"].center).movex(-1)
-        
-    drain_B_via  = CurrentMirror << viam2m3
-    drain_B_via.move(CurrentMirror.ports[f"currm_B_{num_cols - 1}_drain_E"].center).movex(+1)
+    drain_A_via.move(CurrentMirror.ports["currm_A_0_drain_W"].center).movex(-2*maxmet_sep)
 
-    gate_A_via  = CurrentMirror << viam2m3
-    gate_A_via.move(CurrentMirror.ports["currm_A_0_gate_W"].center).movex(-1-2*Length)
-    gate_B_via  = CurrentMirror << viam2m3
-    gate_B_via.move(gate_A_via.center).movey(-1-maxmet_sep+Length)
+    
+    drain_B_via  = CurrentMirror << viam2m3
+    drain_B_via.move(CurrentMirror.ports[f"currm_B_{num_cols - 1}_drain_E"].center).movex(+2*maxmet_sep)
+
     #####################
     CurrentMirror << straight_route(pdk,currm_ref.ports["A_0_drain_E"], drain_A_via.ports["bottom_met_W"])
     CurrentMirror << straight_route(pdk,currm_ref.ports[f"B_{num_cols-1}_drain_E"], drain_B_via.ports["bottom_met_W"])
@@ -185,18 +182,14 @@ def current_mirror_base(
     #CurrentMirror << straight_route(pdk,currm_ref.ports["A_0_source_E"], source_A_via.ports["bottom_met_W"])
     #CurrentMirror << straight_route(pdk,currm_ref.ports["B_0_source_E"], source_B_via.ports["bottom_met_W"])
 
-    source_short = CurrentMirror << c_route(pdk, currm.ports['A_source_E'], currm.ports['B_source_E'],extension=4*maxmet_sep, viaoffset=False)
+    source_short = CurrentMirror << c_route(pdk, currm.ports['A_source_E'], currm.ports['B_source_E'],extension=5*maxmet_sep, viaoffset=False)
+   
     #source_short =  CurrentMirror << straight_route(pdk, source_A_via.ports["top_met_N"], source_B_via.ports["top_met_S"])
     #,extension=1.2*max(Width,Width), width1=psize[0], width2=ps, cwidth=0.32, e1glayer="met3", e2glayer="met3", cglayer="met2")
     #####################
-    CurrentMirror << straight_route(pdk,currm_ref.ports["A_0_gate_W"], gate_A_via.ports["bottom_met_W"])
-    CurrentMirror << straight_route(pdk,currm_ref.ports["B_0_gate_W"], gate_B_via.ports["bottom_met_W"])
-    #####################
-    gate_short =  CurrentMirror << straight_route(pdk, gate_A_via.ports["top_met_S"], gate_B_via.ports["top_met_N"])
-
     # #connecting the Drian of A to gate short
-    CurrentMirror << straight_route(pdk,drain_A_via.ports["top_met_S"],gate_short.ports["route_N"])
-    
+    dg = CurrentMirror << L_route(pdk,drain_A_via.ports["top_met_S"],CurrentMirror.ports["currm_A_0_gate_W"])
+    gate_short =  CurrentMirror << L_route(pdk, dg.ports["top_met_S"], CurrentMirror.ports["currm_B_0_gate_W"])
 	# Adding tapring
     if with_tie:
         tap_sep = max(maxmet_sep,
@@ -208,24 +201,14 @@ def current_mirror_base(
         )
         tie_ref = CurrentMirror << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = sdglayer, horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
         CurrentMirror.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
-
+        #tie_ref.pprint_ports()
         
         # for absc in CurrentMirror.ports.keys():
         #     if len(absc.split("_")) <= 10:
-        #         #if set(["dummy","A","gsdcon"]).issubset(set(absc.split("_"))):
+        #         if set(["currm","dummy","B","gsdcon"]).issubset(set(absc.split("_"))):
         #             print(absc+"\n")
     
-        try:
-            CurrentMirror << straight_route(pdk, CurrentMirror.ports["currm_A_0_dummy_L_gsdcon_top_met_W"],CurrentMirror.ports["welltie_W_top_met_W"])
-            
-            CurrentMirror << straight_route(pdk, CurrentMirror.ports[f"currm_B_{num_cols - 1}_dummy_R_gsdcon_top_met_E"],CurrentMirror.ports["welltie_E_top_met_E"])
-        except KeyError:
-            pass
-        try:
-            CurrentMirror << straight_route(pdk, CurrentMirror.ports[f'currm_B_{num_cols - 1}_dummy_R_gdscon_top_met_E'], CurrentMirror.ports["welltie_E_top_met_E"], glayer2="met1")
-        except KeyError:
-            pass
-    
+  
     # add the substrate tap if specified
     if with_substrate_tap:
         subtap_sep = pdk.get_grule("dnwell", "active_tap")["min_separation"]
@@ -240,8 +223,18 @@ def current_mirror_base(
     CurrentMirror.add_padding(default=pdk.get_grule(well, "active_tap")["min_enclosure"],layers=[pdk.get_glayer(well)])
     CurrentMirror = add_ports_perimeter(CurrentMirror, layer = pdk.get_glayer(well), prefix="well_")
 
-     #Connecting the source of the fets to the bulk ???
-    src2bulk=CurrentMirror << straight_route(pdk, source_short.ports["con_N"],CurrentMirror.ports["welltie_N_top_met_N"])
+    try:
+        CurrentMirror << straight_route(pdk, CurrentMirror.ports["currm_A_0_dummy_L_gsdcon_top_met_W"],CurrentMirror.ports["welltie_W_top_met_W"],glayer2="met1")
+    except KeyError:
+        pass
+    try:
+        CurrentMirror << straight_route(pdk, CurrentMirror.ports[f'currm_B_{num_cols - 1}_dummy_R_gsdcon_top_met_E'], CurrentMirror.ports["welltie_E_top_met_E"], glayer2="met1")
+    except KeyError:
+        pass
+
+    
+    #Connecting the source of the fets to the bulk ???
+    #src2bulk=CurrentMirror << straight_route(pdk, source_short.ports["con_N"],CurrentMirror.ports["welltie_N_top_met_N"])
     
     ##The default naming scheme of ports in GDSFactory
     ##e1=West, e2=North, e3=East, e4=South. The default naming scheme of ports in GDSFactory
@@ -295,24 +288,24 @@ def add_cm_labels(cm_in: Component,
     move_info = list()
     # create labels and append to info list
     
-    # vss
-    vsslabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=psize,centered=True).copy()
-    vsslabel.add_label(text="VSS",layer=pdk.get_glayer("met2_label"))
-    move_info.append((vsslabel,cm_in.ports["sourceshortports_con_N"],None))
-    
     # vref
-    vreflabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=psize,centered=True).copy()
-    vreflabel.add_label(text="VREF",layer=pdk.get_glayer("met2_label"))
+    vreflabel = rectangle(layer=pdk.get_glayer("met3_pin"),size=psize,centered=True).copy()
+    vreflabel.add_label(text="VREF",layer=pdk.get_glayer("met3_label"))
     move_info.append((vreflabel,cm_in.ports["A_drain_top_met_N"],None))
     
     # vcopy
-    vcopylabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=psize,centered=True).copy()
-    vcopylabel.add_label(text="VCOPY",layer=pdk.get_glayer("met2_label"))
+    vcopylabel = rectangle(layer=pdk.get_glayer("met3_pin"),size=psize,centered=True).copy()
+    vcopylabel.add_label(text="VCOPY",layer=pdk.get_glayer("met3_label"))
     move_info.append((vcopylabel,cm_in.ports["B_drain_top_met_N"],None))
+
+    # vss
+    vsslabel = rectangle(layer=pdk.get_glayer("met3_pin"),size=psize,centered=True).copy()
+    vsslabel.add_label(text="VSS",layer=pdk.get_glayer("met3_label"))
+    move_info.append((vsslabel,cm_in.ports["sourceshortports_con_N"],None))
     
     # VB
-    vblabel = rectangle(layer=pdk.get_glayer("met2_pin"),size=psize,centered=True).copy()
-    vblabel.add_label(text="VB",layer=pdk.get_glayer("met2_label"))
+    vblabel = rectangle(layer=pdk.get_glayer("met3_pin"),size=psize,centered=True).copy()
+    vblabel.add_label(text="VB",layer=pdk.get_glayer("met3_label"))
     move_info.append((vblabel,cm_in.ports["welltie_N_top_met_N"], None))
     
     # move everything to position
@@ -322,24 +315,32 @@ def add_cm_labels(cm_in: Component,
         cm_in.add(compref)
     return cm_in.flatten() 
 
+# import sys
+# sys.path.append('../../elementary/current_mirror/')
 
-## To Test their primitives
-# from current_mirror import current_mirror, current_mirror_netlist
+# from current_mirror import current_mirror,add_cm_labels
+
+# comp = current_mirror(gf180)
+# # comp.pprint_ports()
+# comp = add_cm_labels(comp,gf180)
+# comp.name = "CM"
+# comp.show()
 
 if __name__ == "__main__":
-    comp = current_mirror_base(gf180, num_cols=2, Width=1, device='nfet',show_netlist=False)
+    selected_pdk=gf180
+    comp = current_mirror_base(selected_pdk, num_cols=2, Length=5*selected_pdk.get_grule('poly')['min_width'],Width=3.2, device='nfet',show_netlist=False)
     #comp.pprint_ports()
-    comp = add_cm_labels(comp, pdk=gf180)
+    comp = add_cm_labels(comp, pdk=selected_pdk)
     comp.name = "CM"
     comp.show()
     ##Write the current mirror layout to a GDS file
     # comp.write_gds("./CM.gds")
     
-    # #Generate the netlist for the current mirror
-    print("\n...Generating Netlist...")
+    # # #Generate the netlist for the current mirror
+    # print("\n...Generating Netlist...")
     print(comp.info["netlist"].generate_netlist())
-    # #DRC Checks
-    #drc_result = gf180.drc_magic(comp, comp.name)
-    # #LVS Checks
-    #print("\n...Running LVS...")
-    netgen_lvs_result = gf180.lvs_netgen(comp, comp.name,output_file_path=Path("LVS/"),copy_intermediate_files=True)        
+    # # #DRC Checks
+    drc_result = selected_pdk.drc_magic(comp, comp.name,output_file=Path("DRC/"))
+    # # #LVS Checks
+    # #print("\n...Running LVS...")
+    #netgen_lvs_result = selected_pdk.lvs_netgen(comp, comp.name,output_file_path=Path("LVS/"),copy_intermediate_files=True)        
