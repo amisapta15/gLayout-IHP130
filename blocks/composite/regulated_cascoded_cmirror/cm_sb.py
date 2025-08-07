@@ -130,14 +130,14 @@ def self_biased_cascode_current_mirror(
     SBCurrentMirror << straight_route(pdk,top_currm_ref.ports["A_0_source_E"], topA_source_via.ports["bottom_met_W"])
     SBCurrentMirror << straight_route(pdk,top_currm_ref.ports["B_0_source_E"], topB_source_via.ports["bottom_met_W"])
     
-    #source_short =  SBCurrentMirror << straight_route(pdk, topA_source_via.ports["top_met_N"], topB_source_via.ports["top_met_S"])
-    #,extension=1.2*max(Width,Width), width1=psize[0], width2=ps, cwidth=0.32, e1glayer="met3", e2glayer="met3", cglayer="met2")
-    #####################
+    # source_short =  SBCurrentMirror << straight_route(pdk, topA_source_via.ports["top_met_N"], topB_source_via.ports["top_met_S"])
+    # ,extension=1.2*max(Width,Width), width1=psize[0], width2=ps, cwidth=0.32, e1glayer="met3", e2glayer="met3", cglayer="met2")
+    # ####################
     gate_short =  SBCurrentMirror << c_route(pdk, top_currm_ref.ports[f"A_{num_cols - 1}_gate_E"], top_currm_ref.ports[f"B_{num_cols - 1}_gate_E"],cglayer="met2")
     SBCurrentMirror << L_route(pdk,top_currm_ref.ports[f"A_{num_cols - 1}_drain_E"],gate_short.ports["con_N"])
     
     ## Adding the Bottom Current Mirror
-    BCM=SBCurrentMirror << current_mirror_base(pdk=pdk, Width=Width, Length=Length, num_cols=num_cols, device=device,with_tie=False)
+    BCM = current_mirror_base(pdk=pdk, Width=Width, Length=Length, num_cols=num_cols, device=device,with_tie=False)
     bottom_cm_ref= prec_ref_center(BCM)
     bottom_cm_ref.move(top_currm_ref.center).movey(-(2*maxmet_sep)-evaluate_bbox(top_currm_ref)[1])
    
@@ -151,23 +151,25 @@ def self_biased_cascode_current_mirror(
     SBCurrentMirror << L_route(pdk,topA_source_via.ports["top_met_W"], bottom_cm_ref.ports["A_drain_top_met_N"])
     SBCurrentMirror << L_route(pdk,topB_source_via.ports["top_met_E"], bottom_cm_ref.ports["B_drain_top_met_N"])
 
-    # 	# Adding tapring
-    # if with_tie:
-    #     tap_sep = max(maxmet_sep,
-    #         pdk.get_grule("active_diff", "active_tap")["min_separation"])
-    #     tap_sep += pdk.get_grule(sdglayer, "active_tap")["min_enclosure"]
-    #     tap_encloses = (
-    #     2 * (tap_sep + SBCurrentMirror.xmax),
-    #     2 * (tap_sep + SBCurrentMirror.ymax),
-    #     )
-    #     tie_ref = SBCurrentMirror << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = sdglayer, horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
-    #     SBCurrentMirror.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
-    #     #tie_ref.pprint_ports()
+
+    # Adding tapring
+    if with_tie:
+        tap_sep = max(maxmet_sep,
+            pdk.get_grule("active_diff", "active_tap")["min_separation"])
+        tap_sep += pdk.get_grule(sdglayer, "active_tap")["min_enclosure"]
+        tap_encloses = (
+        2 * (tap_sep + SBCurrentMirror.xmax),
+        2 * (tap_sep + SBCurrentMirror.ymax + BCM.ymax),
+        )
+        tie_ref = SBCurrentMirror << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = sdglayer, horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
+        tie_ref.movey(-(BCM.ymax+tap_sep));
+        SBCurrentMirror.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
+        ##tie_ref.pprint_ports()
         
-    #     # for absc in CurrentMirror.ports.keys():
-    #     #     if len(absc.split("_")) <= 10:
-    #     #         if set(["currm","dummy","B","gsdcon"]).issubset(set(absc.split("_"))):
-    #     #             print(absc+"\n")
+        # for absc in CurrentMirror.ports.keys():
+        #     if len(absc.split("_")) <= 10:
+        #         if set(["currm","dummy","B","gsdcon"]).issubset(set(absc.split("_"))):
+        #             print(absc+"\n")
     
   
     #     # add the substrate tap if specified
