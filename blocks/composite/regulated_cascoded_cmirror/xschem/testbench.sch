@@ -4,42 +4,41 @@ K {}
 V {}
 S {}
 E {}
-N 300 -950 300 -910 {lab=VDD}
-N 300 -790 300 -760 {lab=GND}
-N 590 -940 590 -880 {lab=VDD}
-N 630 -850 670 -850 {lab=v_in}
-N 590 -820 590 -780 {lab=v_in}
-N 570 -850 590 -850 {lab=VDD}
-N 570 -890 570 -850 {lab=VDD}
-N 570 -890 590 -890 {lab=VDD}
-N 650 -850 650 -800 {lab=v_in}
-N 590 -800 650 -800 {lab=v_in}
-N 590 -660 590 -620 {lab=GND}
-N 1590 -840 1640 -840 {lab=#net1}
-N 1590 -570 1640 -570 {lab=#net2}
-N 1590 -290 1640 -290 {lab=#net3}
-N 870 -930 870 -870 {lab=VDD}
-N 910 -840 950 -840 {lab=v_aux}
-N 870 -810 870 -770 {lab=v_aux}
-N 850 -840 870 -840 {lab=VDD}
-N 850 -880 850 -840 {lab=VDD}
-N 850 -880 870 -880 {lab=VDD}
-N 930 -840 930 -790 {lab=v_aux}
-N 870 -790 930 -790 {lab=v_aux}
-N 870 -660 870 -620 {lab=GND}
-N 1030 -550 1290 -550 {lab=v_in}
-N 1130 -820 1290 -820 {lab=v_in}
-N 1130 -820 1130 -550 {lab=v_in}
-N 1130 -550 1130 -270 {lab=v_in}
-N 1130 -270 1290 -270 {lab=v_in}
-N 1240 -900 1240 -290 {lab=VDD}
-N 1240 -290 1290 -290 {lab=VDD}
-N 1240 -570 1290 -570 {lab=VDD}
-N 1240 -840 1290 -840 {lab=VDD}
-N 1260 -800 1260 -160 {lab=GND}
-N 1260 -800 1290 -800 {lab=GND}
-N 1260 -530 1290 -530 {lab=GND}
-N 1260 -250 1290 -250 {lab=GND}
+N 900 -470 900 -430 {lab=VDD_3V3}
+N 900 -310 900 -280 {lab=GND}
+N 1050 -550 1050 -490 {lab=VDD_3V3}
+N 1090 -460 1130 -460 {lab=V_IN}
+N 1050 -430 1050 -390 {lab=V_IN}
+N 1030 -460 1050 -460 {lab=VDD_3V3}
+N 1030 -500 1030 -460 {lab=VDD_3V3}
+N 1030 -500 1050 -500 {lab=VDD_3V3}
+N 1110 -460 1110 -410 {lab=V_IN}
+N 1050 -410 1110 -410 {lab=V_IN}
+N 1050 -270 1050 -230 {lab=GND}
+N 1280 -540 1280 -480 {lab=VDD_3V3}
+N 1320 -450 1360 -450 {lab=V_AUX}
+N 1280 -420 1280 -380 {lab=V_AUX}
+N 1260 -450 1280 -450 {lab=VDD_3V3}
+N 1260 -490 1260 -450 {lab=VDD_3V3}
+N 1260 -490 1280 -490 {lab=VDD_3V3}
+N 1340 -450 1340 -400 {lab=V_AUX}
+N 1280 -400 1340 -400 {lab=V_AUX}
+N 1280 -270 1280 -230 {lab=GND}
+N 1520 -370 1550 -370 {lab=VDD_3V3}
+N 1550 -190 1550 -160 {lab=GND}
+N 2000 -350 2130 -350 {lab=#net1}
+N 2130 -360 2130 -350 {lab=#net1}
+N 2000 -330 2130 -330 {lab=#net2}
+N 2130 -330 2130 -270 {lab=#net2}
+N 2000 -310 2100 -310 {lab=#net3}
+N 2100 -310 2100 -170 {lab=#net3}
+N 2100 -170 2130 -170 {lab=#net3}
+N 1520 -350 1550 -350 {lab=V_IN}
+N 1520 -310 1550 -310 {lab=V_IN}
+N 1450 -330 1550 -330 {lab=V_IN}
+N 1510 -250 1550 -250 {lab=V_AUX}
+N 1520 -330 1520 -310 {lab=V_IN}
+N 1520 -350 1520 -330 {lab=V_IN}
 C {title.sym} 160 -30 0 0 {name=l1 author="Quentin Halbach"}
 C {devices/code_shown.sym} 20 -140 0 0 {name=MODELS only_toplevel=true
 format="tcleval( @value )"
@@ -48,10 +47,9 @@ value="
 .lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
 
 "}
-C {vsource.sym} 300 -820 0 0 {name=V1 value=3.3 savecurrent=false}
-C {vdd.sym} 300 -950 0 0 {name=l9 lab=VDD}
-C {gnd.sym} 300 -760 0 0 {name=l10 lab=GND}
-C {symbols/pfet_03v3.sym} 610 -850 0 1 {name=M7
+C {vsource.sym} 900 -340 0 0 {name=V1 value=3.3 savecurrent=false}
+C {gnd.sym} 900 -280 0 0 {name=l10 lab=GND}
+C {symbols/pfet_03v3.sym} 1070 -460 0 1 {name=M7
 L=1u
 W=5u
 nf=1
@@ -65,13 +63,11 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {isource.sym} 590 -750 0 0 {name=I_in value=1u}
-C {lab_wire.sym} 670 -850 2 0 {name=p1 sig_type=std_logic lab=v_in}
-C {vdd.sym} 590 -940 0 0 {name=l12 lab=VDD}
-C {gnd.sym} 590 -620 0 0 {name=l11 lab=GND}
-C {vanilla_cm.sym} 1250 -670 0 0 {name=x1}
-C {vsource.sym} 1640 -750 0 0 {name=v_vanilla value=1.65 savecurrent=true}
-C {gnd.sym} 1640 -720 0 0 {name=l15 lab=GND}
+C {isource.sym} 1050 -360 0 0 {name=I_in value=1u}
+C {lab_wire.sym} 1130 -460 2 0 {name=p1 sig_type=std_logic lab=V_IN}
+C {gnd.sym} 1050 -230 0 0 {name=l11 lab=GND}
+C {vsource.sym} 2220 -360 3 0 {name=v_vanilla value=1.65 savecurrent=true}
+C {gnd.sym} 2250 -360 3 0 {name=l15 lab=GND}
 C {code_shown.sym} 20 -780 0 0 {name=code only_toplevel=false value=
 "
 .option savecurrent
@@ -100,17 +96,13 @@ wrdata cascode.txt i_cascode
 .endc
 "
 }
-C {biased_cm.sym} 1270 -330 0 0 {name=x2}
-C {lab_wire.sym} 1030 -550 0 0 {name=p3 sig_type=std_logic lab=v_in}
-C {vdd.sym} 1240 -900 0 0 {name=l2 lab=VDD}
-C {gnd.sym} 1260 -160 0 0 {name=l3 lab=GND}
-C {vsource.sym} 1640 -480 0 0 {name=v_biased value=1.65 savecurrent=true}
-C {gnd.sym} 1640 -450 0 0 {name=l4 lab=GND}
-C {cascode_cm.sym} 1260 -10 0 0 {name=x3}
-C {lab_wire.sym} 1440 -360 0 0 {name=p5 sig_type=std_logic lab=v_aux}
-C {vsource.sym} 1640 -200 0 0 {name=v_cascode value=1.65 savecurrent=true}
-C {gnd.sym} 1640 -170 0 0 {name=l5 lab=GND}
-C {symbols/pfet_03v3.sym} 890 -840 0 1 {name=M1
+C {lab_wire.sym} 1450 -330 0 0 {name=p3 sig_type=std_logic lab=V_IN}
+C {gnd.sym} 1550 -160 0 0 {name=l3 lab=GND}
+C {vsource.sym} 2220 -270 3 0 {name=v_biased value=1.65 savecurrent=true}
+C {gnd.sym} 2250 -270 3 0 {name=l4 lab=GND}
+C {vsource.sym} 2220 -170 3 0 {name=v_cascode value=1.65 savecurrent=true}
+C {gnd.sym} 2250 -170 3 0 {name=l5 lab=GND}
+C {symbols/pfet_03v3.sym} 1300 -450 0 1 {name=M1
 L=1u
 W=5u
 nf=1
@@ -124,37 +116,42 @@ sa=0 sb=0 sd=0
 model=pfet_03v3
 spiceprefix=X
 }
-C {isource.sym} 870 -740 0 0 {name=I_aux value=1n}
-C {lab_wire.sym} 950 -840 2 0 {name=p6 sig_type=std_logic lab=v_aux}
-C {vdd.sym} 870 -930 0 0 {name=l14 lab=VDD}
-C {gnd.sym} 870 -620 0 0 {name=l16 lab=GND}
-C {res.sym} 300 -880 0 0 {name=R4
+C {isource.sym} 1280 -350 0 0 {name=I_aux value=1n}
+C {lab_wire.sym} 1360 -450 2 0 {name=p6 sig_type=std_logic lab=V_AUX}
+C {gnd.sym} 1280 -230 0 0 {name=l16 lab=GND}
+C {res.sym} 900 -400 0 0 {name=R4
 value=50
 footprint=1206
 device=resistor
 m=1}
-C {res.sym} 590 -690 0 0 {name=R1
+C {res.sym} 1050 -300 0 0 {name=R1
 value=50
 footprint=1206
 device=resistor
 m=1}
-C {res.sym} 870 -680 0 0 {name=R2
+C {res.sym} 1280 -290 0 0 {name=R2
 value=50
 footprint=1206
 device=resistor
 m=1}
-C {res.sym} 1640 -810 0 0 {name=R3
+C {res.sym} 2160 -360 3 0 {name=R3
 value=50
 footprint=1206
 device=resistor
 m=1}
-C {res.sym} 1640 -540 0 0 {name=R5
+C {res.sym} 2160 -270 3 0 {name=R5
 value=50
 footprint=1206
 device=resistor
 m=1}
-C {res.sym} 1640 -260 0 0 {name=R6
+C {res.sym} 2160 -170 3 0 {name=R6
 value=50
 footprint=1206
 device=resistor
 m=1}
+C {top_level.sym} 1370 -90 0 0 {name=x1}
+C {lab_wire.sym} 1510 -250 0 0 {name=p4 sig_type=std_logic lab=V_AUX}
+C {lab_wire.sym} 900 -470 1 0 {name=p5 sig_type=std_logic lab=VDD_3V3}
+C {lab_wire.sym} 1050 -550 1 0 {name=p7 sig_type=std_logic lab=VDD_3V3}
+C {lab_wire.sym} 1280 -540 1 0 {name=p8 sig_type=std_logic lab=VDD_3V3}
+C {lab_wire.sym} 1520 -370 0 0 {name=p2 sig_type=std_logic lab=VDD_3V3}
