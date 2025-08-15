@@ -30,9 +30,6 @@ for line in result.stdout.splitlines():
 # Now, update os.environ with these
 os.environ.update(env_vars)
 
- 
-from CM_primitive import current_mirror_base, generate_current_mirror_netlist
-
 def generate_self_biased_current_mirror_netlist(
     names: str = "SelfBiasedCurrentMirror",
     regulator: Component = None,
@@ -101,10 +98,10 @@ def self_biased_cascode_current_mirror(
     
     # Create the interdigitized fets
     if type.lower() =="pfet" or type.lower() =="pmos":
-        currm= two_pfet_interdigitized(pdk,numcols=num_cols,width=Width,length=Length,fingers=fingers, dummy=with_dummy,with_substrate_tap=with_substrate_tap,with_tie=with_tie)
+        currm= two_pfet_interdigitized(pdk,numcols=num_cols,width=Width,length=Length,fingers=fingers, dummy=with_dummy,with_substrate_tap=False,with_tie=False)
         well, sdglayer = "nwell", "p+s/d"
     elif type.lower() =="nfet" or type.lower() =="nmos":
-        currm= two_nfet_interdigitized(pdk,numcols=num_cols,width=Width,length=Length,fingers=fingers,dummy=with_dummy,                                with_substrate_tap=with_substrate_tap,with_tie=with_tie)
+        currm= two_nfet_interdigitized(pdk,numcols=num_cols,width=Width,length=Length,fingers=fingers,dummy=with_dummy,with_substrate_tap=False,with_tie=False)
         well, sdglayer = "pwell", "n+s/d"
     else:
         raise ValueError("type must be either nfet or pfet")
@@ -140,8 +137,8 @@ def self_biased_cascode_current_mirror(
     ##################### 
     SBCurrentMirror << straight_route(pdk,top_currm_ref.ports["A_0_source_E"], topA_source_via.ports["bottom_met_W"])
     #SBCurrentMirror << straight_route(pdk,top_currm_ref.ports["B_0_source_E"], topB_source_via.ports["bottom_met_W"])
-    topbulk=SBCurrentMirror << straight_route(pdk,SBCurrentMirror.ports[f"top_currm_B_0_source_W"],SBCurrentMirror.ports["top_currm_welltie_W_top_met_E"])
-    SBCurrentMirror << straight_route(pdk,topbulk.ports["route_W"], topB_source_via["bottom_met_E"])    
+    #topbulk=SBCurrentMirror << straight_route(pdk,SBCurrentMirror.ports[f"top_currm_B_0_source_W"],SBCurrentMirror.ports["top_currm_welltie_W_top_met_E"])
+    #SBCurrentMirror << straight_route(pdk,topbulk.ports["route_W"], topB_source_via["bottom_met_E"])    
     #####################
     SBCurrentMirror << straight_route(pdk,top_currm_ref.ports["A_0_gate_W"], topA_gate_via.ports["bottom_met_W"])
     SBCurrentMirror << straight_route(pdk,top_currm_ref.ports["B_0_gate_W"], topB_gate_via.ports["bottom_met_W"])
@@ -168,13 +165,13 @@ def self_biased_cascode_current_mirror(
     #####################
     midA_source_via  = SBCurrentMirror << viam2m3
     midA_source_via.move(SBCurrentMirror.ports[f"mid_cm_A_0_source_W"].center).movex(-4.0)
-    midbulk1=SBCurrentMirror << straight_route(pdk,SBCurrentMirror.ports[f"mid_cm_A_0_source_W"],SBCurrentMirror.ports["mid_cm_welltie_W_top_met_E"])
-    SBCurrentMirror << straight_route(pdk,midbulk1.ports["route_W"], midA_source_via["bottom_met_E"])
+    #midbulk1=SBCurrentMirror << straight_route(pdk,SBCurrentMirror.ports[f"mid_cm_A_0_source_W"],SBCurrentMirror.ports["mid_cm_welltie_W_top_met_E"])
+    #SBCurrentMirror << straight_route(pdk,midbulk1.ports["route_W"], midA_source_via["bottom_met_E"])
     SBCurrentMirror << straight_route(pdk,midA_source_via.ports["top_met_N"], topB_source_via["top_met_S"])
     
     #midB_source_via  = SBCurrentMirror << viam2m3
     #midB_source_via.move(SBCurrentMirror.ports[f"mid_cm_B_0_source_W"].center).movex(-5.0)
-    midbulk2=SBCurrentMirror << straight_route(pdk,SBCurrentMirror.ports[f"mid_cm_B_0_source_W"],SBCurrentMirror.ports["mid_cm_welltie_W_top_met_E"])
+    #midbulk2=SBCurrentMirror << straight_route(pdk,SBCurrentMirror.ports[f"mid_cm_B_0_source_W"],SBCurrentMirror.ports["mid_cm_welltie_W_top_met_E"])
     #SBCurrentMirror << straight_route(pdk,midbulk2.ports["route_S"], midbulk1.ports["route_N"])
  
     #####################
@@ -210,9 +207,9 @@ def self_biased_cascode_current_mirror(
     ##################### 
     SBCurrentMirror << straight_route(pdk,bottom_currm_ref.ports["A_0_source_E"], bottomA_source_via.ports["bottom_met_W"])
     #SBCurrentMirror << straight_route(pdk,top_currm_ref.ports["B_0_source_E"], topB_source_via.ports["bottom_met_W"])
-    bottombulk=SBCurrentMirror << straight_route(pdk,SBCurrentMirror.ports[f"bottom_currm_B_0_source_W"],SBCurrentMirror.ports["bottom_currm_welltie_W_top_met_E"])
-    SBCurrentMirror << straight_route(pdk,bottombulk.ports["route_W"], bottomB_source_via["bottom_met_E"]) 
-    SBCurrentMirror << straight_route(pdk,midA_source_via.ports["top_met_S"], bottomB_source_via["top_met_N"])   
+    #bottombulk=SBCurrentMirror << straight_route(pdk,SBCurrentMirror.ports[f"bottom_currm_B_0_source_W"],SBCurrentMirror.ports["bottom_currm_welltie_W_top_met_E"])
+    #SBCurrentMirror << straight_route(pdk,bottombulk.ports["route_W"], bottomB_source_via["bottom_met_E"]) 
+    #SBCurrentMirror << straight_route(pdk,midA_source_via.ports["top_met_S"], bottomB_source_via["top_met_N"])   
     
     #####################
     SBCurrentMirror << straight_route(pdk,bottom_currm_ref.ports["A_0_gate_W"], bottomA_gate_via.ports["bottom_met_W"])
@@ -258,14 +255,14 @@ def self_biased_cascode_current_mirror(
     SBCurrentMirror << c_route(pdk, topB_drain_via["top_met_W"],Ibiaspin.ports["e1"],extension=max(Width,Width), width1=psize[0], width2=psize[0], cwidth=0.32, e1glayer="met3", e2glayer="met3", cglayer="met3")
     
     
-    bulkpin = SBCurrentMirror << rectangle(size=psize,layer=pdk.get_glayer("met3"),centered=True)
-    bulkpin.move(topB_source_via.center).movey(0.3*evaluate_bbox(top_currm_ref)[1])
-    SBCurrentMirror << straight_route(pdk,topB_source_via["top_met_N"], bulkpin.ports["e4"] )
+    # bulkpin = SBCurrentMirror << rectangle(size=psize,layer=pdk.get_glayer("met3"),centered=True)
+    # bulkpin.move(topB_source_via.center).movey(0.3*evaluate_bbox(top_currm_ref)[1])
+    # SBCurrentMirror << straight_route(pdk,topB_source_via["top_met_N"], bulkpin.ports["e4"] )
     
     SBCurrentMirror.add_ports(Irefpin.get_ports_list(), prefix="refport_")
     SBCurrentMirror.add_ports(Icopypin.get_ports_list(), prefix="copyport_")
     SBCurrentMirror.add_ports(Ibiaspin.get_ports_list(), prefix="biasport_")
-    SBCurrentMirror.add_ports(bulkpin.get_ports_list(), prefix="bulkport_")
+    #SBCurrentMirror.add_ports(bulkpin.get_ports_list(), prefix="bulkport_")
     
     ##############################
     # # Adding the Top Current Mirror Netlist
@@ -328,21 +325,21 @@ def add_self_biased_cascode_cm_labels(
     move_info.append((Ibias_label, CMS.ports["biasport_N"], None))  # Drain of B
 
 
-   # VSS/VDD label (for sources/bulk connection)
-    if transistor_type.lower() == "nfet":
-        bulk_net_name = "VSS"
-        bulk_pin_layer = met2_pin 
-        bulk_label_layer = met2_label 
-    else:  # pfet
-        bulk_net_name = "VDD"
-        bulk_pin_layer = met2_pin 
-        bulk_label_layer = met2_label 
+   # # VSS/VDD label (for sources/bulk connection)
+   #  if transistor_type.lower() == "nfet":
+   #      bulk_net_name = "VSS"
+   #      bulk_pin_layer = met2_pin 
+   #      bulk_label_layer = met2_label 
+   #  else:  # pfet
+   #      bulk_net_name = "VDD"
+   #      bulk_pin_layer = met2_pin 
+   #      bulk_label_layer = met2_label 
     
-    ##Need to clarify the bulk and source connection??
-    # VB label 
-    vb_label = rectangle(layer=bulk_pin_layer, size=psize, centered=True).copy() 
-    vb_label.add_label(text=bulk_net_name , layer=bulk_label_layer)
-    move_info.append((vb_label, CMS.ports["bulkport_N"], None)) 
+   #  ##Need to clarify the bulk and source connection??
+   #  # VB label 
+   #  vb_label = rectangle(layer=bulk_pin_layer, size=psize, centered=True).copy() 
+   #  vb_label.add_label(text=bulk_net_name , layer=bulk_label_layer)
+   #  move_info.append((vb_label, CMS.ports["bulkport_N"], None)) 
     
     # Add labels to the component
     for label, port, alignment in move_info:
@@ -362,9 +359,9 @@ def add_self_biased_cascode_cm_labels(
 if __name__ == "__main__":
 	# Main function to generate the current mirror layout
     # mappedpdk, Width, Length, num_cols, fingers, transistor type
-    comp = self_biased_cascode_current_mirror(sky130, num_cols=2, Width=3, device='nfet',show_netlist=False)
+    comp = self_biased_cascode_current_mirror(gf180, num_cols=2, Width=3, device='nfet',show_netlist=False)
     #comp.pprint_ports()
-    comp = add_self_biased_cascode_cm_labels(comp, transistor_type='nfet', pdk=sky130)
+    comp = add_self_biased_cascode_cm_labels(comp, transistor_type='nfet', pdk=gf180)
  
 
     
@@ -382,8 +379,8 @@ if __name__ == "__main__":
     #print(comp.info["netlist"].generate_netlist())
 	# # # DRC Checks
 	# # #delete_files_in_directory("DRC/")
-    print("\n...Running DRC...")
-    drc_result = sky130.drc_magic(comp, "CM")
+    #print("\n...Running DRC...")
+    #drc_result = sky130.drc_magic(comp, "CM")
     # # #drc_result = sky130.drc_magic(comp, "CM",output_file="DRC/")
     # print(drc_result['result_str'])
 	# # LVS Checks
