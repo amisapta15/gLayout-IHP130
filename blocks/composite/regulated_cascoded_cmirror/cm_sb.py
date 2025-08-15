@@ -162,41 +162,43 @@ def self_biased_cascode_current_mirror(
         2 * (tap_sep + SBCurrentMirror.ymax + BCM.ymax),
         )
         tie_ref = SBCurrentMirror << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = sdglayer, horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
-        tie_ref.movey(-(BCM.ymax+tap_sep));
+        #tie_ref.movey(-(BCM.ymax+tap_sep));
+        tie_ref.movey(-5.1);
         SBCurrentMirror.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
         ##tie_ref.pprint_ports()
-        
-        # for absc in CurrentMirror.ports.keys():
-        #     if len(absc.split("_")) <= 10:
-        #         if set(["currm","dummy","B","gsdcon"]).issubset(set(absc.split("_"))):
-        #             print(absc+"\n")
     
   
-    #     # add the substrate tap if specified
-    #     if with_substrate_tap:
-    #         subtap_sep = pdk.get_grule("dnwell", "active_tap")["min_separation"]
-    #         subtap_enclosure = (
-    #             2.5 * (subtap_sep + SBCurrentMirror.xmax),
-    #             2.5 * (subtap_sep + SBCurrentMirror.ymax),
-    #         )
-    #         subtap_ring = SBCurrentMirror << tapring(pdk, enclosed_rectangle = subtap_enclosure, sdlayer = "p+s/d", horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
-    #         SBCurrentMirror.add_ports(subtap_ring.get_ports_list(), prefix="substrate_tap_")
+        # add the substrate tap if specified
+        if with_substrate_tap:
+            subtap_sep = pdk.get_grule("dnwell", "active_tap")["min_separation"]
+            subtap_enclosure = (
+                2.5 * (subtap_sep + SBCurrentMirror.xmax),
+                2.5 * (subtap_sep + SBCurrentMirror.ymax + BCM.ymax),
+            )
+            subtap_ring_ref = SBCurrentMirror << tapring(pdk, enclosed_rectangle = subtap_enclosure, sdlayer = "p+s/d", horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
+            subtap_ring_ref.movey(-5.1);
+            SBCurrentMirror.add_ports(subtap_ring.get_ports_list(), prefix="substrate_tap_")
             
-    #     # add well
-    #     SBCurrentMirror.add_padding(default=pdk.get_grule(well, "active_tap")["min_enclosure"],layers=[pdk.get_glayer(well)])
-    #     SBCurrentMirror = add_ports_perimeter(SBCurrentMirror, layer = pdk.get_glayer(well), prefix="well_")
-    
-    #     try:
-    #         SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["top_currm_A_0_dummy_L_gsdcon_top_met_W"],SBCurrentMirror.ports["welltie_W_top_met_W"],glayer2="met1")
-    #     except KeyError:
-    #         pass
-    #     try:
-    #         SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports[f'top_currm_B_{num_cols - 1}_dummy_R_gsdcon_top_met_E'], SBCurrentMirror.ports["welltie_E_top_met_E"], glayer2="met1")
-    #     except KeyError:
-    #         pass
+        # add well
+        SBCurrentMirror.add_padding(default=pdk.get_grule(well, "active_tap")["min_enclosure"],layers=[pdk.get_glayer(well)])
+        SBCurrentMirror = add_ports_perimeter(SBCurrentMirror, layer = pdk.get_glayer(well), prefix="well_")
+
+        # for absc in SBCurrentMirror.ports.keys():
+        #     if len(absc.split("_")) <= 14:
+        #         if set(["bottom","cm","dummy","B","gsdcon"]).issubset(set(absc.split("_"))):
+        #             print(absc+"\n")
+                
+        try:
+            SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["top_currm_A_0_dummy_L_gsdcon_top_met_W"],SBCurrentMirror.ports["welltie_W_top_met_W"],glayer2="met1")
+            SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["bottom_cm_currm_A_0_dummy_L_gsdcon_top_met_W"],SBCurrentMirror.ports["welltie_W_top_met_W"],glayer2="met1")
+
+            SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports[f'top_currm_B_{num_cols - 1}_dummy_R_gsdcon_top_met_E'], SBCurrentMirror.ports["welltie_E_top_met_E"], glayer2="met1")
+            SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports[f'bottom_cm_currm_B_{num_cols - 1}_dummy_R_gsdcon_top_met_E'], SBCurrentMirror.ports["welltie_E_top_met_E"], glayer2="met1")
+        except KeyError:
+            pass
         
-    #SBCurrentMirror.add_ports(topA_drain_via.get_ports_list(), prefix="A_drain_")
-    #SBCurrentMirror.add_ports(topB_drain_via.get_ports_list(), prefix="B_drain_")
+    SBCurrentMirror.add_ports(topA_drain_via.get_ports_list(), prefix="A_drain_")
+    SBCurrentMirror.add_ports(topB_drain_via.get_ports_list(), prefix="B_drain_")
 
     
     ##############################
@@ -215,10 +217,11 @@ def self_biased_cascode_current_mirror(
     #                                 subckt_only=True,
     #                                 show_netlist=False,
     #                                 )
-    
+
+    # print(BCM.info["netlist"].generate_netlist())
     # SBCurrentMirror.info["netlist"] = generate_self_biased_current_mirror_netlist(
     #                                 names=SBCurrentMirror.name,
-    #                                 regulator=topcurrm,
+    #                                 regulator=top_currm,
     #                                 base=BCM,
     #                                 show_netlist=False,
     #                                 )
@@ -283,6 +286,6 @@ if __name__ == "__main__":
     drc_result = selected_pdk.drc_magic(comp, comp.name,output_file=Path("DRC/"))
     # # #LVS Checks
     # #print("\n...Running LVS...")
-    #netgen_lvs_result = selected_pdk.lvs_netgen(comp, comp.name,output_file_path=Path("LVS/"),copy_intermediate_files=True)        
+    netgen_lvs_result = selected_pdk.lvs_netgen(comp, comp.name,output_file_path=Path("LVS/"),copy_intermediate_files=True)        
 
   
