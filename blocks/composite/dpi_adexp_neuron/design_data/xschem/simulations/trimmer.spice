@@ -1,0 +1,47 @@
+** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/trimmer.sch
+**.subckt trimmer
+XMP1 net1 net1 VDD VDD sg13_lv_pmos w=0.28u l=8.0u ng=1 m=1
+XMP2 net2 net2 net1 VDD sg13_lv_pmos w=0.28u l=8.0u ng=1 m=1
+XMN2 net4 net2 GND GND sg13_lv_nmos w=0.28u l=8.0u ng=1 m=1
+XMN1 net2 net2 GND GND sg13_lv_nmos w=0.28u l=8.0u ng=1 m=1
+XMP3 net3 net5 VDD VDD sg13_lv_pmos w=2.0u l=2.0u ng=2 m=1
+XMP4 net4 VDD net3 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
+XMP5 net6 net5 VDD VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=2
+XMP6 net8 VDD net6 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
+XMP7 net7 net5 VDD VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=2
+XMP8 vbp VDD net7 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
+XMP9 net8 net4 VDD VDD sg13_lv_pmos w=0.28u l=8.0u ng=1 m=1
+XMN3 net8 net8 GND GND sg13_lv_nmos w=2.0u l=2.0u ng=1 m=1
+XMN4 vbp_casc net8 net9 GND sg13_lv_nmos w=2.0u l=2.0u ng=1 m=4
+XR1 vbp_casc vbp rppd w=0.5e-6 l=389e-6 m=1 b=0
+XR2 GND net9 rhigh w=0.5e-6 l=152.5e-6 m=1 b=0
+vbp net5 vbp 0
+.save i(vbp)
+vbp_casc VDD vbp_casc 0
+.save i(vbp_casc)
+Vdd VDD GND 1.8
+vload VDD net10 0
+.save i(vload)
+C1 net10 GND 0.5p m=1
+**** begin user architecture code
+
+
+.options savecurrrents
+.include trimmer.save
+.param temp=27
+.control
+save all
+op
+tran 50p 20n
+write tran_neuron.raw
+plot I(Vload)
+.endc
+
+
+ .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt
+.lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerRES.lib res_typ_stat
+
+**** end user architecture code
+**.ends
+.GLOBAL GND
+.end
