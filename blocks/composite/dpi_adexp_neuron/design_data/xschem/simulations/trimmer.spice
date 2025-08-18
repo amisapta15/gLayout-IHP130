@@ -13,29 +13,34 @@ XMP8 vbp VDD net7 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
 XMP9 net8 net4 VDD VDD sg13_lv_pmos w=0.28u l=8.0u ng=1 m=1
 XMN3 net8 net8 GND GND sg13_lv_nmos w=2.0u l=2.0u ng=1 m=1
 XMN4 vbp_casc net8 net9 GND sg13_lv_nmos w=2.0u l=2.0u ng=1 m=4
-XR1 vbp_casc vbp rppd w=0.5e-6 l=389e-6 m=1 b=0
-XR2 GND net9 rhigh w=0.5e-6 l=152.5e-6 m=1 b=0
+XR1 vbp_casc vbp sub! rppd w=0.5e-6 l=389e-6 m=1 b=0
+XR2 GND net9 sub! rhigh w=0.5e-6 l=152.5e-6 m=1 b=0
 vbp net5 vbp 0
 .save i(vbp)
 vbp_casc VDD vbp_casc 0
 .save i(vbp_casc)
 Vdd VDD GND 1.8
-vload VDD net10 0
+R3 net13 net14 300 m=1
+XMP10 net10 vbp VDD VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=2
+XMP11 net13 vbp_casc net10 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
+XMP12 net11 vbp net15 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=4
+XMP13 net13 vbp_casc net11 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=4
+XMP14 net12 vbp net16 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=8
+XMP15 net13 vbp_casc net12 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=8
+vload net14 GND 0
 .save i(vload)
-C1 net10 GND 0.5p m=1
 **** begin user architecture code
 
 
-.options savecurrrents
-.include trimmer.save
-.param temp=27
+* --- parameters ---
+.param Rload = 300
 .control
-save all
-op
-tran 50p 20n
-write tran_neuron.raw
-plot I(Vload)
+  set noaskquit
+  step param Rload list 50 100 150 200 300
+  op
+  plot Rload vs i(vload)
 .endc
+
 
 
  .lib /foss/pdks/ihp-sg13g2/libs.tech/ngspice/models/cornerMOSlv.lib mos_tt

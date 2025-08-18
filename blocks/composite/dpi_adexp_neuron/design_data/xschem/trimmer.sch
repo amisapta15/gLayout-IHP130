@@ -1,10 +1,10 @@
-v {xschem version=3.4.7 file_version=1.2}
+v {xschem version=3.4.8RC file_version=1.2}
 G {}
 K {}
 V {}
 S {}
 E {}
-P 4 1 -1510 -170 {}
+P 4 1 -2530 -660 {}
 N -1550 -850 -1550 -820 {lab=#net1}
 N -1510 -910 -1450 -910 {lab=#net1}
 N -1450 -910 -1450 -850 {lab=#net1}
@@ -38,7 +38,6 @@ N -1030 -900 -940 -900 {lab=#net5}
 N -1280 -780 -1260 -780 {lab=VDD}
 N -1260 -830 -1260 -780 {lab=VDD}
 N -1260 -830 -990 -830 {lab=VDD}
-N -990 -830 -990 -780 {lab=VDD}
 N -1030 -780 -990 -780 {lab=VDD}
 N -1320 -690 -1200 -690 {lab=#net4}
 N -1320 -750 -1320 -690 {lab=#net4}
@@ -81,34 +80,61 @@ N -940 -900 -940 -870 {lab=#net5}
 N -940 -810 -940 -740 {lab=vbp}
 N -990 -780 -990 -770 {lab=VDD}
 N -990 -710 -990 -680 {lab=vbp_casc}
-N -720 -980 -420 -980 {lab=VDD}
-N -420 -980 -420 -790 {lab=VDD}
 N -1780 -980 -1780 -810 {lab=VDD}
 N -1780 -510 -1780 -470 {lab=GND}
 N -1780 -750 -1780 -510 {lab=GND}
 N -1780 -980 -1550 -980 {lab=VDD}
-N -420 -730 -420 -700 {lab=#net10}
-N -420 -640 -420 -450 {lab=GND}
-C {devices/title.sym} -1610 -70 0 0 {name=l5 author="Copyright 2023 IHP PDK Authors"}
-C {devices/code_shown.sym} -1080 -320 0 0 {name=NGSPICE only_toplevel=true 
+N -420 -980 -420 -970 {lab=VDD}
+N -720 -980 -420 -980 {lab=VDD}
+N -480 -940 -460 -940 {lab=vbp}
+N -420 -910 -420 -850 {lab=#net10}
+N -470 -820 -460 -820 {lab=vbp_casc}
+N -990 -830 -990 -780 {lab=VDD}
+N -190 -940 -160 -940 {lab=vbp}
+N -190 -960 -190 -940 {lab=vbp}
+N -350 -960 -190 -960 {lab=vbp}
+N -480 -960 -480 -940 {lab=vbp}
+N -490 -940 -480 -940 {lab=vbp}
+N -350 -940 -320 -940 {lab=vbp}
+N -350 -960 -350 -940 {lab=vbp}
+N -480 -960 -350 -960 {lab=vbp}
+N -190 -820 -160 -820 {lab=vbp_casc}
+N -190 -860 -190 -820 {lab=vbp_casc}
+N -340 -860 -190 -860 {lab=vbp_casc}
+N -470 -860 -470 -820 {lab=vbp_casc}
+N -490 -820 -470 -820 {lab=vbp_casc}
+N -340 -820 -320 -820 {lab=vbp_casc}
+N -340 -860 -340 -820 {lab=vbp_casc}
+N -470 -860 -340 -860 {lab=vbp_casc}
+N -280 -910 -280 -850 {lab=#net11}
+N -120 -910 -120 -850 {lab=#net12}
+N -420 -760 -420 -670 {lab=#net13}
+N -280 -790 -280 -760 {lab=#net13}
+N -280 -760 -120 -760 {lab=#net13}
+N -420 -760 -280 -760 {lab=#net13}
+N -120 -790 -120 -760 {lab=#net13}
+N -420 -790 -420 -760 {lab=#net13}
+N -420 -610 -420 -570 {lab=#net14}
+N -420 -510 -420 -490 {lab=GND}
+C {devices/title.sym} -1550 -400 0 0 {name=l5 author="Yuan Li"}
+C {devices/code_shown.sym} -2570 -640 0 0 {name=NGSPICE only_toplevel=true 
 value="
-.options savecurrrents
-.include trimmer.save
-.param temp=27
+* --- parameters ---
+.param Rload = 300
 .control
-save all 
-op
-tran 50p 20n
-write tran_neuron.raw
-plot I(Vload)
+  set noaskquit
+  step param Rload list 50 100 150 200 300 
+  op
+  plot Rload vs i(vload)
 .endc
+
 "}
-C {devices/code_shown.sym} -1760 -180 0 0 {name=MODEL only_toplevel=true
+C {devices/code_shown.sym} -2300 -920 0 0 {name=MODEL only_toplevel=true
 format="tcleval( @value )"
 value=".lib $::SG13G2_MODELS/cornerMOSlv.lib mos_tt
 .lib $::SG13G2_MODELS/cornerRES.lib res_typ_stat
 "}
-C {sg13g2_pr/annotate_fet_params.sym} -1800 -370 0 0 {name=annot2 ref=MP1}
+C {sg13g2_pr/annotate_fet_params.sym} -2250 -770 0 0 {name=annot2 ref=MP1}
 C {sg13g2_pr/sg13_lv_pmos.sym} -1530 -910 0 1 {name=MP1
 l=8.0u
 w=0.28u
@@ -235,7 +261,7 @@ C {devices/ammeter.sym} -940 -840 0 0 {name=vbp}
 C {devices/ammeter.sym} -990 -740 0 0 {name=vbp_casc}
 C {devices/vsource.sym} -1780 -780 0 0 {name=Vdd value=1.8}
 C {devices/gnd.sym} -1780 -470 0 0 {name=l1 lab=GND}
-C {devices/gnd.sym} -420 -450 0 0 {name=l2 lab=GND}
+C {devices/gnd.sym} -420 -490 0 0 {name=l2 lab=GND}
 C {lab_pin.sym} -1780 -980 2 1 {name=p1 sig_type=std_logic lab=VDD}
 C {lab_pin.sym} -1780 -510 2 1 {name=p4 sig_type=std_logic lab=GND}
 C {lab_pin.sym} -1550 -610 2 1 {name=p3 sig_type=std_logic lab=GND}
@@ -251,9 +277,65 @@ C {lab_pin.sym} -1550 -910 2 1 {name=p16 sig_type=std_logic lab=VDD}
 C {lab_pin.sym} -1550 -790 2 1 {name=p17 sig_type=std_logic lab=VDD}
 C {lab_pin.sym} -850 -780 0 1 {name=p18 sig_type=std_logic lab=VDD}
 C {lab_pin.sym} -1160 -690 0 1 {name=p19 sig_type=std_logic lab=VDD}
-C {devices/ammeter.sym} -420 -760 0 0 {name=vload}
-C {capa.sym} -420 -670 0 0 {name=C1
-m=1
-value=0.5p
+C {res.sym} -420 -640 0 0 {name=R3
+value=300
 footprint=1206
-device="ceramic capacitor"}
+device=resistor
+m=1}
+C {sg13g2_pr/sg13_lv_pmos.sym} -440 -940 0 0 {name=MP10
+l=2.0u
+w=2.0u
+ng=1
+m=2
+model=sg13_lv_pmos
+spiceprefix=X
+}
+C {sg13g2_pr/sg13_lv_pmos.sym} -440 -820 0 0 {name=MP11
+l=0.28u
+w=2.0u
+ng=1
+m=2
+model=sg13_lv_pmos
+spiceprefix=X
+}
+C {lab_pin.sym} -490 -940 0 0 {name=p2 sig_type=std_logic lab=vbp}
+C {lab_pin.sym} -490 -820 2 1 {name=p11 sig_type=std_logic lab=vbp_casc}
+C {lab_pin.sym} -420 -940 0 1 {name=p20 sig_type=std_logic lab=VDD}
+C {lab_pin.sym} -420 -820 0 1 {name=p21 sig_type=std_logic lab=VDD}
+C {sg13g2_pr/sg13_lv_pmos.sym} -300 -940 0 0 {name=MP12
+l=2.0u
+w=2.0u
+ng=1
+m=4
+model=sg13_lv_pmos
+spiceprefix=X
+}
+C {sg13g2_pr/sg13_lv_pmos.sym} -300 -820 0 0 {name=MP13
+l=0.28u
+w=2.0u
+ng=1
+m=4
+model=sg13_lv_pmos
+spiceprefix=X
+}
+C {lab_pin.sym} -280 -940 0 1 {name=p22 sig_type=std_logic lab=VDD}
+C {lab_pin.sym} -280 -820 0 1 {name=p23 sig_type=std_logic lab=VDD}
+C {sg13g2_pr/sg13_lv_pmos.sym} -140 -940 0 0 {name=MP14
+l=2.0u
+w=2.0u
+ng=1
+m=8
+model=sg13_lv_pmos
+spiceprefix=X
+}
+C {sg13g2_pr/sg13_lv_pmos.sym} -140 -820 0 0 {name=MP15
+l=0.28u
+w=2.0u
+ng=1
+m=8
+model=sg13_lv_pmos
+spiceprefix=X
+}
+C {lab_pin.sym} -120 -940 0 1 {name=p24 sig_type=std_logic lab=VDD}
+C {lab_pin.sym} -120 -820 0 1 {name=p25 sig_type=std_logic lab=VDD}
+C {devices/ammeter.sym} -420 -540 0 0 {name=vload}
