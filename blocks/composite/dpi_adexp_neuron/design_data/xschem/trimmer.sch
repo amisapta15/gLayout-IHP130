@@ -1,9 +1,29 @@
-v {xschem version=3.4.8RC file_version=1.2}
+v {xschem version=3.4.7 file_version=1.2}
 G {}
 K {}
 V {}
 S {}
 E {}
+B 2 360 -1300 1160 -900 {flags=graph
+y1=0.8
+y2=2.8
+ypos1=0
+ypos2=2
+divy=5
+subdivy=1
+unity=1
+x1=-1e-06
+x2=9e-06
+divx=5
+subdivx=1
+xlabmag=1.0
+ylabmag=1.0
+node=""
+dataset=-1
+unitx=1
+logx=0
+logy=0
+autoload=1}
 P 4 1 -2530 -660 {}
 N -1550 -850 -1550 -820 {lab=#net1}
 N -1510 -910 -1450 -910 {lab=#net1}
@@ -66,8 +86,8 @@ N -940 -900 -940 -740 {lab=vbp}
 N -990 -780 -990 -680 {lab=vbp_casc}
 N -330 -1080 -330 -1020 {lab=#net8}
 N -990 -830 -990 -780 {lab=vbp_casc}
-N -400 -1110 -370 -1110 {lab=vbp}
-N -400 -990 -370 -990 {lab=vbp_casc}
+N -390 -1110 -370 -1110 {lab=vbp}
+N -390 -990 -370 -990 {lab=vbp_casc}
 N -1660 -1040 -1590 -1040 {lab=enN}
 N -1390 -1040 -1360 -1040 {lab=enN}
 N -1390 -1100 -1390 -1040 {lab=enN}
@@ -106,16 +126,16 @@ N -1030 -600 -980 -600 {lab=#net6}
 N -980 -660 -980 -600 {lab=#net6}
 N -980 -530 -980 -510 {lab=GND}
 N -1070 -510 -980 -510 {lab=GND}
-N -2060 -600 -2060 -560 {lab=VDD}
-N -1920 -750 -1830 -750 {lab=enN}
-N -2080 -750 -2000 -750 {lab=en}
-N -2080 -690 -2080 -670 {lab=GND}
+N -2000 -730 -2000 -690 {lab=VDD}
+N -1860 -880 -1770 -880 {lab=enN}
+N -2020 -880 -1940 -880 {lab=en}
+N -2020 -820 -2020 -800 {lab=GND}
 N -330 -1240 -330 -1140 {lab=VDD}
-N -1960 -710 -1960 -680 {lab=GND}
-N -330 -960 -330 -840 {lab=#net13}
+N -1900 -840 -1900 -810 {lab=GND}
+N -330 -910 -330 -720 {lab=ibias}
 N -790 -1170 -790 -1100 {lab=enN}
 N -920 -1100 -790 -1100 {lab=enN}
-N -710 -1170 -710 -1050 {lab=#net14}
+N -710 -1170 -710 -1050 {lab=enMon}
 N -670 -1020 -670 -830 {lab=vbp_casc}
 N -910 -830 -670 -830 {lab=vbp_casc}
 N -670 -1240 -670 -1080 {lab=VDD}
@@ -124,10 +144,35 @@ N -750 -1240 -750 -1210 {lab=VDD}
 N -850 -1240 -750 -1240 {lab=VDD}
 N -1660 -1100 -1660 -1040 {lab=enN}
 N -1660 -1100 -1390 -1100 {lab=enN}
-N -330 -780 -330 -720 {lab=ibias}
 N -330 -660 -330 -550 {lab=GND}
+N -90 -1070 -90 -1010 {lab=#net13}
+N -160 -1100 -130 -1100 {lab=vbp}
+N -160 -980 -130 -980 {lab=vbp_casc}
+N 190 -1070 190 -1010 {lab=#net14}
+N 130 -1100 150 -1100 {lab=vbp}
+N -330 -1240 -90 -1240 {lab=VDD}
+N -90 -1240 -90 -1130 {lab=VDD}
+N -90 -1240 190 -1240 {lab=VDD}
+N 190 -1240 190 -1130 {lab=VDD}
+N 190 -950 190 -910 {lab=ibias}
+N -90 -910 190 -910 {lab=ibias}
+N -330 -960 -330 -910 {lab=ibias}
+N -90 -950 -90 -910 {lab=ibias}
+N -330 -910 -90 -910 {lab=ibias}
+N -390 -1180 -390 -1110 {lab=vbp}
+N -400 -1110 -390 -1110 {lab=vbp}
+N -160 -1180 130 -1180 {lab=vbp}
+N 130 -1180 130 -1100 {lab=vbp}
+N -160 -1180 -160 -1100 {lab=vbp}
+N -390 -1180 -160 -1180 {lab=vbp}
+N 150 -1050 150 -980 {lab=vbp_casc}
+N -160 -1050 150 -1050 {lab=vbp_casc}
+N -390 -1050 -390 -990 {lab=vbp_casc}
+N -400 -990 -390 -990 {lab=vbp_casc}
+N -160 -1050 -160 -980 {lab=vbp_casc}
+N -390 -1050 -160 -1050 {lab=vbp_casc}
 C {devices/title.sym} -1610 -320 0 0 {name=l5 author="Yuan Li"}
-C {devices/code_shown.sym} -2420 -700 0 0 {name=NGSPICE only_toplevel=true 
+C {devices/code_shown.sym} -2340 -790 0 0 {name=NGSPICE only_toplevel=true 
 value="
 .include trimmer.save
 .option savecurrent
@@ -135,16 +180,14 @@ value="
 .control
 op
 save all 
-tran 500n 150u
-plot en enN
+tran 500p 65u
+plot en enN enMon
 plot vstart
 plot vbp vbp_casc
-plot I(ibias)
+plot v(ibias)/300
 .endc
-"
-
 "}
-C {sg13g2_pr/annotate_fet_params.sym} -2190 -1030 0 0 {name=annot2 ref=MP1}
+C {sg13g2_pr/annotate_fet_params.sym} -2100 -1020 0 0 {name=annot2 ref=MP1}
 C {sg13g2_pr/sg13_lv_pmos.sym} -1530 -910 0 1 {name=MP1
 l=8.0u
 w=0.28u
@@ -369,19 +412,19 @@ spiceprefix=X
 }
 C {lab_pin.sym} -1460 -560 0 1 {name=p31 sig_type=std_logic lab=GND}
 C {lab_pin.sym} -980 -560 0 1 {name=p32 sig_type=std_logic lab=GND}
-C {vsource.sym} -2060 -530 0 0 {name=V1 value=1.65 savecurrent=false}
-C {devices/gnd.sym} -2060 -500 0 0 {name=l3 lab=GND}
-C {lab_pin.sym} -2060 -600 2 1 {name=p35 sig_type=std_logic lab=VDD}
-C {vsource.sym} -2080 -720 0 0 {name=Ven value="PULSE(0 1.65 0 1ns 1ns 10us 20us)"}
-C {inv.sym} -1980 -750 0 0 {name=xinv1}
-C {lab_pin.sym} -1960 -790 3 1 {name=p36 sig_type=std_logic lab=VDD}
-C {devices/gnd.sym} -2080 -670 0 0 {name=l4 lab=GND}
-C {lab_pin.sym} -2060 -750 3 1 {name=p39 sig_type=std_logic lab=en}
+C {vsource.sym} -2000 -660 0 0 {name=V1 value=1.65 savecurrent=false}
+C {devices/gnd.sym} -2000 -630 0 0 {name=l3 lab=GND}
+C {lab_pin.sym} -2000 -730 2 1 {name=p35 sig_type=std_logic lab=VDD}
+C {vsource.sym} -2020 -850 0 0 {name=Ven value=1.65}
+C {inv.sym} -1920 -880 0 0 {name=xinv1}
+C {lab_pin.sym} -1900 -920 3 1 {name=p36 sig_type=std_logic lab=VDD}
+C {devices/gnd.sym} -2020 -800 0 0 {name=l4 lab=GND}
+C {lab_pin.sym} -2000 -880 3 1 {name=p39 sig_type=std_logic lab=en}
 C {lab_pin.sym} -940 -900 0 0 {name=p9 sig_type=std_logic lab=vbp}
 C {lab_pin.sym} -990 -780 0 1 {name=p10 sig_type=std_logic lab=vbp_casc}
 C {devices/gnd.sym} -1780 -510 0 0 {name=l1 lab=GND}
-C {devices/gnd.sym} -1960 -680 0 0 {name=l6 lab=GND}
-C {simulator_commands_shown.sym} -2420 -880 0 0 {
+C {devices/gnd.sym} -1900 -810 0 0 {name=l6 lab=GND}
+C {simulator_commands_shown.sym} -2340 -970 0 0 {
 name=Libs_Ngspice
 simulator=ngspice
 only_toplevel=false
@@ -396,6 +439,46 @@ C {lab_pin.sym} -1420 -610 1 0 {name=p22 sig_type=std_logic lab=vstart
 }
 C {inv.sym} -770 -1170 0 0 {name=xinv2}
 C {devices/gnd.sym} -750 -1130 0 0 {name=l7 lab=GND}
-C {lab_pin.sym} -1830 -750 0 1 {name=p24 sig_type=std_logic lab=enN}
-C {devices/ammeter.sym} -330 -810 0 0 {name=ibias}
+C {lab_pin.sym} -1770 -880 0 1 {name=p24 sig_type=std_logic lab=enN}
 C {lab_pin.sym} -330 -750 0 0 {name=p23 sig_type=std_logic lab=ibias}
+C {launcher.sym} 450 -800 0 0 {name=h5
+descr="load waves" 
+tclcommand="xschem raw_read $netlist_dir/trimmer.raw tran"
+}
+C {sg13g2_pr/sg13_lv_pmos.sym} -110 -1100 0 0 {name=MP12
+l=2.0u
+w=2.0u
+ng=1
+m=4
+model=sg13_lv_pmos
+spiceprefix=X
+}
+C {sg13g2_pr/sg13_lv_pmos.sym} -110 -980 0 0 {name=MP13
+l=0.28u
+w=2.0u
+ng=1
+m=2
+model=sg13_lv_pmos
+spiceprefix=X
+}
+C {lab_pin.sym} -90 -1100 0 1 {name=p34 sig_type=std_logic lab=VDD}
+C {lab_pin.sym} -90 -980 0 1 {name=p37 sig_type=std_logic lab=VDD}
+C {sg13g2_pr/sg13_lv_pmos.sym} 170 -1100 0 0 {name=MP14
+l=2.0u
+w=2.0u
+ng=1
+m=8
+model=sg13_lv_pmos
+spiceprefix=X
+}
+C {sg13g2_pr/sg13_lv_pmos.sym} 170 -980 0 0 {name=MP15
+l=0.28u
+w=2.0u
+ng=1
+m=2
+model=sg13_lv_pmos
+spiceprefix=X
+}
+C {lab_pin.sym} 190 -1100 0 1 {name=p41 sig_type=std_logic lab=VDD}
+C {lab_pin.sym} 190 -980 0 1 {name=p42 sig_type=std_logic lab=VDD}
+C {lab_pin.sym} -710 -1050 1 1 {name=p25 sig_type=std_logic lab=enMon}
