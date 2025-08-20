@@ -114,7 +114,7 @@ N 1770 -100 1770 -60 {lab=#net7}
 N 1840 -70 1840 -60 {lab=#net7}
 N 1840 -150 1840 -130 {lab=#net8}
 N 1780 140 1800 140 {lab=VREF}
-N 1200 540 1200 570 {lab=GND}
+N 260 490 260 520 {lab=GND}
 N 920 240 920 340 {lab=GND}
 N 610 140 610 310 {lab=GND}
 N 610 310 760 310 {lab=GND}
@@ -145,7 +145,7 @@ value="
 .param temp=127
 .control
 save all 
-tran 500p 20000n
+tran 500p 1000n
 write tran_neuron.raw
 plot vp VLK
 plot REQ RST vmem
@@ -163,7 +163,7 @@ value="
 .lib cornerRES.lib res_typ
 "
       }
-C {isource.sym} 610 -20 0 0 {name=I0 value=0.2u}
+C {isource.sym} 610 -20 0 0 {name=I0 value=0.8u}
 C {sg13g2_pr/sg13_lv_nmos.sym} 740 220 0 0 {name=M3
 l=0.15u
 w=0.6u
@@ -402,9 +402,9 @@ spiceprefix=X
 C {lab_pin.sym} 1840 -180 0 1 {name=p34 sig_type=std_logic lab=VDD}
 C {vdd.sym} 1840 -210 0 0 {name=l14 lab=VDD}
 C {lab_pin.sym} 1780 140 0 0 {name=p36 sig_type=std_logic lab=VREF}
-C {lab_pin.sym} 1200 480 1 0 {name=p37 sig_type=std_logic lab=VREF}
-C {devices/vsource.sym} 1200 510 0 0 {name=Vahp1 value=1}
-C {devices/gnd.sym} 1200 570 0 0 {name=l15 lab=GND}
+C {lab_pin.sym} 260 430 1 0 {name=p37 sig_type=std_logic lab=VREF}
+C {devices/vsource.sym} 260 460 0 0 {name=Vahp1 value=1}
+C {devices/gnd.sym} 260 520 0 0 {name=l15 lab=GND}
 C {devices/gnd.sym} 920 340 0 0 {name=l17 lab=GND}
 C {devices/gnd.sym} 540 340 0 0 {name=l18 lab=GND}
 C {buff.sym} 2040 -280 0 0 {name=xbuff1}

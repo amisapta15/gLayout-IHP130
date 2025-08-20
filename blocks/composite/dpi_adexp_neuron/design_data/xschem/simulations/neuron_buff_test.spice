@@ -1,6 +1,6 @@
 ** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/neuron_buff_test.sch
 **.subckt neuron_buff_test
-I0 VDD vn1 0.2u
+I0 VDD vn1 0.8u
 XM3 vmem VLK GND GND sg13_lv_nmos w=0.6u l=0.15u ng=1 m=1
 XM1 GND VTHR vn1 VDD sg13_lv_pmos w=1.2u l=0.15u ng=1 m=1
 XM4 vmem vmem vn1 VDD sg13_lv_pmos w=1.2u l=0.15u ng=1 m=1
@@ -45,7 +45,7 @@ xinv1 VDD net9 OUT GND inv
 .param temp=127
 .control
 save all
-tran 500p 20000n
+tran 500p 1000n
 write tran_neuron.raw
 plot vp VLK
 plot REQ RST vmem
