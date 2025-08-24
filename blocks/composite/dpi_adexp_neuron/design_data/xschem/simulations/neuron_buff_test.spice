@@ -26,7 +26,7 @@ xbuff1 VDD REQ net9 GND buff
 xinv1 VDD net9 OUT GND inv
 Vdd1 VDD GND 1.8
 XM23 VLK VLK GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
-ILK VDD VLK 1n
+ILK VDD VLK 0.1u
 XM24 VREF VREF GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
 IVREF VDD VREF 3u
 XM25 VLKAHP VLKAHP GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
@@ -36,7 +36,7 @@ ITHAHP VTHRAHP GND 390u
 XM27 VAHP VAHP VDD VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
 IAHP VAHP GND 9n
 XM22 VTHR VTHR VDD VDD sg13_lv_pmos w=1.2u l=0.75u ng=1 m=1
-ITHR VTHR GND 10.0n
+ITHR VTHR GND 10.0u
 XC5 vmem GND cap_cmim w=10.0e-6 l=10.0e-6 m=8
 XC1 RST GND cap_cmim w=10.0e-6 l=10.0e-6 m=8
 XC2 vp GND cap_cmim w=10.0e-6 l=10.0e-6 m=8
@@ -44,6 +44,7 @@ xinv2 VDD enNeuAHP net10 GND inv
 XM28 net11 net10 vmem VDD sg13_lv_pmos w=1.2u l=0.75u ng=1 m=1
 Vdd2 enNeuAHP GND 1.8
 * noconn OUT
+* noconn GND
 **** begin user architecture code
 
 .include diodes.lib

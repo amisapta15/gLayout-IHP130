@@ -1,4 +1,4 @@
-v {xschem version=3.4.8RC file_version=1.2}
+v {xschem version=3.4.7 file_version=1.2}
 G {}
 K {}
 V {}
@@ -25,10 +25,10 @@ vn1
 vlk
 vthr"
 rainbow=1
-y1=0.3
-y2=1.8
-x2=3.8563335e-06
-x1=1.1683335e-06}
+x2=3.1944426e-06
+x1=5.064426e-07
+y1=0
+y2=1.5}
 B 2 40 -1170 840 -770 {flags=graph
 ypos1=0
 ypos2=2
@@ -47,8 +47,8 @@ color="4 5"
 node="out
 vmem"
 y2=1.9477697
-x1=2.1043792e-07
-x2=4.4191964e-06
+x1=7.2939704e-07
+x2=4.9381556e-06
 y1=0}
 T {ILK goes 
 from 0.01u to 0.1u 
@@ -64,7 +64,7 @@ T {Iin goes
 from 0.8u to 10u
 from low to very high firing rate } 640 -120 0 0 0.4 0.4 {}
 T {HIGH is on for AHP
-LOW is off for AHP} 970 270 0 0 0.4 0.4 {}
+LOW is off for AHP} 350 160 0 0 0.4 0.4 {}
 N 610 50 610 80 {lab=vn1}
 N 760 160 760 190 {lab=vmem}
 N 610 50 760 50 {lab=vn1}
@@ -236,7 +236,8 @@ N 920 140 1080 140 {lab=vmem}
 N 1080 260 1080 320 {lab=#net11}
 N 1210 230 1240 230 {lab=enNeuAHP}
 N 350 80 350 100 {lab=GND}
-N 350 -10 350 20 {lab=enNeuAHP}
+N 290 50 290 100 {lab=GND}
+N 350 -30 350 20 {lab=enNeuAHP}
 C {devices/code_shown.sym} -630 -360 0 0 {name=MODEL only_toplevel=true
 format="tcleval( @value )"
 value="
@@ -510,7 +511,7 @@ C {devices/gnd.sym} 450 100 0 0 {name=l23 lab=GND}
 C {vdd.sym} 450 10 0 0 {name=l24 lab=VDD}
 C {devices/launcher.sym} 130 -300 0 0 {name=h5
 descr="load waves" 
-tclcommand="xschem raw_read $netlist_dir/test_mim_cap.raw tran"
+tclcommand="xschem raw_read $netlist_dir/tran_neuron.raw tran"
 }
 C {lab_wire.sym} 550 110 1 0 {name=p18 sig_type=std_logic lab=VTHR}
 C {sg13g2_pr/sg13_lv_nmos.sym} 310 330 0 1 {name=M23
@@ -521,7 +522,7 @@ m=1
 model=sg13_lv_nmos
 spiceprefix=X
 }
-C {isource.sym} 290 230 0 0 {name=ILK value=1n}
+C {isource.sym} 290 230 0 0 {name=ILK value=0.1u}
 C {vdd.sym} 290 190 0 0 {name=l26 lab=VDD}
 C {lab_pin.sym} 290 330 2 1 {name=p40 sig_type=std_logic lab=GND}
 C {sg13g2_pr/sg13_lv_nmos.sym} 150 340 0 1 {name=M24
@@ -588,7 +589,7 @@ spiceprefix=X
 }
 C {vdd.sym} 200 -30 0 0 {name=l18 lab=VDD}
 C {lab_pin.sym} 200 10 0 0 {name=p27 sig_type=std_logic lab=VDD}
-C {isource.sym} 200 110 0 0 {name=ITHR value=10.0n}
+C {isource.sym} 200 110 0 0 {name=ITHR value=10.0u}
 C {devices/gnd.sym} 200 150 0 0 {name=l30 lab=GND}
 C {lab_wire.sym} 270 10 1 0 {name=p45 sig_type=std_logic lab=VTHR}
 C {lab_wire.sym} 1990 -80 2 0 {name=p24 sig_type=std_logic lab=REQ}
@@ -625,5 +626,7 @@ C {lab_pin.sym} 1080 230 2 1 {name=p48 sig_type=std_logic lab=VDD}
 C {lab_wire.sym} 1240 230 1 0 {name=p49 sig_type=std_logic lab=enNeuAHP}
 C {devices/vsource.sym} 350 50 0 0 {name=Vdd2 value=1.8}
 C {devices/gnd.sym} 350 100 0 0 {name=l32 lab=GND}
-C {lab_wire.sym} 350 -10 2 0 {name=p50 sig_type=std_logic lab=enNeuAHP}
 C {noconn.sym} 2340 -220 2 0 {name=l20}
+C {devices/gnd.sym} 290 100 0 0 {name=l33 lab=GND}
+C {noconn.sym} 290 50 2 0 {name=l34}
+C {lab_wire.sym} 350 -30 2 0 {name=p50 sig_type=std_logic lab=enNeuAHP}
