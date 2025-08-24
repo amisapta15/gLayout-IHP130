@@ -1,4 +1,4 @@
-v {xschem version=3.4.7 file_version=1.2}
+v {xschem version=3.4.8RC file_version=1.2}
 G {}
 K {}
 V {}
@@ -63,8 +63,8 @@ from 5/10u to 60u } 130 -130 0 0 0.4 0.4 {}
 T {Iin goes 
 from 0.8u to 10u
 from low to very high firing rate } 640 -120 0 0 0.4 0.4 {}
-T {Connect this
-for AHP} 940 270 0 0 0.4 0.4 {}
+T {HIGH is on for AHP
+LOW is off for AHP} 970 270 0 0 0.4 0.4 {}
 N 610 50 610 80 {lab=vn1}
 N 760 160 760 190 {lab=vmem}
 N 610 50 760 50 {lab=vn1}
@@ -78,21 +78,19 @@ N 760 160 820 160 {lab=vmem}
 N 760 140 760 160 {lab=vmem}
 N 760 310 760 340 {lab=GND}
 N 1480 240 1480 330 {lab=GND}
-N 1150 300 1150 310 {lab=GND}
-N 1270 300 1270 310 {lab=GND}
-N 1150 310 1270 310 {lab=GND}
-N 1080 240 1080 310 {lab=GND}
-N 1080 310 1150 310 {lab=GND}
-N 1120 210 1150 210 {lab=vp}
-N 1150 210 1150 240 {lab=vp}
-N 1270 210 1270 240 {lab=vp}
-N 1150 210 1270 210 {lab=vp}
+N 1150 440 1150 450 {lab=GND}
+N 1270 440 1270 450 {lab=GND}
+N 1150 450 1270 450 {lab=GND}
+N 1080 380 1080 450 {lab=GND}
+N 1080 450 1150 450 {lab=GND}
+N 1120 350 1150 350 {lab=vp}
+N 1150 350 1150 380 {lab=vp}
+N 1270 350 1270 380 {lab=vp}
+N 1150 350 1270 350 {lab=vp}
 N 1310 50 1330 50 {lab=vp}
-N 1270 100 1270 210 {lab=vp}
 N 1080 80 1080 100 {lab=GND}
 N 1330 50 1330 100 {lab=vp}
 N 1270 100 1330 100 {lab=vp}
-N 1270 80 1270 100 {lab=vp}
 N 1180 -40 1180 -20 {lab=#net1}
 N 1080 -20 1080 20 {lab=#net1}
 N 1270 -20 1270 20 {lab=#net1}
@@ -158,7 +156,6 @@ N 760 250 760 310 {lab=GND}
 N 1730 -180 1800 -180 {lab=REQ}
 N 1730 -250 1730 -180 {lab=REQ}
 N 2080 -300 2080 -280 {lab=VDD}
-N 2340 -160 2340 60 {lab=GND}
 N 2340 -250 2340 -220 {lab=OUT}
 N 2080 -220 2080 -200 {lab=GND}
 N 2120 -250 2150 -250 {lab=#net9}
@@ -166,8 +163,8 @@ N 2230 -250 2340 -250 {lab=OUT}
 N 2190 -300 2190 -290 {lab=VDD}
 N 2190 -210 2190 -200 {lab=GND}
 N 1530 -80 1530 -60 {lab=REQ}
-N 390 10 390 20 {lab=VDD}
-N 390 80 390 100 {lab=GND}
+N 450 10 450 20 {lab=VDD}
+N 450 80 450 100 {lab=GND}
 N 920 110 920 140 {lab=vmem}
 N 330 330 350 330 {lab=VLK}
 N 290 280 290 300 {lab=VLK}
@@ -227,13 +224,19 @@ N 1530 -80 1740 -80 {lab=REQ}
 N 1530 -100 1530 -80 {lab=REQ}
 N 1220 -150 1220 -100 {lab=REQ}
 N 1220 -100 1530 -100 {lab=REQ}
-N 1080 160 1080 180 {lab=GND}
-N 1010 160 1080 160 {lab=GND}
-N 1080 330 1080 340 {lab=GND}
-N 920 140 1480 140 {lab=vmem}
-N 1010 160 1010 330 {lab=GND}
-N 1010 330 1080 330 {lab=GND}
-N 1080 310 1080 330 {lab=GND}
+N 1080 140 1480 140 {lab=vmem}
+N 1080 450 1080 480 {lab=GND}
+N 1270 100 1270 350 {lab=vp}
+N 1270 80 1270 100 {lab=vp}
+N 1120 230 1130 230 {lab=#net10}
+N 1170 170 1170 190 {lab=VDD}
+N 1170 270 1170 280 {lab=GND}
+N 1080 140 1080 200 {lab=vmem}
+N 920 140 1080 140 {lab=vmem}
+N 1080 260 1080 320 {lab=#net11}
+N 1210 230 1240 230 {lab=enNeuAHP}
+N 350 80 350 100 {lab=GND}
+N 350 -10 350 20 {lab=enNeuAHP}
 C {devices/code_shown.sym} -630 -360 0 0 {name=MODEL only_toplevel=true
 format="tcleval( @value )"
 value="
@@ -265,8 +268,9 @@ write tran_neuron.raw
 tran 1n 5u
 write tran_neuron.raw
 *Example plots (uncomment inside ngspice if you want autoplots)
-plot vmem vn1 Vthr Vlk
-plot vmem out
+*plot vmem vn1 Vthr Vlk
+*plot vmem out
+quit
 .endc
 "}
 C {simulator_commands_shown.sym} -630 -180 0 0 {
@@ -278,6 +282,9 @@ value="
 .lib cornerMOShv.lib mos_tt
 .lib cornerHBT.lib hbt_typ
 .lib cornerRES.lib res_typ
+.lib cornerCAP.lib cap_typ
+"
+
 "
       }
 C {isource.sym} 610 -20 0 0 {name=Iin value=0.8u}
@@ -307,11 +314,6 @@ spiceprefix=X
 }
 C {devices/gnd.sym} 760 340 0 0 {name=l3 lab=GND}
 C {vdd.sym} 610 -80 0 0 {name=l1 lab=VDD}
-C {capa.sym} 920 210 0 0 {name=C1
-m=1
-value=1.2p
-footprint=1206
-device="ceramic capacitor"}
 C {lab_wire.sym} 870 110 0 0 {name=p1 sig_type=std_logic lab=vmem}
 C {lab_pin.sym} 760 110 0 0 {name=p2 sig_type=std_logic lab=VDD}
 C {lab_pin.sym} 610 110 0 1 {name=p3 sig_type=std_logic lab=VDD}
@@ -326,7 +328,7 @@ model=sg13_lv_nmos
 spiceprefix=X
 }
 C {lab_pin.sym} 1480 210 0 0 {name=p6 sig_type=std_logic lab=GND}
-C {sg13g2_pr/sg13_lv_nmos.sym} 1100 210 0 1 {name=M5
+C {sg13g2_pr/sg13_lv_nmos.sym} 1100 350 0 1 {name=M5
 l=3.0u
 w=1.2u
 ng=1
@@ -334,12 +336,7 @@ m=1
 model=sg13_lv_nmos
 spiceprefix=X
 }
-C {capa.sym} 1150 270 0 0 {name=C2
-m=1
-value=1.2p
-footprint=1206
-device="ceramic capacitor"}
-C {sg13g2_pr/sg13_lv_nmos.sym} 1290 270 0 1 {name=M6
+C {sg13g2_pr/sg13_lv_nmos.sym} 1290 410 0 1 {name=M6
 l=3.0u
 w=1.2u
 ng=1
@@ -375,10 +372,10 @@ m=1
 model=sg13_lv_pmos
 spiceprefix=X
 }
-C {devices/gnd.sym} 1080 340 0 0 {name=l4 lab=GND}
+C {devices/gnd.sym} 1080 480 0 0 {name=l4 lab=GND}
 C {devices/gnd.sym} 1480 330 0 0 {name=l5 lab=GND}
-C {lab_pin.sym} 1080 210 0 0 {name=p10 sig_type=std_logic lab=GND}
-C {lab_pin.sym} 1270 270 0 0 {name=p11 sig_type=std_logic lab=GND}
+C {lab_pin.sym} 1080 350 0 0 {name=p10 sig_type=std_logic lab=GND}
+C {lab_pin.sym} 1270 410 0 0 {name=p11 sig_type=std_logic lab=GND}
 C {lab_pin.sym} 1180 -150 0 0 {name=p12 sig_type=std_logic lab=VDD}
 C {sg13g2_pr/sg13_lv_pmos.sym} 1200 -150 0 1 {name=M11
 l=0.28u
@@ -391,7 +388,7 @@ spiceprefix=X
 C {vdd.sym} 1180 -210 0 0 {name=l6 lab=VDD}
 C {lab_pin.sym} 1140 -70 0 0 {name=p14 sig_type=std_logic lab=VAHP}
 C {lab_pin.sym} 1040 50 0 0 {name=p15 sig_type=std_logic lab=VTHRAHP}
-C {lab_pin.sym} 1310 270 0 1 {name=p16 sig_type=std_logic lab=VLKAHP}
+C {lab_pin.sym} 1310 410 0 1 {name=p16 sig_type=std_logic lab=VLKAHP}
 C {lab_wire.sym} 690 220 0 0 {name=p17 sig_type=std_logic lab=VLK}
 C {sg13g2_pr/sg13_lv_pmos.sym} 1500 -150 0 1 {name=M13
 l=3.0u
@@ -449,7 +446,7 @@ spiceprefix=X
 }
 C {lab_pin.sym} 1620 140 0 1 {name=p23 sig_type=std_logic lab=GND}
 C {devices/gnd.sym} 1620 330 0 0 {name=l8 lab=GND}
-C {lab_wire.sym} 1190 210 0 0 {name=p28 sig_type=std_logic lab=vp}
+C {lab_wire.sym} 1190 350 0 0 {name=p28 sig_type=std_logic lab=vp}
 C {sg13g2_pr/sg13_lv_pmos.sym} 1820 -20 0 0 {name=M7
 l=0.28u
 w=2.4u
@@ -478,11 +475,6 @@ spiceprefix=X
 }
 C {lab_pin.sym} 1840 140 0 1 {name=p31 sig_type=std_logic lab=GND}
 C {devices/gnd.sym} 1840 330 0 0 {name=l12 lab=GND}
-C {capa.sym} 1960 80 0 0 {name=C3
-m=1
-value=1.2p
-footprint=1206
-device="ceramic capacitor"}
 C {devices/gnd.sym} 1960 330 0 0 {name=l13 lab=GND}
 C {lab_wire.sym} 1750 210 0 0 {name=p32 sig_type=std_logic lab=RST}
 C {sg13g2_pr/sg13_lv_pmos.sym} 1820 -100 0 0 {name=M20
@@ -508,20 +500,14 @@ C {lab_pin.sym} 1780 140 0 0 {name=p36 sig_type=std_logic lab=VREF}
 C {devices/gnd.sym} 920 340 0 0 {name=l17 lab=GND}
 C {buff.sym} 2040 -280 0 0 {name=xbuff1}
 C {vdd.sym} 2080 -300 0 0 {name=l19 lab=VDD}
-C {capa.sym} 2340 -190 0 0 {name=C4
-m=1
-value=0.5p
-footprint=1206
-device="ceramic capacitor"}
-C {devices/gnd.sym} 2340 60 0 0 {name=l20 lab=GND}
 C {lab_wire.sym} 2340 -250 2 0 {name=p39 sig_type=std_logic lab=OUT}
 C {devices/gnd.sym} 2080 -200 0 0 {name=l21 lab=GND}
 C {inv.sym} 2170 -250 0 0 {name=xinv1}
 C {vdd.sym} 2190 -300 0 0 {name=l16 lab=VDD}
 C {devices/gnd.sym} 2190 -200 0 0 {name=l22 lab=GND}
-C {devices/vsource.sym} 390 50 0 0 {name=Vdd1 value=1.8}
-C {devices/gnd.sym} 390 100 0 0 {name=l23 lab=GND}
-C {vdd.sym} 390 10 0 0 {name=l24 lab=VDD}
+C {devices/vsource.sym} 450 50 0 0 {name=Vdd1 value=1.8}
+C {devices/gnd.sym} 450 100 0 0 {name=l23 lab=GND}
+C {vdd.sym} 450 10 0 0 {name=l24 lab=VDD}
 C {devices/launcher.sym} 130 -300 0 0 {name=h5
 descr="load waves" 
 tclcommand="xschem raw_read $netlist_dir/test_mim_cap.raw tran"
@@ -559,7 +545,7 @@ model=sg13_lv_nmos
 spiceprefix=X
 }
 C {devices/gnd.sym} 990 -400 0 0 {name=l15 lab=GND}
-C {isource.sym} 990 -530 0 0 {name=ILKAHP value=1n}
+C {isource.sym} 990 -530 0 0 {name=ILKAHP value=5p}
 C {vdd.sym} 990 -560 0 0 {name=l27 lab=VDD}
 C {lab_pin.sym} 1070 -450 0 1 {name=p41 sig_type=std_logic lab=VLKAHP}
 C {lab_pin.sym} 990 -450 0 0 {name=p25 sig_type=std_logic lab=GND}
@@ -573,7 +559,7 @@ spiceprefix=X
 }
 C {vdd.sym} 1430 -540 0 0 {name=l9 lab=VDD}
 C {lab_pin.sym} 1430 -500 0 0 {name=p42 sig_type=std_logic lab=VDD}
-C {isource.sym} 1430 -400 0 0 {name=ITHAHP value=10n}
+C {isource.sym} 1430 -400 0 0 {name=ITHAHP value=390u}
 C {lab_pin.sym} 1540 -500 1 0 {name=p44 sig_type=std_logic lab=VTHRAHP}
 C {devices/gnd.sym} 1430 -360 0 0 {name=l28 lab=GND}
 C {sg13g2_pr/sg13_lv_pmos.sym} 1250 -500 0 1 {name=M27
@@ -586,7 +572,7 @@ spiceprefix=X
 }
 C {vdd.sym} 1230 -540 0 0 {name=l10 lab=VDD}
 C {lab_pin.sym} 1230 -500 0 0 {name=p26 sig_type=std_logic lab=VDD}
-C {isource.sym} 1230 -400 0 0 {name=IAHP value=5n}
+C {isource.sym} 1230 -400 0 0 {name=IAHP value=9n}
 C {devices/gnd.sym} 1230 -360 0 0 {name=l29 lab=GND}
 C {lab_pin.sym} 1340 -500 1 0 {name=p43 sig_type=std_logic lab=VAHP}
 C {devices/gnd.sym} 130 380 0 0 {name=l11 lab=GND}
@@ -606,3 +592,38 @@ C {isource.sym} 200 110 0 0 {name=ITHR value=10.0n}
 C {devices/gnd.sym} 200 150 0 0 {name=l30 lab=GND}
 C {lab_wire.sym} 270 10 1 0 {name=p45 sig_type=std_logic lab=VTHR}
 C {lab_wire.sym} 1990 -80 2 0 {name=p24 sig_type=std_logic lab=REQ}
+C {sg13g2_pr/cap_cmim.sym} 920 210 0 0 {name=C5
+model=cap_cmim
+w=10.0e-6
+l=10.0e-6
+m=8
+spiceprefix=X}
+C {sg13g2_pr/cap_cmim.sym} 1960 80 0 0 {name=C1
+model=cap_cmim
+w=10.0e-6
+l=10.0e-6
+m=8
+spiceprefix=X}
+C {sg13g2_pr/cap_cmim.sym} 1150 410 0 0 {name=C2
+model=cap_cmim
+w=10.0e-6
+l=10.0e-6
+m=8
+spiceprefix=X}
+C {inv.sym} 1190 230 0 1 {name=xinv2}
+C {sg13g2_pr/sg13_lv_pmos.sym} 1100 230 0 1 {name=M28
+l=0.75u
+w=1.2u
+ng=1
+m=1
+model=sg13_lv_pmos
+spiceprefix=X
+}
+C {lab_pin.sym} 1170 170 0 1 {name=p46 sig_type=std_logic lab=VDD}
+C {lab_pin.sym} 1170 280 2 0 {name=p47 sig_type=std_logic lab=GND}
+C {lab_pin.sym} 1080 230 2 1 {name=p48 sig_type=std_logic lab=VDD}
+C {lab_wire.sym} 1240 230 1 0 {name=p49 sig_type=std_logic lab=enNeuAHP}
+C {devices/vsource.sym} 350 50 0 0 {name=Vdd2 value=1.8}
+C {devices/gnd.sym} 350 100 0 0 {name=l32 lab=GND}
+C {lab_wire.sym} 350 -10 2 0 {name=p50 sig_type=std_logic lab=enNeuAHP}
+C {noconn.sym} 2340 -220 2 0 {name=l20}
