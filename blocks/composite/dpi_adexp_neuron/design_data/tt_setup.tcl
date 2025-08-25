@@ -9,7 +9,7 @@
 # Change the settings below to match your design:
 # ------------------------------------------------
 set TOP_LEVEL_CELL     tt_um_dpi_adexp
-set TEMPLATE_FILE      tt_block_1x2_pg.def
+set TEMPLATE_FILE      tt_block_1x2_pgvdd.def
 set POWER_STRIPE_WIDTH 2.2um                 ;# The minimum width is 1.2um
 
 # Power stripes: NET name, x position. You can add additional power stripes for each net, as needed.
@@ -29,10 +29,10 @@ cellname rename tt_um_template $TOP_LEVEL_CELL
 # --------------------------------
 proc draw_power_stripe {name x} {
     global POWER_STRIPE_WIDTH
-    box $x 5um $x 220.76um
+    box $x 5um $x 308.74um
     box width $POWER_STRIPE_WIDTH
-    paint met4
-    label $name FreeSans 0.25u -met4
+    paint met5
+    label $name FreeSans 0.25u -met5
     port make
     port use [expr {$name eq "VGND" ? "ground" : "power"}]
     port class bidirectional
