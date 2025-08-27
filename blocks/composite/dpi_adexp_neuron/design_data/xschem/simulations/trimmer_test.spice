@@ -1,57 +1,54 @@
 ** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/trimmer_test.sch
 **.subckt trimmer_test
-XMP1 net1 net1 net12 VDD sg13_lv_pmos w=0.28u l=8.0u ng=1 m=1
+XMP1 net1 net1 net11 VDD sg13_lv_pmos w=0.28u l=8.0u ng=1 m=1
 XMP2 vstart vstart net1 VDD sg13_lv_pmos w=0.28u l=8.0u ng=1 m=1
 XMN2 net3 vstart GND GND sg13_lv_nmos w=0.28u l=8.0u ng=1 m=1
 XMN1 vstart vstart GND GND sg13_lv_nmos w=0.28u l=8.0u ng=1 m=1
-XMP3 net2 vbp net11 VDD sg13_lv_pmos w=2.0u l=2.0u ng=2 m=1
+XMP3 net2 vbp net10 VDD sg13_lv_pmos w=2.0u l=2.0u ng=2 m=1
 XMP4 net3 vbp_casc net2 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
-XMP5 net4 vbp net10 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=2
+XMP5 net4 vbp net9 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=2
 XMP6 net6 vbp_casc net4 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
-XMP7 net5 vbp net9 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=2
+XMP7 net5 vbp net8 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=2
 XMP8 vbp vbp_casc net5 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
 XMP9 net6 net3 VDD VDD sg13_lv_pmos w=0.28u l=8.0u ng=1 m=1
 XMN3 net6 net6 GND GND sg13_lv_nmos w=2.0u l=2.0u ng=1 m=1
 XMN4 vbp_casc net6 net7 GND sg13_lv_nmos w=2.0u l=2.0u ng=1 m=4
-XR1 vbp_casc vbp sub! rppd w=0.5e-6 l=389e-6 m=1 b=0
-XR2 GND net7 sub! rhigh w=0.5e-6 l=152.5e-6 m=1 b=0
+XR1 vbp_casc vbp rppd w=0.5e-6 l=389e-6 m=1 b=0
+XR2 GND net7 rhigh w=0.5e-6 l=152.5e-6 m=1 b=0
 R3 ibias GND 300 m=1
-XMP10 net8 vbp net22 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=2
-XMP11 ibias vbp_casc net8 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
+XMP10 net14 vbp net15 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=2
+XMP11 net19 vbp_casc net14 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
 XMP16 vbp_casc enMon VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=1
-XMP17 net9 enN VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=1
-XMP18 net10 enN VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=1
-XMP19 net12 enN VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=1
-XMP20 net11 enN VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=1
+XMP17 net8 enN VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
+XMP18 net9 enN VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
+XMP19 net11 enN VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=1
+XMP20 net10 enN VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=1
 XMN5 vstart enN GND GND sg13_lv_nmos w=2u l=0.28u ng=1 m=1
 XMN6 net6 enN GND GND sg13_lv_nmos w=2u l=0.28u ng=1 m=1
 V1 VDD GND 1.8
-Ven en GND PULSE(0 1.8 10ns 1ns 1ns 45us 90us)
+Ven en GND 1.8
 xinv1 VDD en enN GND inv
 xinv2 VDD enN enMon GND inv
-XMP12 net22 net13 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=1
-Ven1 D0 GND PULSE(0 1.8 100ns 1ns 1ns 45u 90u)
-
-xinv3 VDD D0 net13 GND inv
-XMP13 net14 net22 net15 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=4
-XMP14 ibias net8 net14 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=4
-XMP15 net15 net21 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=1
-XMP21 net16 net22 net17 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=8
-XMP22 ibias net8 net16 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=8
-XMP23 net17 net23 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=1
-XMP24 net18 net22 net19 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=16
-XMP25 ibias net8 net18 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=16
-XMP26 net19 net20 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=1
-Ven2 D1 GND PULSE(0 1.8 5us 1ns 1ns 45u 90u)
-
-xinv4 VDD D1 net21 GND inv
-Ven3 D2 GND PULSE(0 1.8 10us 1ns 1ns 45u 90u)
-
-xinv5 VDD D2 net23 GND inv
-Ven4 D3 GND PULSE(0 1.8 15us 1ns 1ns 45u 90u)
-
-xinv6 VDD D3 net20 GND inv
-* noconn #net24
+XMP12 net15 net12 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
+Ven1 net13 GND 1.8
+xinv3 VDD net13 net12 GND inv
+XMP13 net16 vbp net17 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=4
+XMP14 net19 vbp_casc net16 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=4
+XMP15 net17 net18 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=4
+Ven2 net20 GND 1.8
+xinv4 VDD net20 net18 GND inv
+XMP21 net21 vbp net22 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=8
+XMP22 net19 vbp_casc net21 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=8
+XMP23 net22 net23 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=8
+XMP24 net24 vbp net25 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=16
+XMP25 net19 vbp_casc net24 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=16
+XMP26 net25 net26 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=16
+Ven3 net27 GND 1.8
+xinv5 VDD net27 net23 GND inv
+Ven4 net28 GND 1.8
+xinv6 VDD net28 net26 GND inv
+Vmeas net19 ibias 0
+.save i(vmeas)
 **** begin user architecture code
 
 
@@ -60,12 +57,14 @@ xinv6 VDD D3 net20 GND inv
 .param temp=127
 .control
 op
+write trim.raw
 save all
-tran 1n 50u
-plot en enN enMon
-plot D0 D1 D2 D3
-plot vstart
-plot vbp vbp_casc
+tran 1n 5u
+write trim.raw
+*plot en enN enMon
+*plot D0 D1 D2 D3
+*plot vstart
+*plot vbp vbp_casc
 plot v(ibias)/300
 .endc
 

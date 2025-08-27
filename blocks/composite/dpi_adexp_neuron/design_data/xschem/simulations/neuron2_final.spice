@@ -1,5 +1,5 @@
-** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/neuron_buff_test.sch
-**.subckt neuron_buff_test
+** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/neuron2_final.sch
+**.subckt neuron2_final
 Iin VDD vn1 0.6u
 XM3 vmem VLK GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
 XM1 GND VTHR vn1 VDD sg13_lv_pmos w=1.2u l=0.75u ng=1 m=1

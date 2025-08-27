@@ -1,4 +1,4 @@
-v {xschem version=3.4.8RC file_version=1.2}
+v {xschem version=3.4.7 file_version=1.2}
 G {}
 K {}
 V {}
@@ -117,30 +117,22 @@ N -1660 -1100 -1660 -1040 {lab=enN}
 N -1660 -1100 -1390 -1100 {lab=enN}
 N -330 -660 -330 -550 {lab=GND}
 N -330 -1240 -330 -1220 {lab=VDD}
-N -330 -1160 -330 -1140 {lab=vbp}
+N -330 -1160 -330 -1140 {lab=#net13}
 N -1790 -1040 -1660 -1040 {lab=enN}
 N -1160 -1240 -1160 -720 {lab=VDD}
 N -1320 -1240 -1160 -1240 {lab=VDD}
-N -390 -1110 -370 -1110 {lab=vbp}
-N -380 -990 -370 -990 {lab=vbp_casc}
-N -330 -960 -330 -720 {lab=ibias}
-N -90 -1080 -90 -1020 {lab=#net13}
 N -90 -1240 -90 -1220 {lab=VDD}
-N -90 -1160 -90 -1140 {lab=#net14}
-N -160 -1110 -130 -1110 {lab=vbp}
-N -160 -990 -130 -990 {lab=vbp_casc}
-N -90 -960 -90 -720 {lab=#net15}
 N -330 -1240 -90 -1240 {lab=VDD}
 N -670 -1240 -330 -1240 {lab=VDD}
-N -160 -1140 -160 -1110 {lab=vbp}
-N -330 -1140 -160 -1140 {lab=vbp}
-N -390 -1140 -330 -1140 {lab=vbp}
-N -390 -1140 -390 -1110 {lab=vbp}
-N -400 -1110 -390 -1110 {lab=vbp}
-N -160 -1060 -160 -990 {lab=vbp_casc}
-N -380 -1060 -160 -1060 {lab=vbp_casc}
-N -380 -1060 -380 -990 {lab=vbp_casc}
-N -400 -990 -380 -990 {lab=vbp_casc}
+N -400 -1110 -370 -1110 {lab=vbp}
+N -400 -990 -370 -990 {lab=vbp_casc}
+N -330 -960 -330 -720 {lab=ibias}
+N -680 -1400 -600 -1400 {lab=#net14}
+N -680 -1340 -680 -1320 {lab=GND}
+N -560 -1360 -560 -1330 {lab=GND}
+N -450 -1190 -370 -1190 {lab=#net15}
+N -450 -1400 -450 -1190 {lab=#net15}
+N -520 -1400 -450 -1400 {lab=#net15}
 C {devices/title.sym} -1610 -320 0 0 {name=l5 author="Yuan Li"}
 C {devices/code_shown.sym} -2340 -790 0 0 {name=NGSPICE only_toplevel=true 
 value="
@@ -150,7 +142,7 @@ value="
 .control
 op
 save all 
-tran 1n 50u
+tran 1n 5u
 plot en enN enMon
 plot D0 D1 D2 D3
 plot vstart
@@ -385,7 +377,7 @@ C {lab_pin.sym} -980 -560 0 1 {name=p32 sig_type=std_logic lab=GND}
 C {vsource.sym} -2000 -660 0 0 {name=V1 value=1.8}
 C {devices/gnd.sym} -2000 -630 0 0 {name=l3 lab=GND}
 C {lab_pin.sym} -2000 -730 2 1 {name=p35 sig_type=std_logic lab=VDD}
-C {vsource.sym} -1950 -1010 0 0 {name=Ven value="PULSE(0 1.8 10ns 1ns 1ns 40u 80u)"}
+C {vsource.sym} -1950 -1010 0 0 {name=Ven value=1.8}
 C {inv.sym} -1850 -1040 0 0 {name=xinv1}
 C {lab_pin.sym} -1830 -1080 3 1 {name=p36 sig_type=std_logic lab=VDD}
 C {devices/gnd.sym} -1950 -960 0 0 {name=l4 lab=GND}
@@ -422,33 +414,8 @@ spiceprefix=X
 C {lab_pin.sym} -330 -1190 0 1 {name=p37 sig_type=std_logic lab=VDD}
 C {lab_pin.sym} -1740 -1040 3 1 {name=p24 sig_type=std_logic lab=enN}
 C {noconn.sym} -280 -1180 3 0 {name=l17}
-C {lab_pin.sym} -370 -1190 2 1 {name=p56 sig_type=std_logic lab=enN}
-C {sg13g2_pr/sg13_lv_pmos.sym} -110 -1110 0 0 {name=MP13
-l=2.0u
-w=2.0u
-ng=1
-m=4
-model=sg13_lv_pmos
-spiceprefix=X
-}
-C {sg13g2_pr/sg13_lv_pmos.sym} -110 -990 0 0 {name=MP14
-l=0.28u
-w=2.0u
-ng=1
-m=4
-model=sg13_lv_pmos
-spiceprefix=X
-}
-C {lab_pin.sym} -90 -1110 0 1 {name=p34 sig_type=std_logic lab=VDD}
-C {lab_pin.sym} -90 -990 0 1 {name=p38 sig_type=std_logic lab=VDD}
-C {sg13g2_pr/sg13_lv_pmos.sym} -110 -1190 0 0 {name=MP15
-l=0.28u
-w=2.0u
-ng=1
-m=1
-model=sg13_lv_pmos
-spiceprefix=X
-}
-C {lab_pin.sym} -90 -1190 0 1 {name=p40 sig_type=std_logic lab=VDD}
-C {noconn.sym} -40 -1180 3 0 {name=l8}
-C {lab_pin.sym} -130 -1190 2 1 {name=p41 sig_type=std_logic lab=enN}
+C {vsource.sym} -680 -1370 0 0 {name=Ven1 value=1.8}
+C {inv.sym} -580 -1400 0 0 {name=xinv3}
+C {lab_pin.sym} -560 -1440 3 1 {name=p4 sig_type=std_logic lab=VDD}
+C {devices/gnd.sym} -680 -1320 0 0 {name=l8 lab=GND}
+C {devices/gnd.sym} -560 -1330 0 0 {name=l9 lab=GND}

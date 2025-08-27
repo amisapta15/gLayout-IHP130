@@ -1,39 +1,50 @@
-** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/neuron_buff_test.sch
-**.subckt neuron_buff_test
-Iin VDD vn1 0.6u
+** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/neuron2_buff_test_somewhat_working.sch
+**.subckt neuron2_buff_test_somewhat_working
+Iin VDD vn1 0.8u
 XM3 vmem VLK GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
 XM1 GND VTHR vn1 VDD sg13_lv_pmos w=1.2u l=0.75u ng=1 m=1
 XM4 vmem vmem vn1 VDD sg13_lv_pmos w=1.2u l=0.75u ng=1 m=1
-XC5 vmem GND cap_cmim w=10.0e-6 l=10.0e-6 m=8
+XM2 vmem RST GND GND sg13_lv_nmos w=1.2u l=0.28u ng=1 m=1
+XM5 net11 vp GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
+XM6 vp VLKAHP GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
+XM8 vp vp net1 VDD sg13_lv_pmos w=1.2u l=0.75u ng=1 m=1
+XM9 GND VTHRAHP net1 VDD sg13_lv_pmos w=1.2u l=0.75u ng=1 m=1
+XM10 net1 VAHP net2 VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
+XM11 net2 REQ VDD VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
+XM13 net4 net3 VDD VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
+XM14 vmem REQ net4 VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
+XM15 net3 net3 VDD VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
+XM16 REQ vmem net3 VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
+XM17 REQ vmem net5 GND sg13_lv_nmos w=1.2u l=0.28u ng=1 m=1
+XM18 net5 net5 GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
+XM7 RST REQ net7 VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
+XM12 RST REQ net6 GND sg13_lv_nmos w=1.2u l=0.28u ng=1 m=1
+XM19 net6 VREF GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
+XM20 net7 net7 net8 VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
+XM21 net8 REQ VDD VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
+xbuff1 VDD REQ net9 GND buff
+xinv1 VDD net9 OUT GND inv
 Vdd1 VDD GND 1.8
 XM23 VLK VLK GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
-ILK VDD VLK 10n
+ILK VDD VLK 0.1u
 XM24 VREF VREF GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
-IVREF VDD VREF 0.5u
-XM5 vmem RST GND GND sg13_lv_nmos w=1.2u l=0.28u ng=1 m=1
-XM6 net2 net1 VDD VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
-XM8 vmem REQ net2 VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
-XM9 net1 net1 VDD VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
-XM10 REQ vmem net1 VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
-XM11 REQ vmem net3 GND sg13_lv_nmos w=1.2u l=0.28u ng=1 m=1
-XM25 net3 net3 GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
-XM26 net4 REQ net6 VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
-XM27 net4 REQ net5 GND sg13_lv_nmos w=1.2u l=0.28u ng=1 m=1
-XM28 net5 VREF GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
-XM29 net6 net6 net7 VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
-XM30 net7 REQ VDD VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
-xbuff2 VDD REQ net8 GND buff
-xinv2 VDD net8 OUT GND inv
+IVREF VDD VREF 5u
+XM25 VLKAHP VLKAHP GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
+ILKAHP VDD VLKAHP 5p
+XM26 VTHRAHP VTHRAHP VDD VDD sg13_lv_pmos w=2.4u l=0.75u ng=1 m=1
+ITHAHP VTHRAHP GND 390u
+XM27 VAHP VAHP VDD VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
+IAHP VAHP GND 5n
+XM22 VTHR VTHR VDD VDD sg13_lv_pmos w=1.2u l=0.75u ng=1 m=1
+ITHR VTHR GND 500.0u
+XC5 vmem GND cap_cmim w=10.0e-6 l=10.0e-6 m=8
+XC1 RST GND cap_cmim w=10.0e-6 l=10.0e-6 m=8
+XC2 vp GND cap_cmim w=10.0e-6 l=10.0e-6 m=8
+xinv2 VDD enNeuAHP net10 GND inv
+XM28 net11 net10 vmem VDD sg13_lv_pmos w=1.2u l=0.75u ng=1 m=1
+Vdd2 enNeuAHP GND 1.8
 * noconn OUT
-XM2 VTHR VTHR GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
-ITHR VDD VTHR 0.9u
-XC2 RST GND cap_cmim w=10.0e-6 l=10.0e-6 m=8
-XM7 net9 net4 net10 VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
-XM12 net9 net4 GND GND sg13_lv_nmos w=1.2u l=0.28u ng=1 m=1
-XM14 net10 net10 VDD VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
-XM13 RST net9 net11 VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
-XM15 RST net9 GND GND sg13_lv_nmos w=1.2u l=0.28u ng=1 m=1
-XM16 net11 net11 VDD VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
+* noconn GND
 **** begin user architecture code
 
 .include diodes.lib
@@ -61,12 +72,11 @@ write tran_neuron.raw
 *alter Vthr dc 0.9
 *alter Vlk dc 0.3
 *alter vahp1 dc 1.0
-tran 10n 10u
+tran 500p 2u
 write tran_neuron.raw
 *Example plots (uncomment inside ngspice if you want autoplots)
 plot vmem vn1 Vthr Vlk
 plot vmem out
-*quit
 .endc
 
 

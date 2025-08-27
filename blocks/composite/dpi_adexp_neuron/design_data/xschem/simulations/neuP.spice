@@ -1,7 +1,7 @@
 ** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/neuP.sch
 **.subckt neuP
-XM3 Vthr Vthr GND GND sg13_lv_nmos w=0.6u l=0.15u ng=1 m=1
-Vdd2 VDD GND 1.65
+XM3 Vthr Vthr GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
+Vdd2 VDD GND 1.8
 * noconn Vthr
 I0 VDD Vthr 1n
 **** begin user architecture code
@@ -18,7 +18,7 @@ I0 VDD Vthr 1n
 save all
 op
 write neuT.raw
-dc I0 0 0.2n 10p
+dc I0 0 0.1u 1n
 write neuT.raw
 plot v(vthr)
 .endc
