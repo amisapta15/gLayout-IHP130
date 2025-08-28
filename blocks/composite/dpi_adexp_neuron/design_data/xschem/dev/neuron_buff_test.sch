@@ -26,9 +26,9 @@ vlk
 vthr"
 rainbow=1
 y1=0
-x1=0
-x2=1.1e-05
-y2=1}
+x2=9.251808e-06
+y2=1
+x1=0}
 B 2 40 -1170 840 -770 {flags=graph
 ypos1=0
 ypos2=2
@@ -46,10 +46,9 @@ sim_type=tran
 color="4 5"
 node="out
 vmem"
-y2=1.9477697
-x2=4.9816678e-06
 y1=0
-x1=-1.042983e-07}
+y2=2
+x2=10e-6}
 T {ITHR goes 
 from 5/10u to 60u } -250 -10 0 0 0.4 0.4 {}
 T {ILK goes 
@@ -63,15 +62,17 @@ N 610 50 760 50 {lab=vn1}
 N 610 10 610 50 {lab=vn1}
 N 760 50 760 80 {lab=vn1}
 N 610 -80 610 -50 {lab=VDD}
-N 930 110 1120 110 {lab=vmem}
+N 820 110 920 110 {lab=vmem}
 N 820 110 820 160 {lab=vmem}
 N 800 110 820 110 {lab=vmem}
 N 760 160 820 160 {lab=vmem}
 N 760 140 760 160 {lab=vmem}
 N 760 310 760 340 {lab=GND}
+N 960 250 960 340 {lab=GND}
 N 610 140 610 310 {lab=GND}
 N 610 310 760 310 {lab=GND}
 N 760 250 760 310 {lab=GND}
+N 920 110 920 180 {lab=vmem}
 N 690 220 720 220 {lab=VLK}
 N 550 110 570 110 {lab=VTHR}
 N 440 -200 440 -190 {lab=VDD}
@@ -136,10 +137,9 @@ N 1480 -10 1480 0 {lab=#net6}
 N 1480 -90 1480 -70 {lab=#net7}
 N 1420 200 1440 200 {lab=VREF}
 N 1380 -120 1440 -120 {lab=REQ}
-N 1480 -370 1480 -350 {lab=VDD}
-N 1520 -320 1550 -320 {lab=#net8}
+N 1600 -370 1600 -350 {lab=VDD}
+N 1740 -320 1740 -290 {lab=OUT}
 N 1630 -320 1740 -320 {lab=OUT}
-N 1590 -370 1590 -360 {lab=VDD}
 N 1170 -20 1170 0 {lab=REQ}
 N 1380 -20 1380 80 {lab=REQ}
 N 1170 -20 1380 -20 {lab=REQ}
@@ -155,59 +155,60 @@ N -30 150 -30 160 {lab=GND}
 N -30 -50 -30 -40 {lab=VDD}
 N 1380 -120 1380 -20 {lab=REQ}
 N 1790 40 1820 40 {lab=#net4}
-N 1860 80 1860 90 {lab=#net9}
+N 1860 80 1860 90 {lab=#net8}
 N 1790 120 1820 120 {lab=#net4}
-N 1860 70 1860 80 {lab=#net9}
+N 1860 70 1860 80 {lab=#net8}
 N 1790 80 1790 120 {lab=#net4}
 N 1790 40 1790 80 {lab=#net4}
 N 1860 150 1860 170 {lab=GND}
-N 1860 80 2040 80 {lab=#net9}
-N 1790 -40 1820 -40 {lab=#net10}
-N 1790 0 1860 0 {lab=#net10}
-N 1860 0 1860 10 {lab=#net10}
-N 1790 -40 1790 0 {lab=#net10}
-N 1860 -10 1860 0 {lab=#net10}
+N 1860 80 2040 80 {lab=#net8}
+N 1790 -40 1820 -40 {lab=#net9}
+N 1790 0 1860 0 {lab=#net9}
+N 1860 0 1860 10 {lab=#net9}
+N 1790 -40 1790 0 {lab=#net9}
+N 1860 -10 1860 0 {lab=#net9}
 N 1860 -90 1860 -70 {lab=VDD}
 N 1480 80 1790 80 {lab=#net4}
-N 2040 40 2070 40 {lab=#net9}
+N 2040 40 2070 40 {lab=#net8}
 N 2110 80 2110 90 {lab=RST}
-N 2040 120 2070 120 {lab=#net9}
+N 2040 120 2070 120 {lab=#net8}
 N 2110 70 2110 80 {lab=RST}
 N 2110 150 2110 170 {lab=GND}
-N 2040 -40 2070 -40 {lab=#net11}
-N 2040 0 2110 0 {lab=#net11}
-N 2110 0 2110 10 {lab=#net11}
-N 2110 -10 2110 0 {lab=#net11}
-N 2110 -90 2110 -70 {lab=VDD}
-N 2040 -40 2040 -0 {lab=#net11}
-N 2040 80 2040 120 {lab=#net9}
-N 2040 40 2040 80 {lab=#net9}
-N 1160 270 2550 270 {lab=RST}
-N 1380 -320 1380 -120 {lab=REQ}
-N 1380 -320 1440 -320 {lab=REQ}
-N 1590 -280 1590 -240 {lab=GND}
-N 1480 -290 1480 -260 {lab=GND}
 N 2330 80 2550 80 {lab=RST}
-N 2550 80 2550 270 {lab=RST}
-N 970 250 970 340 {lab=GND}
-N 930 110 930 180 {lab=vmem}
-N 900 220 900 250 {lab=GND}
-N 960 250 970 250 {lab=GND}
-N 930 220 930 250 {lab=GND}
-N 900 250 930 250 {lab=GND}
-N 960 220 960 250 {lab=GND}
-N 930 250 960 250 {lab=GND}
-N 820 110 930 110 {lab=vmem}
-N 2300 140 2300 170 {lab=GND}
-N 2360 170 2370 170 {lab=GND}
-N 2330 140 2330 170 {lab=GND}
-N 2300 170 2330 170 {lab=GND}
-N 2360 140 2360 170 {lab=GND}
-N 2330 170 2360 170 {lab=GND}
-N 2330 80 2330 100 {lab=RST}
+N 2040 -40 2070 -40 {lab=#net10}
+N 2040 0 2110 0 {lab=#net10}
+N 2110 0 2110 10 {lab=#net10}
+N 2110 -10 2110 0 {lab=#net10}
+N 2110 -90 2110 -70 {lab=VDD}
+N 2040 -40 2040 -0 {lab=#net10}
+N 2040 80 2040 120 {lab=#net8}
+N 2040 40 2040 80 {lab=#net8}
+N 1380 -320 1380 -120 {lab=REQ}
+N 1600 -280 1600 -250 {lab=GND}
+N 920 110 1120 110 {lab=vmem}
 N 2110 80 2330 80 {lab=RST}
-N 2330 210 2370 210 {lab=GND}
-N 2370 170 2370 210 {lab=GND}
+N 2550 80 2550 430 {lab=RST}
+N 1530 -320 1560 -320 {lab=#net11}
+N 1380 -320 1450 -320 {lab=REQ}
+N 1490 -360 1490 -350 {lab=VDD}
+N 1490 -290 1490 -280 {lab=GND}
+N 890 220 890 250 {lab=GND}
+N 950 250 960 250 {lab=GND}
+N 920 220 920 250 {lab=GND}
+N 890 250 920 250 {lab=GND}
+N 950 220 950 250 {lab=GND}
+N 920 250 950 250 {lab=GND}
+N 1190 270 1190 430 {lab=RST}
+N 1160 270 1190 270 {lab=RST}
+N 1190 430 2550 430 {lab=RST}
+N 2370 280 2370 370 {lab=GND}
+N 2300 250 2300 280 {lab=GND}
+N 2360 280 2370 280 {lab=GND}
+N 2330 250 2330 280 {lab=GND}
+N 2300 280 2330 280 {lab=GND}
+N 2360 250 2360 280 {lab=GND}
+N 2330 280 2360 280 {lab=GND}
+N 2330 80 2330 210 {lab=RST}
 C {devices/code_shown.sym} -630 -360 0 0 {name=MODEL only_toplevel=true
 format="tcleval( @value )"
 value="
@@ -236,7 +237,7 @@ write tran_neuron.raw
 *alter Vthr dc 0.9
 *alter Vlk dc 0.3
 *alter vahp1 dc 1.0
-tran 10n 10u
+tran 10n 11u
 write tran_neuron.raw
 *Example plots (uncomment inside ngspice if you want autoplots)
 plot vmem vn1 Vthr Vlk
@@ -291,6 +292,7 @@ C {lab_pin.sym} 610 110 0 1 {name=p3 sig_type=std_logic lab=VDD}
 C {lab_pin.sym} 760 220 0 1 {name=p4 sig_type=std_logic lab=GND}
 C {lab_wire.sym} 720 50 0 0 {name=p5 sig_type=std_logic lab=vn1}
 C {lab_wire.sym} 690 220 0 0 {name=p17 sig_type=std_logic lab=VLK}
+C {devices/gnd.sym} 960 340 0 0 {name=l17 lab=GND}
 C {devices/launcher.sym} 130 -300 0 0 {name=h5
 descr="load waves" 
 tclcommand="xschem raw_read $netlist_dir/tran_neuron.raw tran"
@@ -420,7 +422,7 @@ spiceprefix=X
 }
 C {lab_pin.sym} 1480 200 0 1 {name=p25 sig_type=std_logic lab=GND}
 C {devices/gnd.sym} 1480 390 0 0 {name=l9 lab=GND}
-C {lab_wire.sym} 1390 270 0 0 {name=p26 sig_type=std_logic lab=RST}
+C {lab_wire.sym} 1380 430 0 0 {name=p26 sig_type=std_logic lab=RST}
 C {sg13g2_pr/sg13_lv_pmos.sym} 1460 -40 0 0 {name=M29
 l=3.0u
 w=2.4u
@@ -441,13 +443,13 @@ spiceprefix=X
 C {lab_pin.sym} 1480 -120 0 1 {name=p41 sig_type=std_logic lab=VDD}
 C {vdd.sym} 1480 -150 0 0 {name=l15 lab=VDD}
 C {lab_pin.sym} 1420 200 0 0 {name=p42 sig_type=std_logic lab=VREF}
-C {buff.sym} 1440 -350 0 0 {name=xbuff2}
-C {vdd.sym} 1480 -370 0 0 {name=l27 lab=VDD}
-C {lab_wire.sym} 1680 -320 3 0 {name=p43 sig_type=std_logic lab=OUT}
-C {devices/gnd.sym} 1590 -240 0 0 {name=l28 lab=GND}
-C {inv.sym} 1570 -320 0 0 {name=xinv2}
-C {vdd.sym} 1590 -370 0 0 {name=l29 lab=VDD}
+C {buff.sym} 1450 -350 0 0 {name=xbuff2}
+C {vdd.sym} 1600 -370 0 0 {name=l27 lab=VDD}
+C {devices/gnd.sym} 1490 -280 0 0 {name=l28 lab=GND}
+C {inv.sym} 1580 -320 0 0 {name=xinv2}
+C {vdd.sym} 1490 -360 0 0 {name=l29 lab=VDD}
 C {lab_wire.sym} 1380 -80 2 0 {name=p44 sig_type=std_logic lab=REQ}
+C {noconn.sym} 1740 -290 2 0 {name=l33}
 C {sg13g2_pr/sg13_lv_nmos.sym} -10 120 0 1 {name=M2
 l=3.0u
 w=1.2u
@@ -460,7 +462,6 @@ C {isource.sym} -30 -10 0 0 {name=ITHR value=300n}
 C {vdd.sym} -30 -50 0 0 {name=l5 lab=VDD}
 C {lab_pin.sym} -30 120 2 1 {name=p13 sig_type=std_logic lab=GND}
 C {devices/gnd.sym} -30 160 0 0 {name=l7 lab=GND}
-C {devices/gnd.sym} 2330 210 0 0 {name=l10 lab=GND}
 C {sg13g2_pr/sg13_lv_pmos.sym} 1840 40 0 0 {name=M7
 l=0.28u
 w=2.4u
@@ -519,9 +520,9 @@ spiceprefix=X
 C {lab_pin.sym} 2110 -40 0 1 {name=p23 sig_type=std_logic lab=VDD}
 C {vdd.sym} 2110 -90 0 0 {name=l13 lab=VDD}
 C {devices/gnd.sym} 2110 170 0 0 {name=l14 lab=GND}
-C {devices/gnd.sym} 1480 -260 0 0 {name=l16 lab=GND}
-C {devices/gnd.sym} 970 340 0 0 {name=l17 lab=GND}
-C {sg13g2_pr/sg13_lv_pmos.sym} 930 200 3 1 {name=M17
+C {devices/gnd.sym} 1600 -250 0 0 {name=l16 lab=GND}
+C {lab_wire.sym} 1740 -320 2 0 {name=p43 sig_type=std_logic lab=OUT}
+C {sg13g2_pr/sg13_lv_pmos.sym} 920 200 3 1 {name=M17
 l=10.0u
 w=5.0u
 ng=6
@@ -529,7 +530,8 @@ m=10
 model=sg13_lv_pmos
 spiceprefix=X
 }
-C {sg13g2_pr/sg13_lv_pmos.sym} 2330 120 3 1 {name=M18
+C {devices/gnd.sym} 2370 370 0 0 {name=l10 lab=GND}
+C {sg13g2_pr/sg13_lv_pmos.sym} 2330 230 3 1 {name=M18
 l=10.0u
 w=5.0u
 ng=6
@@ -537,4 +539,3 @@ m=10
 model=sg13_lv_pmos
 spiceprefix=X
 }
-C {noconn.sym} 1740 -320 2 0 {name=l18}

@@ -4,7 +4,6 @@ Iin VDD vn1 0.6u
 XM3 vmem VLK GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
 XM1 GND VTHR vn1 VDD sg13_lv_pmos w=1.2u l=0.75u ng=1 m=1
 XM4 vmem vmem vn1 VDD sg13_lv_pmos w=1.2u l=0.75u ng=1 m=1
-XC5 vmem GND cap_cmim w=10.0e-6 l=10.0e-6 m=8
 Vdd1 VDD GND 1.8
 XM23 VLK VLK GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
 ILK VDD VLK 3n
@@ -24,16 +23,17 @@ XM29 net6 net6 net7 VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
 XM30 net7 REQ VDD VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
 xbuff2 VDD REQ net8 GND buff
 xinv2 VDD net8 OUT GND inv
-* noconn OUT
 XM2 VTHR VTHR GND GND sg13_lv_nmos w=1.2u l=3.0u ng=1 m=1
 ITHR VDD VTHR 300n
-XC2 RST GND cap_cmim w=10.0e-6 l=10.0e-6 m=8
 XM7 net9 net4 net10 VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
 XM12 net9 net4 GND GND sg13_lv_nmos w=1.2u l=0.28u ng=1 m=1
 XM14 net10 net10 VDD VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
 XM13 RST net9 net11 VDD sg13_lv_pmos w=2.4u l=0.28u ng=1 m=1
 XM15 RST net9 GND GND sg13_lv_nmos w=1.2u l=0.28u ng=1 m=1
 XM16 net11 net11 VDD VDD sg13_lv_pmos w=2.4u l=3.0u ng=1 m=1
+XM17 GND vmem GND GND sg13_lv_pmos w=5.0u l=10.0u ng=6 m=10
+XM18 GND RST GND GND sg13_lv_pmos w=5.0u l=10.0u ng=6 m=10
+* noconn OUT
 **** begin user architecture code
 
 .include diodes.lib
@@ -84,8 +84,8 @@ plot vmem out
 **.ends
 
 * expanding   symbol:  buff.sym # of pins=4
-** sym_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/buff.sym
-** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/buff.sch
+** sym_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/dev/buff.sym
+** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/dev/buff.sch
 .subckt buff VDD in out VSS
 *.iopin VDD
 *.ipin in
@@ -99,8 +99,8 @@ XM5 out net1 VDD VDD sg13_lv_pmos w=6.0u l=0.28u ng=4 m=1
 
 
 * expanding   symbol:  inv.sym # of pins=4
-** sym_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/inv.sym
-** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/inv.sch
+** sym_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/dev/inv.sym
+** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/dev/inv.sch
 .subckt inv VDD in out VSS
 *.iopin VDD
 *.ipin in

@@ -368,4 +368,14 @@ grulesobj["capmet"]["via3"] = {}
 grulesobj["capmet"]["met4"] = {}
 grulesobj["capmet"]["via4"] = {}
 grulesobj["capmet"]["met5"] = {}
-grulesobj["capmet"]["capmet"] = {"capmettop": (71, 20), "capmetbottom": (70, 20), "min_separation": 1.2}
+grulesobj["capmet"]["capmet"] = {
+    "capmettop":    (126, 0),   # TopMetal1 Top Contact via Top Via 1
+    "capmetbottom": (67, 0),   # Metal5 Bottom Contact
+    "min_width":    1.14,   # µm, minimum MIM width
+    "min_area":     1.30,   # µm², minimum device area
+    "max_area":     5625.0, # µm², maximum per device
+    "min_separation": 0.60, # µm, between adjacent MIMs
+    "metal5_enclosure": 0.60, # µm, M5 must enclose MIM
+    "topvia1_enclosure": 0.36, # µm, MIM must enclose TopVia1
+    "topmetal1_spacing": 0.60, # µm, spacing TopMetal1 to MIM
+}
