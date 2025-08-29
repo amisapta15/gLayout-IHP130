@@ -1,57 +1,13 @@
-** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/dev/sbcm.sch
-**.subckt sbcm
-Vdd1 VDD GND 1.8
-XM6 net2 net1 VDD VDD sg13_lv_pmos w=1.2u l=0.5u ng=1 m=1
-XM9 net4 net1 VDD VDD sg13_lv_pmos w=1.2u l=0.5u ng=1 m=1
-XM1 net5 net3 net2 VDD sg13_lv_pmos w=1.2u l=0.5u ng=1 m=1
-XM2 net1 net3 net4 VDD sg13_lv_pmos w=1.2u l=0.5u ng=1 m=1
-IREF net3 GND 300u
-R1 ibias GND 50 m=1
-XM23 net1 VDD net3 GND sg13_lv_nmos w=5.0u l=3.0u ng=1 m=1
-* noconn ibias
-Vload VDD net5 0
-**** begin user architecture code
-
-.include diodes.lib
-.include sg13g2_bondpad.lib
-
-
-
-.options savecurrents
-.include sbcm.save
-.param temp=27
-.control
-set wr_singlescale
-set noaskquit
-*set appendwrite
-set hcopypscolor=1
-
-*Save node voltages and device currents if desired
-save all
-
-*Baseline operating point at current deck values
-op
-write sbcm.raw
-dc Vload 0 5.0 0.1
-*tran 100p 1u
-write sbcm.raw
-plot -i(Vload)
-*quit
-.endc
-
-
-
-
-
-.lib cornerMOSlv.lib mos_tt
-.lib cornerMOShv.lib mos_tt
-.lib cornerHBT.lib hbt_typ
-.lib cornerRES.lib res_typ
-.lib cornerCAP.lib cap_typ
-
-
-**** end user architecture code
+** sch_path: /foss/designs/gLayout-IHP130/blocks/composite/dpi_adexp_neuron/design_data/xschem/sbcm.sch
+**.subckt sbcm VDD GND IREF ICOPY
+*.iopin VDD
+*.iopin GND
+*.iopin IREF
+*.iopin ICOPY
+XM6 net2 net1 VDD VDD sg13_lv_pmos w=15.0u l=0.5u ng=5 m=1
+XM9 net3 net1 VDD VDD sg13_lv_pmos w=15.0u l=0.5u ng=5 m=10
+XM1 ICOPY IREF net2 VDD sg13_lv_pmos w=15.0u l=0.5u ng=5 m=1
+XM2 net1 IREF net3 VDD sg13_lv_pmos w=15.0u l=0.5u ng=5 m=10
+XM23 net1 VDD IREF GND sg13_lv_nmos w=21.0u l=0.5u ng=7 m=10
 **.ends
-.GLOBAL GND
-.GLOBAL VDD
 .end

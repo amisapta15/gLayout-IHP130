@@ -26,9 +26,9 @@ vlk
 vthr"
 rainbow=1
 y1=0
-x2=9.251808e-06
+x2=6.938856e-06
 y2=1
-x1=0}
+x1=-2.312952e-06}
 B 2 40 -1170 840 -770 {flags=graph
 ypos1=0
 ypos2=2
@@ -137,9 +137,8 @@ N 1480 -10 1480 0 {lab=#net6}
 N 1480 -90 1480 -70 {lab=#net7}
 N 1420 200 1440 200 {lab=VREF}
 N 1380 -120 1440 -120 {lab=REQ}
-N 1600 -370 1600 -350 {lab=VDD}
-N 1740 -320 1740 -290 {lab=OUT}
-N 1630 -320 1740 -320 {lab=OUT}
+N 1620 -520 1620 -500 {lab=VDD}
+N 2030 -360 2030 -330 {lab=OUT}
 N 1170 -20 1170 0 {lab=REQ}
 N 1380 -20 1380 80 {lab=REQ}
 N 1170 -20 1380 -20 {lab=REQ}
@@ -184,11 +183,11 @@ N 2040 -40 2040 -0 {lab=#net10}
 N 2040 80 2040 120 {lab=#net8}
 N 2040 40 2040 80 {lab=#net8}
 N 1380 -320 1380 -120 {lab=REQ}
-N 1600 -280 1600 -250 {lab=GND}
+N 1620 -430 1620 -400 {lab=GND}
 N 920 110 1120 110 {lab=vmem}
 N 2110 80 2330 80 {lab=RST}
 N 2550 80 2550 430 {lab=RST}
-N 1530 -320 1560 -320 {lab=#net11}
+N 1530 -320 1580 -320 {lab=#net11}
 N 1380 -320 1450 -320 {lab=REQ}
 N 1490 -360 1490 -350 {lab=VDD}
 N 1490 -290 1490 -280 {lab=GND}
@@ -209,6 +208,27 @@ N 2300 280 2330 280 {lab=GND}
 N 2360 250 2360 280 {lab=GND}
 N 2330 280 2360 280 {lab=GND}
 N 2330 80 2330 210 {lab=RST}
+N 1800 -520 1800 -500 {lab=VDD}
+N 1800 -430 1800 -400 {lab=GND}
+N 1640 -300 1640 -280 {lab=VDD}
+N 1640 -210 1640 -180 {lab=GND}
+N 1800 -310 1800 -290 {lab=VDD}
+N 1800 -220 1800 -190 {lab=GND}
+N 1840 -360 1840 -260 {lab=OUT}
+N 1580 -320 1580 -250 {lab=#net11}
+N 1580 -250 1600 -250 {lab=#net11}
+N 1840 -360 2030 -360 {lab=OUT}
+N 1840 -470 1840 -360 {lab=OUT}
+N 1580 -470 1580 -320 {lab=#net11}
+N 1680 -250 1690 -250 {lab=#net12}
+N 1660 -470 1690 -470 {lab=#net12}
+N 1690 -350 1690 -250 {lab=#net12}
+N 1730 -470 1760 -470 {lab=#net12}
+N 1730 -260 1760 -260 {lab=#net12}
+N 1730 -350 1730 -260 {lab=#net12}
+N 1690 -350 1730 -350 {lab=#net12}
+N 1690 -470 1690 -350 {lab=#net12}
+N 1730 -470 1730 -350 {lab=#net12}
 C {devices/code_shown.sym} -630 -360 0 0 {name=MODEL only_toplevel=true
 format="tcleval( @value )"
 value="
@@ -237,7 +257,7 @@ write tran_neuron.raw
 *alter Vthr dc 0.9
 *alter Vlk dc 0.3
 *alter vahp1 dc 1.0
-tran 10n 11u
+tran 1n 10u
 write tran_neuron.raw
 *Example plots (uncomment inside ngspice if you want autoplots)
 plot vmem vn1 Vthr Vlk
@@ -443,13 +463,12 @@ spiceprefix=X
 C {lab_pin.sym} 1480 -120 0 1 {name=p41 sig_type=std_logic lab=VDD}
 C {vdd.sym} 1480 -150 0 0 {name=l15 lab=VDD}
 C {lab_pin.sym} 1420 200 0 0 {name=p42 sig_type=std_logic lab=VREF}
-C {buff.sym} 1450 -350 0 0 {name=xbuff2}
-C {vdd.sym} 1600 -370 0 0 {name=l27 lab=VDD}
+C {vdd.sym} 1620 -520 0 0 {name=l27 lab=VDD}
 C {devices/gnd.sym} 1490 -280 0 0 {name=l28 lab=GND}
-C {inv.sym} 1580 -320 0 0 {name=xinv2}
+C {inv.sym} 1600 -470 0 0 {name=xinv2}
 C {vdd.sym} 1490 -360 0 0 {name=l29 lab=VDD}
 C {lab_wire.sym} 1380 -80 2 0 {name=p44 sig_type=std_logic lab=REQ}
-C {noconn.sym} 1740 -290 2 0 {name=l33}
+C {noconn.sym} 2030 -330 2 0 {name=l33}
 C {sg13g2_pr/sg13_lv_nmos.sym} -10 120 0 1 {name=M2
 l=3.0u
 w=1.2u
@@ -520,8 +539,8 @@ spiceprefix=X
 C {lab_pin.sym} 2110 -40 0 1 {name=p23 sig_type=std_logic lab=VDD}
 C {vdd.sym} 2110 -90 0 0 {name=l13 lab=VDD}
 C {devices/gnd.sym} 2110 170 0 0 {name=l14 lab=GND}
-C {devices/gnd.sym} 1600 -250 0 0 {name=l16 lab=GND}
-C {lab_wire.sym} 1740 -320 2 0 {name=p43 sig_type=std_logic lab=OUT}
+C {devices/gnd.sym} 1620 -400 0 0 {name=l16 lab=GND}
+C {lab_wire.sym} 2030 -360 2 0 {name=p43 sig_type=std_logic lab=OUT}
 C {sg13g2_pr/sg13_lv_pmos.sym} 920 200 3 1 {name=M17
 l=10.0u
 w=5.0u
@@ -539,3 +558,14 @@ m=10
 model=sg13_lv_pmos
 spiceprefix=X
 }
+C {inv.sym} 1470 -320 0 0 {name=xinv1}
+C {vdd.sym} 1800 -520 0 0 {name=l18 lab=VDD}
+C {inv.sym} 1780 -470 0 0 {name=xinv3}
+C {devices/gnd.sym} 1800 -400 0 0 {name=l19 lab=GND}
+C {vdd.sym} 1640 -300 0 0 {name=l20 lab=VDD}
+C {inv.sym} 1620 -250 0 0 {name=xinv4}
+C {devices/gnd.sym} 1640 -180 0 0 {name=l21 lab=GND}
+C {vdd.sym} 1800 -310 0 0 {name=l22 lab=VDD}
+C {inv.sym} 1780 -260 0 0 {name=xinv5}
+C {devices/gnd.sym} 1800 -190 0 0 {name=l30 lab=GND}
+C {lab_wire.sym} 1070 -1260 0 0 {name=p24 sig_type=std_logic lab=RST}

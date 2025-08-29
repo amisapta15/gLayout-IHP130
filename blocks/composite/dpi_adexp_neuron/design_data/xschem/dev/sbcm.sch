@@ -33,15 +33,15 @@ N 50 -490 190 -490 {lab=#net3}
 N 420 -850 420 -760 {lab=VDD}
 N 250 -850 420 -850 {lab=VDD}
 N 420 -700 420 -550 {lab=#net5}
-N 250 -620 250 -550 {lab=#net5}
-N 250 -550 420 -550 {lab=#net5}
-C {devices/code_shown.sym} -1000 -460 0 0 {name=MODEL only_toplevel=true
+N 250 -620 250 -510 {lab=ibias}
+N 250 -510 480 -510 {lab=ibias}
+C {devices/code_shown.sym} 150 -360 0 0 {name=MODEL only_toplevel=true
 format="tcleval( @value )"
 value="
 .include diodes.lib
 .include sg13g2_bondpad.lib
 "}
-C {devices/code_shown.sym} -1010 -1140 0 0 {name=NGSPICE only_toplevel=true 
+C {devices/code_shown.sym} -590 -650 0 0 {name=NGSPICE only_toplevel=true 
 value="
 .options savecurrents
 .include sbcm.save
@@ -58,14 +58,15 @@ save all
 *Baseline operating point at current deck values
 op
 write sbcm.raw
-dc Vload 0 5.0 0.1
-*tran 100p 1u
+*dc Vload 0 5.0 0.1
+tran 100p 1u
 write sbcm.raw
-plot -i(Vload)
+*plot -i(Vload)
+plot v(ibias)/50
 *quit
 .endc
 "}
-C {simulator_commands_shown.sym} -1000 -280 0 0 {
+C {simulator_commands_shown.sym} 150 -180 0 0 {
 name=Libs_Ngspice
 simulator=ngspice
 only_toplevel=false
@@ -84,8 +85,8 @@ C {devices/gnd.sym} -130 -760 0 0 {name=l23 lab=GND}
 C {vdd.sym} -130 -850 0 0 {name=l24 lab=VDD}
 C {sg13g2_pr/sg13_lv_pmos.sym} 230 -790 0 0 {name=M6
 l=0.5u
-w=1.2u
-ng=1
+w=15.0u
+ng=5
 m=1
 model=sg13_lv_pmos
 spiceprefix=X
@@ -95,16 +96,16 @@ C {lab_pin.sym} 110 -790 0 0 {name=p8 sig_type=std_logic lab=VDD}
 C {lab_pin.sym} 250 -790 0 1 {name=p9 sig_type=std_logic lab=VDD}
 C {sg13g2_pr/sg13_lv_pmos.sym} 130 -790 0 1 {name=M9
 l=0.5u
-w=1.2u
-ng=1
-m=1
+w=15.0u
+ng=5
+m=10
 model=sg13_lv_pmos
 spiceprefix=X
 }
 C {sg13g2_pr/sg13_lv_pmos.sym} 230 -650 0 0 {name=M1
 l=0.5u
-w=1.2u
-ng=1
+w=15.0u
+ng=5
 m=1
 model=sg13_lv_pmos
 spiceprefix=X
@@ -113,13 +114,13 @@ C {lab_pin.sym} 110 -650 0 0 {name=p1 sig_type=std_logic lab=VDD}
 C {lab_pin.sym} 250 -650 0 1 {name=p2 sig_type=std_logic lab=VDD}
 C {sg13g2_pr/sg13_lv_pmos.sym} 130 -650 0 1 {name=M2
 l=0.5u
-w=1.2u
-ng=1
-m=1
+w=15.0u
+ng=5
+m=10
 model=sg13_lv_pmos
 spiceprefix=X
 }
-C {isource.sym} 50 -450 0 0 {name=IREF value=300u}
+C {isource.sym} 50 -450 0 0 {name=IREF value=300n}
 C {devices/gnd.sym} 50 -400 0 0 {name=l29 lab=GND}
 C {res.sym} 560 -420 3 0 {name=R1
 value=50
@@ -129,13 +130,13 @@ m=1}
 C {devices/gnd.sym} 610 -420 0 0 {name=l1 lab=GND}
 C {lab_wire.sym} 500 -420 1 0 {name=p3 sig_type=std_logic lab=ibias}
 C {sg13g2_pr/sg13_lv_nmos.sym} 30 -530 0 0 {name=M23
-l=3.0u
-w=5.0u
-ng=1
-m=1
+l=0.5u
+w=21.0u
+ng=7
+m=10
 model=sg13_lv_nmos
 spiceprefix=X
 }
 C {lab_pin.sym} 50 -530 0 1 {name=p4 sig_type=std_logic lab=GND}
-C {noconn.sym} 480 -510 0 0 {name=l2}
 C {devices/vsource.sym} 420 -730 0 0 {name=Vload value=0}
+C {noconn.sym} 420 -550 0 0 {name=l2}
