@@ -190,7 +190,6 @@ N 1480 -290 1480 -260 {lab=GND}
 N 2330 80 2550 80 {lab=RST}
 N 2550 80 2550 270 {lab=RST}
 N 970 250 970 340 {lab=GND}
-N 930 110 930 180 {lab=vmem}
 N 900 220 900 250 {lab=GND}
 N 960 250 970 250 {lab=GND}
 N 930 220 930 250 {lab=GND}
@@ -208,6 +207,7 @@ N 2330 80 2330 100 {lab=RST}
 N 2110 80 2330 80 {lab=RST}
 N 2330 210 2370 210 {lab=GND}
 N 2370 170 2370 210 {lab=GND}
+N 930 110 930 180 {lab=vmem}
 C {devices/code_shown.sym} -630 -360 0 0 {name=MODEL only_toplevel=true
 format="tcleval( @value )"
 value="

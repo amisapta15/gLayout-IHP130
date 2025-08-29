@@ -22,7 +22,11 @@ logx=0
 logy=0
 rawfile=$netlist_dir/trim.raw
 autoload=1
-sim_type=tran}
+sim_type=tran
+x1=2.5e-07
+x2=1.25e-06
+y1=-2
+y2=3}
 P 4 1 -2530 -660 {}
 N -1550 -850 -1550 -820 {lab=#net1}
 N -1510 -910 -1450 -910 {lab=#net1}
@@ -505,7 +509,7 @@ C {sg13g2_pr/sg13_lv_pmos.sym} -70 -1180 0 0 {name=MP15
 l=0.28u
 w=2.0u
 ng=1
-m=4
+m=2
 model=sg13_lv_pmos
 spiceprefix=X
 }
@@ -540,7 +544,7 @@ C {sg13g2_pr/sg13_lv_pmos.sym} 200 -1180 0 0 {name=MP23
 l=0.28u
 w=2.0u
 ng=1
-m=8
+m=2
 model=sg13_lv_pmos
 spiceprefix=X
 }
@@ -569,7 +573,7 @@ C {sg13g2_pr/sg13_lv_pmos.sym} 480 -1170 0 0 {name=MP26
 l=0.28u
 w=2.0u
 ng=1
-m=16
+m=2
 model=sg13_lv_pmos
 spiceprefix=X
 }

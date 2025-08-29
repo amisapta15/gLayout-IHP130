@@ -34,15 +34,15 @@ Ven1 net13 GND 1.8
 xinv3 VDD net13 net12 GND inv
 XMP13 net16 vbp net17 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=4
 XMP14 net19 vbp_casc net16 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=4
-XMP15 net17 net18 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=4
+XMP15 net17 net18 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
 Ven2 net20 GND 1.8
 xinv4 VDD net20 net18 GND inv
 XMP21 net21 vbp net22 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=8
 XMP22 net19 vbp_casc net21 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=8
-XMP23 net22 net23 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=8
+XMP23 net22 net23 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
 XMP24 net24 vbp net25 VDD sg13_lv_pmos w=2.0u l=2.0u ng=1 m=16
 XMP25 net19 vbp_casc net24 VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=16
-XMP26 net25 net26 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=16
+XMP26 net25 net26 VDD VDD sg13_lv_pmos w=2.0u l=0.28u ng=1 m=2
 Ven3 net27 GND 1.8
 xinv5 VDD net27 net23 GND inv
 Ven4 net28 GND 1.8
