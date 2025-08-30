@@ -51,6 +51,7 @@ def resistor(
         
         # short gate and drain 
         diode_connect = toplvl << c_route(pdk, pfet_reference.ports['multiplier_0_gate_W'], pfet_reference.ports['multiplier_0_drain_W'])
+        toplvl.add_ports(diode_connect.ports, prefix='port_')
         
     else:
         pfet_references = []
