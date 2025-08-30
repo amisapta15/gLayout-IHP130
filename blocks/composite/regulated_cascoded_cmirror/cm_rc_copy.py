@@ -22,6 +22,8 @@ from typing import Optional, Union
 import os
 import subprocess
 
+import contextlib
+
 # Run a shell, source .bashrc, then printenv
 cmd = 'bash -c "source ~/.bashrc && printenv"'
 result = subprocess.run(cmd, shell=True, text=True, capture_output=True)
@@ -412,6 +414,7 @@ def regulated_cascode_current_mirror(
         "dummy_routes": True
     }
     # Define transistor parameters
+    # Add the NMOS devices
     XMB4 = nmos(pdk,
                 width=0.5,
                 fingers=1,
@@ -473,16 +476,7 @@ def regulated_cascode_current_mirror(
                 with_substrate_tap=False,
                 length=1,
                 interfinger_rmult=1)
-    # XMB4 = nmos(pdk, 
-    #             width=width[1], 
-    #             fingers=fingers[1], 
-    #             multipliers=multipliers[1], 
-    #             with_dummy=dummy_2, 
-    #             with_substrate_tap=False, 
-    #             length=length[1], 
-    #             tie_layers=tie_layers2, 
-    #             sd_rmult=sd_rmult, 
-    #             **nmos_kwargs)
+    # Add the PMOS devices
     XM2 = pmos(pdk,
                 width=0.5,
                 fingers=1,
@@ -511,17 +505,7 @@ def regulated_cascode_current_mirror(
                 with_dummy=False,
                 with_substrate_tap=False,
                 length=1)
-    # XM2 = pmos(pdk, 
-    #             width=width[0], 
-    #             fingers=fingers[0], 
-    #             multipliers=multipliers[0], 
-    #             with_dummy=dummy_1, 
-    #             with_substrate_tap=False, 
-    #             length=length[0], 
-    #             tie_layers=tie_layers1, 
-    #             sd_rmult=sd_rmult, 
-    #             **pmos_kwargs )
-    
+       
     # Adding the references of the transistors to the top component
     fet_XMB4_ref = RegulatedCM << XMB4
     fet_XMB5_ref = RegulatedCM << XMB5
@@ -536,7 +520,7 @@ def regulated_cascode_current_mirror(
     fet_XM3_ref = RegulatedCM << XM3
     fet_XM4_ref = RegulatedCM << XM4
     
-
+    # Naming each transistor reference
     fet_XMB4_ref.name = "XMB4"
     fet_XMB5_ref.name = "XMB5"
     fet_XMB1_ref.name = "XMB1"
@@ -579,7 +563,7 @@ def regulated_cascode_current_mirror(
     RegulatedCM.add_ports(fet_XM4_ref.get_ports_list(),prefix="rcm_XM4_")
 
 
-    # Placement of the transistors
+    # Get the dimensions of the transistors for placement
     fet_XMB4_dim = evaluate_bbox(fet_XMB4_ref)
     fet_XMB5_dim = evaluate_bbox(fet_XMB5_ref)
     fet_XMB1_dim = evaluate_bbox(fet_XMB1_ref)
@@ -593,6 +577,7 @@ def regulated_cascode_current_mirror(
     fet_XM3_dim = evaluate_bbox(fet_XM3_ref)
     fet_XM4_dim = evaluate_bbox(fet_XM4_ref)
 
+    # Place each transistor in the top component
     fet_XM2_ref.movey(fet_XM2_dim[1]/2 + maxmet_sep + fet_XMB4_dim[1]/2)
     fet_XMB5_ref.movex(-fet_XMB5_dim[0]/2 - maxmet_sep - fet_XMB4_dim[0]/2)
     fet_XMB1_ref.movex(+fet_XMB1_dim[0]/2 + maxmet_sep + fet_XMB4_dim[0]/2) 
@@ -727,19 +712,6 @@ def regulated_cascode_current_mirror(
     iout_via = RegulatedCM << viam2m3
     iout_via.move(drain_XMB4_via.center).movey(-1*maxmet_sep - 1.5*fet_XMB4_dim[1]/2)
 
-
-          
-
-    import contextlib
-    # with open("ports.csv" , "w") as f:
-    #     with contextlib.redirect_stdout(f):
-    #         RegulatedCM.pprint_ports()
-    # with open("ports_XMB4.csv" , "w") as f:
-    #     with contextlib.redirect_stdout(f):
-    #         fet_XMB4_ref.pprint_ports()
-    # with open("ports_XM2.csv" , "w") as f:
-    #     with contextlib.redirect_stdout(f):
-    #         fet_XM2_ref.pprint_ports()
     with open("ports_iout_via.csv" , "w") as f:
         with contextlib.redirect_stdout(f):
             iout_via.pprint_ports()
@@ -813,9 +785,8 @@ def regulated_cascode_current_mirror(
         aligned_comp = align_comp_to_port(comp, prt, alignment=alignment)
         RegulatedCM.add(aligned_comp)
     component = RegulatedCM.flatten()
-    #/headless/conda-env/miniconda3/envs/GLdev/bin/python3 cm_rc_copy.py 
-    #RegulatedCM << straight_route(pdk, fet_XM2_ref.ports["rcm_XMB4drain_N"], fet_XM2_ref.ports["rcm_XM2_drain_S"])
-
+    
+    
     #let's take a look at our current state of layout
     ## To see in Klayout via Klive
     #top_level.show()
