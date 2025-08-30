@@ -35,11 +35,9 @@ for line in result.stdout.splitlines():
 # Now, update os.environ with these
 os.environ.update(env_vars)
 
-import sys
-sys.path.append('../../../../elementary/current_mirror/')
-from current_mirror import current_mirror,add_cm_labels
+from inv import inverter
 
-def dpi_inv2(pdk: MappedPDK,
+def dpi_inv34(pdk: MappedPDK,
         multipliers: tuple[int,int] = (1,1),
         dummy_1: tuple[bool,bool] = (True,True),
         dummy_2: tuple[bool,bool] = (True,True),
@@ -48,29 +46,10 @@ def dpi_inv2(pdk: MappedPDK,
     ) -> Component:
     pdk.activate()
     top_level = Component(name="dpi_inv2")
-    viam2m3 = via_stack(pdk, "met2", "met3", centered=True) #met2 is the bottom layer. met3 is the top layer.
 
-    pfet_top = pmos(pdk, width=2.4, fingers=1, length=0.28, tie_layers=tie_layers1,multipliers=1, with_dummy=True, with_substrate_tap=False, dnwell=False)
-    pfet_top_ref=prec_ref_center(pfet_top)
-    top_level.add(pfet_top_ref)
-    
-
-    vdd_via3 = top_level << viam2m3
-    vdd_via3.move(pfet_top_ref.ports["source_E"].center).movex(3)
-    top_level << straight_route(pdk, vdd_via3.ports["bottom_met_W"],pfet_top_ref.ports["source_E"],glayer1=tie_layers2[0], fullbottom=True )
-    top_level << straight_route(pdk, vdd_via3.ports["bottom_met_W"],pfet_top_ref.ports["tie_E_top_met_E"],glayer1=tie_layers2[1], fullbottom=True )
-
-    REQ_via=top_level << viam2m3
-    REQ_via.move(pfet_top_ref.ports["gate_W"].center).movex(-5)
-    top_level << straight_route(pdk, pfet_top_ref.ports["gate_W"], REQ_via.ports["bottom_met_E"])
-
-    ##################################################################3
-    
-    mp14=resistor(pdk,width=2.4,length=3.0,num_series=1,with_tie=True,with_dummy=True)
+    mp14=resistor(pdk,width=2.4,length=3.0,num_series=1,with_tie=True)
     mp14_ref=prec_ref_center(mp14)
-    mp14_ref.movey(top_level.ymin - evaluate_bbox(mp14)[1]/2 - pdk.util_max_metal_seperation())
     top_level.add(mp14_ref)
-    ###################################################################################
 
     width=(2.4,1.2);length=(0.28,0.28);fingers=(1,1);
     
@@ -86,13 +65,12 @@ def dpi_inv2(pdk: MappedPDK,
     fet_N_ref.movey(top_level.ymin - evaluate_bbox(fet_N)[1]/2 - pdk.util_max_metal_seperation())
     top_level.add(fet_N_ref)
 
-
+    top_level << c_route(pdk, fet_P_ref.ports["multiplier_0_source_E"], mp14.ports["pfet_gate_E"],viaoffset=True, fullbottom=True)
     top_level << c_route(pdk, fet_P_ref.ports["multiplier_0_drain_W"], fet_N_ref.ports["multiplier_0_drain_W"],viaoffset=True, fullbottom=True)
     top_level << c_route(pdk, fet_P_ref.ports["multiplier_0_gate_E"], fet_N_ref.ports["multiplier_0_gate_E"],viaoffset=True, fullbottom=True)
-    top_level << c_route(pdk, fet_P_ref.ports["multiplier_0_source_W"], mp14_ref.ports["pfet_drain_W"],viaoffset=True, fullbottom=True)
 
 
-    
+    viam2m3 = via_stack(pdk, "met2", "met3", centered=True) #met2 is the bottom layer. met3 is the top layer.
     in_via = top_level << viam2m3
     out_via = top_level << viam2m3
 
@@ -105,45 +83,24 @@ def dpi_inv2(pdk: MappedPDK,
 
     vss_via1 = top_level << viam2m3
     vss_via1.move(fet_N_ref.ports["multiplier_0_source_W"].center).movex(-3.5)
-    
+    top_level << straight_route(pdk, fet_N_ref.ports["multiplier_0_source_W"], vss_via1.ports["bottom_met_E"], glayer1=tie_layers2[0], fullbottom=True)
     top_level << straight_route(pdk, vss_via1.ports["bottom_met_E"],fet_N_ref.ports["tie_W_top_met_W"],glayer1=tie_layers2[1], fullbottom=True )
 
     vdd_via1 = top_level << viam2m3
     vdd_via1.move(fet_P_ref.ports["multiplier_0_source_E"].center).movex(3)
     top_level << straight_route(pdk, vdd_via1.ports["bottom_met_W"],fet_P_ref.ports["tie_E_top_met_E"],glayer1=tie_layers2[1], fullbottom=True )
-
-
-    
     vdd_via2 = top_level << viam2m3
     vdd_via2.move(mp14_ref.ports["pfet_source_E"].center).movex(2)
+    top_level << straight_route(pdk, vdd_via2.ports["bottom_met_W"],mp14_ref.ports["pfet_source_E"],glayer1=tie_layers2[0], fullbottom=True )
     top_level << straight_route(pdk, vdd_via2.ports["bottom_met_W"],mp14_ref.ports["pfet_tie_E_top_met_E"],glayer1=tie_layers2[1], fullbottom=True )
-
-
-    vdd_via3 = top_level << viam2m3
-    vdd_via3.move(pfet_top_ref.ports["source_E"].center).movex(3)
-    top_level << straight_route(pdk, vdd_via3.ports["bottom_met_W"],pfet_top_ref.ports["source_E"],glayer1=tie_layers2[0], fullbottom=True )
-    top_level << straight_route(pdk, vdd_via3.ports["bottom_met_W"],pfet_top_ref.ports["tie_E_top_met_E"],glayer1=tie_layers2[1], fullbottom=True )
-
-    REQ_via=top_level << viam2m3
-    REQ_via.move(pfet_top_ref.ports["gate_W"].center).movex(-5)
-    top_level << straight_route(pdk, pfet_top_ref.ports["gate_W"], REQ_via.ports["bottom_met_E"])
-
-    top_level << c_route(pdk,pfet_top_ref.ports["drain_E"],mp14_ref.ports["pfet_source_E"],fullbottom=True )
     
-    ncm28 = current_mirror(pdk,numcols=1,width=1.2,length=3.0,device='nfet',with_tie=True)
-    ncm28_ref= prec_ref_center(ncm28)
-    ncm28_ref.movey(top_level.ymin - evaluate_bbox(ncm28)[1]/2 - pdk.util_max_metal_seperation())
-    top_level.add(ncm28_ref)
-
-    #top_level << c_route(pdk,  ncm28.ports["fet_B_drain_E"], fet_N_ref.ports["multiplier_0_source_E"],fullbottom=True)
-
     
     return component_snap_to_grid(rename_ports_by_orientation(top_level))
     
 
 
 if __name__ == "__main__":
-    comp = dpi_inv2(ihp130)
+    comp = dpi_inv34(ihp130)
     # comp.pprint_ports()
     #comp = add_inv_labels(comp, ihp130)
     comp.name = "DPINV"

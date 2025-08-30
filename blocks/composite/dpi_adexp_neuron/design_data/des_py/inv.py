@@ -135,21 +135,21 @@ def inverter(
     
     #suply
     suplabel = rectangle(layer=pdk.get_glayer("met3_pin"),size=psize,centered=True).copy()
-    suplabel.add_label(text="VDD",layer=pdk.get_glayer("met3_pin"))
+    suplabel.add_label(text="VDD",layer=pdk.get_glayer("met3_label"))
     move_info.append((suplabel,vdd_via.ports["top_met_E"],None))
     #sup_ref = top_level << suplabel;
     
     
     # output
     outputlabel = rectangle(layer=pdk.get_glayer("met3_pin"),size=psize,centered=True).copy()
-    outputlabel.add_label(text="OUT",layer=pdk.get_glayer("met3_pin"))
+    outputlabel.add_label(text="OUT",layer=pdk.get_glayer("met3_label"))
     move_info.append((outputlabel,out_via.ports["top_met_E"],None))
     #op_ref = top_level << outputlabel;
     
     
     # input
     inputlabel = rectangle(layer=pdk.get_glayer("met3_pin"),size=psize,centered=True).copy()
-    inputlabel.add_label(text="IN",layer=pdk.get_glayer("met3_pin"))
+    inputlabel.add_label(text="IN",layer=pdk.get_glayer("met3_label"))
     move_info.append((inputlabel,in_via.ports["top_met_W"], None))
     #ip_ref = top_level << inputlabel;
     

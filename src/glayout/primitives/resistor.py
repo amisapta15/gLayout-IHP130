@@ -16,6 +16,7 @@ def resistor(
     width: float = 5,
     length: float = 1,
     num_series: int = 1,
+    with_dummy: bool = False,
     with_substrate_tap: bool = False,
     with_tie: bool = False,
     with_dnwell: bool = False,
@@ -46,7 +47,7 @@ def resistor(
     toplvl = Component()
     max_sep = pdk.util_max_metal_seperation()
     if num_series == 1:
-        pfet_reference = toplvl << pmos(pdk, width=width, length=length, with_substrate_tap=with_substrate_tap, with_tie=with_tie, dnwell=with_dnwell, rmult=rmult, multipliers=multipliers, substrate_tap_layers=substrate_tap_layers, tie_layers=tie_layers, with_dummy=False)
+        pfet_reference = toplvl << pmos(pdk, width=width, length=length, with_substrate_tap=with_substrate_tap, with_tie=with_tie, dnwell=with_dnwell, rmult=rmult, multipliers=multipliers, substrate_tap_layers=substrate_tap_layers, tie_layers=tie_layers, with_dummy=with_dummy)
         toplvl.add_ports(pfet_reference.ports, prefix='pfet_')
         
         # short gate and drain 
