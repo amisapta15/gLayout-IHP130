@@ -426,6 +426,53 @@ def regulated_cascode_current_mirror(
                 with_dummy=False,
                 with_substrate_tap=False,
                 length=1)
+    XMB1 = nmos(pdk,
+                width=0.5,
+                fingers=1,
+                multipliers=1,
+                with_dummy=False,
+                with_substrate_tap=False,
+                length=1)
+    XMCASC_IN = nmos(pdk,   
+                width=0.5,
+                fingers=20,  
+                multipliers=1,
+                with_dummy=False,
+                with_substrate_tap=False,
+                length=1,
+                interfinger_rmult=1)
+    XMREF = nmos(pdk,   
+                width=0.5,
+                fingers=2,  
+                multipliers=1,
+                with_dummy=False,
+                with_substrate_tap=False,
+                length=1,
+                interfinger_rmult=1)
+    XMCASC = nmos(pdk,   
+                width=0.5,
+                fingers=20,  
+                multipliers=1,
+                with_dummy=False,
+                with_substrate_tap=False,
+                length=1,
+                interfinger_rmult=1)
+    XMREF_A = nmos(pdk,   
+                width=0.5,
+                fingers=2,  
+                multipliers=1,
+                with_dummy=False,
+                with_substrate_tap=False,
+                length=1,
+                interfinger_rmult=1)
+    XMB_B = nmos(pdk,   
+                width=0.5,
+                fingers=20,  
+                multipliers=1,
+                with_dummy=False,
+                with_substrate_tap=False,
+                length=1,
+                interfinger_rmult=1)
     # XMB4 = nmos(pdk, 
     #             width=width[1], 
     #             fingers=fingers[1], 
@@ -437,6 +484,27 @@ def regulated_cascode_current_mirror(
     #             sd_rmult=sd_rmult, 
     #             **nmos_kwargs)
     XM2 = pmos(pdk,
+                width=0.5,
+                fingers=1,
+                multipliers=1,
+                with_dummy=False,
+                with_substrate_tap=False,
+                length=1)
+    XM1 = pmos(pdk,
+                width=0.5,
+                fingers=1,
+                multipliers=1,
+                with_dummy=False,
+                with_substrate_tap=False,
+                length=1)
+    XM3 = pmos(pdk,
+                width=0.5,
+                fingers=1,
+                multipliers=1,
+                with_dummy=False,
+                with_substrate_tap=False,
+                length=1)
+    XM4 = pmos(pdk,
                 width=0.5,
                 fingers=1,
                 multipliers=1,
@@ -457,34 +525,98 @@ def regulated_cascode_current_mirror(
     # Adding the references of the transistors to the top component
     fet_XMB4_ref = RegulatedCM << XMB4
     fet_XMB5_ref = RegulatedCM << XMB5
+    fet_XMB1_ref = RegulatedCM << XMB1
+    fet_XMCASC_IN_ref = RegulatedCM << XMCASC_IN
+    fet_XMREF_ref = RegulatedCM << XMREF
+    fet_XMCASC_ref = RegulatedCM << XMCASC
+    fet_XMREF_A_ref = RegulatedCM << XMREF_A
+    fet_XMB_B_ref = RegulatedCM << XMB_B
     fet_XM2_ref = RegulatedCM << XM2
+    fet_XM1_ref = RegulatedCM << XM1
+    fet_XM3_ref = RegulatedCM << XM3
+    fet_XM4_ref = RegulatedCM << XM4
+    
 
     fet_XMB4_ref.name = "XMB4"
     fet_XMB5_ref.name = "XMB5"
+    fet_XMB1_ref.name = "XMB1"
+    fet_XMCASC_IN_ref.name = "XMCASC_IN"
+    fet_XMREF_ref.name = "XMREF"
+    fet_XMCASC_ref.name = "XMCASC"
+    fet_XMREF_A_ref.name = "XMREF_A"
+    fet_XMB_B_ref.name = "XMB_B"
     fet_XM2_ref.name = "XM2"
+    fet_XM1_ref.name = "XM1"
+    fet_XM3_ref.name = "XM3"
+    fet_XM4_ref.name = "XM4"
 
     # Add reference of each transistor to the top component
     RegulatedCM.add(fet_XMB4_ref)
     RegulatedCM.add(fet_XMB5_ref)
+    RegulatedCM.add(fet_XMB1_ref)
+    RegulatedCM.add(fet_XMCASC_IN_ref)
+    RegulatedCM.add(fet_XMREF_ref)
+    RegulatedCM.add(fet_XMCASC_ref)
+    RegulatedCM.add(fet_XMREF_A_ref)
+    RegulatedCM.add(fet_XMB_B_ref)
     RegulatedCM.add(fet_XM2_ref)
+    RegulatedCM.add(fet_XM1_ref)
+    RegulatedCM.add(fet_XM3_ref)
+    RegulatedCM.add(fet_XM4_ref)
 
     # Add ports of each transistor to the top component with prefixes
     RegulatedCM.add_ports(fet_XMB4_ref.get_ports_list(),prefix="rcm_XMB4_")
     RegulatedCM.add_ports(fet_XMB5_ref.get_ports_list(),prefix="rcm_XMB5_")
+    RegulatedCM.add_ports(fet_XMB1_ref.get_ports_list(),prefix="rcm_XMB1_")
+    RegulatedCM.add_ports(fet_XMCASC_IN_ref.get_ports_list(),prefix="rcm_XMCASC_IN_")
+    RegulatedCM.add_ports(fet_XMREF_ref.get_ports_list(),prefix="rcm_XMREF_")
+    RegulatedCM.add_ports(fet_XMCASC_ref.get_ports_list(),prefix="rcm_XMCASC_")
+    RegulatedCM.add_ports(fet_XMREF_A_ref.get_ports_list(),prefix="rcm_XMREF_A_")
+    RegulatedCM.add_ports(fet_XMB_B_ref.get_ports_list(),prefix="rcm_XMB_B_")
     RegulatedCM.add_ports(fet_XM2_ref.get_ports_list(),prefix="rcm_XM2_")
+    RegulatedCM.add_ports(fet_XM1_ref.get_ports_list(),prefix="rcm_XM1_")
+    RegulatedCM.add_ports(fet_XM3_ref.get_ports_list(),prefix="rcm_XM3_")
+    RegulatedCM.add_ports(fet_XM4_ref.get_ports_list(),prefix="rcm_XM4_")
+
 
     # Placement of the transistors
     fet_XMB4_dim = evaluate_bbox(fet_XMB4_ref)
     fet_XMB5_dim = evaluate_bbox(fet_XMB5_ref)
+    fet_XMB1_dim = evaluate_bbox(fet_XMB1_ref)
+    fet_XMCASC_IN_dim = evaluate_bbox(fet_XMCASC_IN_ref)
+    fet_XMREF_dim = evaluate_bbox(fet_XMREF_ref)
+    fet_XMCASC_dim = evaluate_bbox(fet_XMCASC_ref)
+    fet_XMREF_A_dim = evaluate_bbox(fet_XMREF_A_ref)
+    fet_XMB_B_dim = evaluate_bbox(fet_XMB_B_ref)    
     fet_XM2_dim = evaluate_bbox(fet_XM2_ref)
+    fet_XM1_dim = evaluate_bbox(fet_XM1_ref)
+    fet_XM3_dim = evaluate_bbox(fet_XM3_ref)
+    fet_XM4_dim = evaluate_bbox(fet_XM4_ref)
 
     fet_XM2_ref.movey(fet_XM2_dim[1]/2 + maxmet_sep + fet_XMB4_dim[1]/2)
     fet_XMB5_ref.movex(-fet_XMB5_dim[0]/2 - maxmet_sep - fet_XMB4_dim[0]/2)
+    fet_XMB1_ref.movex(+fet_XMB1_dim[0]/2 + maxmet_sep + fet_XMB4_dim[0]/2) 
+    fet_XM1_ref.movey(+fet_XM1_dim[1]/2 + maxmet_sep + fet_XMB1_dim[1]/2)
+    fet_XM1_ref.movex(+fet_XMB1_dim[0]/2 + maxmet_sep + fet_XMB4_dim[0]/2)
+    ### QUESTION: XMCASC_IN needs a multiplier of 20 or nf =20. The dimensions seem incorrect for dim[0] and are using a mult of 35.
+    fet_XMCASC_IN_ref.movex(+fet_XMCASC_IN_dim[0]/2 + 35*maxmet_sep + fet_XMB1_dim[0]/2)
+    fet_XM3_ref.movey(+fet_XMCASC_IN_dim[1]/2 + maxmet_sep + fet_XM3_dim[1]/2)
+    fet_XM3_ref.movex(+fet_XMCASC_IN_dim[0]/2 + 35*maxmet_sep + fet_XM3_dim[0]/2)
+    ### Place XMREF
+    fet_XMREF_ref.movex(+fet_XMCASC_IN_dim[0]/2 + 35*maxmet_sep + fet_XMB1_dim[0]/2).movey(-fet_XMCASC_IN_dim[1]/2 - maxmet_sep - fet_XMREF_dim[1]/2)    
     # fet_XMB4_ref = RegulatedCM << XMB4
     # fet_XM2_ref = RegulatedCM << XM2
+    ### Place XMREF_A, XCASC
+    fet_XMCASC_ref.movex(+fet_XMCASC_dim[0]/2 + 120*maxmet_sep + fet_XMCASC_IN_dim[0]/2)
+    fet_XMREF_A_ref.movex(+fet_XMCASC_dim[0]/2 + 120*maxmet_sep + fet_XMCASC_IN_dim[0]/2).movey(-fet_XMCASC_dim[1]/2 - maxmet_sep - fet_XMREF_A_dim[1]/2)
+    #### Place XMB_B, XMB4
+    fet_XMB_B_ref.movex(+fet_XMCASC_dim[0] - 7*maxmet_sep + fet_XMB_B_dim[0] + fet_XMCASC_IN_dim[0])
+    fet_XM4_ref.movex(+fet_XMCASC_dim[0] - 7*maxmet_sep + fet_XMB_B_dim[0] + fet_XMCASC_IN_dim[0]).movey(+fet_XM4_dim[1]/2 + maxmet_sep + fet_XMB_B_dim[1]/2)
+    
 
     # Routing between the transistors
     viam2m3 = via_stack(pdk, "met2", "met3", centered=True) #met2 is the bottom layer. met3 is the top layer.
+    viam3m4 = via_stack(pdk, "met3", "met4", centered=True) #met3 is the bottom layer. met4 is the top layer.   
     # Position the vias to respective ports centre
     drain_XMB4_via = RegulatedCM << viam2m3
     drain_XMB4_via.move(RegulatedCM.ports["rcm_XMB4_multiplier_0_drain_W"].center)#.movey(-0.8*maxmet_sep) #.movex(1*maxmet_sep)
@@ -510,19 +642,107 @@ def regulated_cascode_current_mirror(
     source_XM2_via = RegulatedCM << viam2m3
     source_XM2_via.move(fet_XM2_ref.ports["source_E"].center)#.movey(0.8*maxmet_sep)     
 
+    drain_XM1_via = RegulatedCM << viam2m3
+    drain_XM1_via.move(fet_XM1_ref.ports["drain_W"].center)#.movey(-0.8*maxmet_sep) #.movex(1*maxmet_sep)        
+    gate_XM1_via = RegulatedCM << viam2m3
+    gate_XM1_via.move(fet_XM1_ref.ports["gate_S"].center)#.movex(0.8*maxmet_sep) 
+    source_XM1_via = RegulatedCM << viam2m3
+    source_XM1_via.move(fet_XM1_ref.ports["source_E"].center)#.movey(0.8*maxmet_sep)    
+
+    drain_XMB1_via = RegulatedCM << viam2m3
+    drain_XMB1_via.move(fet_XMB1_ref.ports["drain_W"].center)#.movey(-0.8*maxmet_sep) #.movex(1*maxmet_sep)        
+    gate_XMB1_via = RegulatedCM << viam2m3
+    gate_XMB1_via.move(fet_XMB1_ref.ports["gate_S"].center)#.movex(0.8*maxmet_sep) 
+    source_XMB1_via = RegulatedCM << viam2m3
+    source_XMB1_via.move(fet_XMB1_ref.ports["source_E"].center)#.movey(0.8*maxmet_sep)  
+
+    drain_XMCASC_IN_via = RegulatedCM << viam2m3
+    drain_XMCASC_IN_via.move(fet_XMCASC_IN_ref.ports["drain_W"].center)#.movey(-0.8*maxmet_sep) #.
+    gate_XMCASC_IN_via = RegulatedCM << viam2m3
+    gate_XMCASC_IN_via.move(fet_XMCASC_IN_ref.ports["gate_S"].center)#.movex(0.8*maxmet_sep) 
+    source_XMCASC_IN_via = RegulatedCM << viam2m3
+    source_XMCASC_IN_via.move(fet_XMCASC_IN_ref.ports["source_E"].center)#.movey(0.8*maxmet_sep) 
+    #### M2-M2-M4 vias on top of each other   
+    gate_XMCASC_IN_M4_via = RegulatedCM << viam3m4
+    gate_XMCASC_IN_M4_via.move(fet_XMCASC_IN_ref.ports["gate_S"].center).movex(-15*maxmet_sep).movey(+5*maxmet_sep)
+    gate_XMCASC_IN_M4_M3 = RegulatedCM << viam2m3
+    gate_XMCASC_IN_M4_M3.move(fet_XMCASC_IN_ref.ports["gate_S"].center).movex(-15*maxmet_sep).movey(+5*maxmet_sep)
+
+    drain_XM3_via = RegulatedCM << viam2m3
+    drain_XM3_via.move(fet_XM3_ref.ports["drain_W"].center)#.movey(-0.8*maxmet_sep) #.
+    gate_XM3_via = RegulatedCM << viam2m3
+    gate_XM3_via.move(fet_XM3_ref.ports["gate_S"].center)#.movex(0.8*maxmet_sep) 
+    source_XM3_via = RegulatedCM << viam2m3
+    source_XM3_via.move(fet_XM3_ref.ports["source_E"].center)#.movey(0.8*maxmet_sep)  
+
+    drain_XMREF_via = RegulatedCM << viam2m3
+    drain_XMREF_via.move(fet_XMREF_ref.ports["drain_W"].center)#.movey(-0.8*maxmet_sep) #.
+    gate_XMREF_via = RegulatedCM << viam2m3
+    gate_XMREF_via.move(fet_XMREF_ref.ports["gate_S"].center)#.movex(0.8*maxmet_sep) 
+    source_XMREF_via = RegulatedCM << viam2m3
+    source_XMREF_via.move(fet_XMREF_ref.ports["source_E"].center)#.movey(0.8*maxmet_sep)     
+
+    drain_XMREF_A_via = RegulatedCM << viam2m3
+    drain_XMREF_A_via.move(fet_XMREF_A_ref.ports["drain_W"].center)#.movey(-0.8*maxmet_sep) #.  
+    gate_XMREF_A_via = RegulatedCM << viam2m3
+    gate_XMREF_A_via.move(fet_XMREF_A_ref.ports["gate_S"].center)#.movex(0.8*maxmet_sep) 
+    source_XMREF_A_via = RegulatedCM << viam2m3
+    source_XMREF_A_via.move(fet_XMREF_A_ref.ports["source_E"].center)#.movey(0.8*maxmet_sep)
+
+    drain_XMCASC_via = RegulatedCM << viam2m3
+    drain_XMCASC_via.move(fet_XMCASC_ref.ports["drain_W"].center)#.movey(-0.8*maxmet_sep) #.  
+    gate_XMCASC_via = RegulatedCM << viam2m3
+    gate_XMCASC_via.move(fet_XMCASC_ref.ports["gate_S"].center)#.movex(0.8*maxmet_sep) 
+    source_XMCASC_via = RegulatedCM << viam2m3
+    source_XMCASC_via.move(fet_XMCASC_ref.ports["source_E"].center)#.movey(0.8*maxmet_sep)  
+
+    drain_XMB_B_via = RegulatedCM << viam2m3
+    drain_XMB_B_via.move(fet_XMB_B_ref.ports["drain_W"].center)#.movey(-0.8*maxmet_sep) #.  
+    gate_XMB_B_via = RegulatedCM << viam2m3 
+    gate_XMB_B_via.move(fet_XMB_B_ref.ports["gate_S"].center)#.movex(0.8*maxmet_sep) 
+    source_XMB_B_via = RegulatedCM << viam2m3
+    source_XMB_B_via.move(fet_XMB_B_ref.ports["source_E"].center)#.movey(0.8*maxmet_sep)
+
+    drain_XM4_via = RegulatedCM << viam2m3
+    drain_XM4_via.move(fet_XM4_ref.ports["drain_W"].center)#.movey(-0.8*maxmet_sep) #.  
+    gate_XM4_via = RegulatedCM << viam2m3
+    gate_XM4_via.move(fet_XM4_ref.ports["gate_S"].center)#.movex(0.8*maxmet_sep) 
+    source_XM4_via = RegulatedCM << viam2m3
+    source_XM4_via.move(fet_XM4_ref.ports["source_E"].center)#.movey(0.8*maxmet_sep)    
+
+    drain_XMB_B_via = RegulatedCM << viam2m3
+    drain_XMB_B_via.move(fet_XMB_B_ref.ports["drain_W"].center)#.movey(-0.8*maxmet_sep) #.  
+    gate_XMB_B_via = RegulatedCM << viam2m3 
+    gate_XMB_B_via.move(fet_XMB_B_ref.ports["gate_S"].center)#.movex(0.8*maxmet_sep) 
+    source_XMB_B_via = RegulatedCM << viam2m3
+    source_XMB_B_via.move(fet_XMB_B_ref.ports["source_E"].center)#.movey(0.8*maxmet_sep)
+
+    drain_XM4_via = RegulatedCM << viam2m3
+    drain_XM4_via.move(fet_XM4_ref.ports["drain_W"].center)#.movey(-0.8*maxmet_sep) #.  
+    gate_XM4_via = RegulatedCM << viam2m3
+    gate_XM4_via.move(fet_XM4_ref.ports["gate_S"].center)#.movex(0.8*maxmet_sep) 
+    source_XM4_via = RegulatedCM << viam2m3
+    source_XM4_via.move(fet_XM4_ref.ports["source_E"].center)#.movey(0.8*maxmet_sep)
+
+    iout_via = RegulatedCM << viam2m3
+    iout_via.move(drain_XMB4_via.center).movey(-1*maxmet_sep - 1.5*fet_XMB4_dim[1]/2)
+
 
           
 
     import contextlib
-    with open("ports.csv" , "w") as f:
+    # with open("ports.csv" , "w") as f:
+    #     with contextlib.redirect_stdout(f):
+    #         RegulatedCM.pprint_ports()
+    # with open("ports_XMB4.csv" , "w") as f:
+    #     with contextlib.redirect_stdout(f):
+    #         fet_XMB4_ref.pprint_ports()
+    # with open("ports_XM2.csv" , "w") as f:
+    #     with contextlib.redirect_stdout(f):
+    #         fet_XM2_ref.pprint_ports()
+    with open("ports_iout_via.csv" , "w") as f:
         with contextlib.redirect_stdout(f):
-            RegulatedCM.pprint_ports()
-    with open("ports_XMB4.csv" , "w") as f:
-        with contextlib.redirect_stdout(f):
-            fet_XMB4_ref.pprint_ports()
-    with open("ports_XM2.csv" , "w") as f:
-        with contextlib.redirect_stdout(f):
-            fet_XM2_ref.pprint_ports()
+            iout_via.pprint_ports()
 
     #Routing
     RegulatedCM << c_route(pdk, RegulatedCM.ports["rcm_XMB4_drain_W"], fet_XM2_ref.ports["drain_W"])
@@ -532,7 +752,35 @@ def regulated_cascode_current_mirror(
     RegulatedCM << straight_route(pdk, fet_XMB4_ref.ports["gate_W"], fet_XMB5_ref.ports["gate_E"])
     RegulatedCM << c_route(pdk, fet_XMB5_ref.ports["gate_W"], fet_XMB5_ref.ports["drain_W"])
     RegulatedCM << straight_route(pdk, fet_XMB4_ref.ports["source_W"], fet_XMB5_ref.ports["source_E"])
-
+    #### Route XMB1, XM1
+    RegulatedCM << c_route(pdk, fet_XM1_ref.ports["drain_W"], fet_XMB1_ref.ports["drain_W"])
+    RegulatedCM << straight_route(pdk, fet_XM1_ref.ports["source_W"], fet_XM2_ref.ports["source_E"])
+    RegulatedCM << straight_route(pdk, fet_XMB1_ref.ports["source_W"], fet_XMB4_ref.ports["source_E"])
+    RegulatedCM << straight_route(pdk, fet_XM1_ref.ports["gate_W"], fet_XM2_ref.ports["gate_E"])
+    #RegulatedCM << c_route(pdk, fet_XM1_ref.ports["gate_S"], fet_XM2_ref.ports["drain_S"])
+    #RegulatedCM << c_route(pdk, fet_XM1_ref.ports["gate_S"], fet_XM1_ref.ports["drain_S"])
+    #### Route XMCASC_IN, XM3
+    RegulatedCM << c_route(pdk, fet_XM3_ref.ports["drain_W"], fet_XMCASC_IN_ref.ports["drain_W"])   
+    RegulatedCM << straight_route(pdk, fet_XM3_ref.ports["source_W"], fet_XM2_ref.ports["source_E"])
+    RegulatedCM << straight_route(pdk, fet_XM1_ref.ports["gate_E"], fet_XM3_ref.ports["gate_W"])
+    ########### L_route looks wrong as it has shorted SOURCE OF XMB1 MAKE A VIA AND COONECT    
+    RegulatedCM << L_route(pdk, fet_XMCASC_IN_ref.ports["gate_W"], gate_XMCASC_IN_M4_M3.ports["bottom_met_S"])
+    RegulatedCM << L_route(pdk, gate_XMCASC_IN_M4_M3.ports["top_met_N"], fet_XMB1_ref.ports["drain_E"])
+    ########### Route XMREF, XMCASC_IN; D to S may need via
+    RegulatedCM << straight_route(pdk, fet_XMREF_ref.ports["drain_N"], fet_XMCASC_IN_ref.ports["source_S"])
+    RegulatedCM << L_route(pdk, fet_XMREF_ref.ports["source_W"], fet_XMB5_ref.ports["source_S"])
+    RegulatedCM << c_route(pdk, fet_XMREF_ref.ports["gate_E"], fet_XMCASC_IN_ref.ports["drain_E"], extension=5*maxmet_sep)
+    #RegulatedCM << c
+    ############ Route XMREF_A, XMCASC;
+    RegulatedCM << c_route(pdk, fet_XMREF_A_ref.ports["drain_E"], fet_XMCASC_ref.ports["source_E"], extension=5*maxmet_sep)
+    RegulatedCM << straight_route(pdk, fet_XMREF_A_ref.ports["gate_W"], fet_XMREF_ref.ports["gate_E"])  
+    RegulatedCM << straight_route(pdk, fet_XMREF_A_ref.ports["source_W"], fet_XMREF_ref.ports["source_E"])
+    ########### Route XMB_B, XM4
+    RegulatedCM << c_route(pdk, fet_XMB_B_ref.ports["drain_W"], fet_XM4_ref.ports["drain_W"])
+    RegulatedCM << straight_route(pdk, fet_XMB_B_ref.ports["source_W"], fet_XMREF_A_ref.ports["source_E"])
+    RegulatedCM << straight_route(pdk, fet_XM4_ref.ports["source_W"], fet_XM3_ref.ports["source_E"])
+    RegulatedCM << L_route(pdk, fet_XMB_B_ref.ports["gate_S"], fet_XMREF_A_ref.ports["drain_E"])
+    #/headless/conda-env/miniconda3/envs/GLdev/bin/python3 cm_rc_copy.py
     RegulatedCM = component_snap_to_grid(rename_ports_by_orientation(RegulatedCM))
 
     #Add Pins
@@ -543,9 +791,12 @@ def regulated_cascode_current_mirror(
     # move_info.append((iref_label, RegulatedCM.ports["rcm_XMB5_drain_N"], None))
     move_info.append((iref_label, fet_XMB5_ref.ports["drain_N"], None))
 
-    # iout_label = rectangle(layer = pdk.get_glayer("met3_pin"), size=psize, centered=True).copy()
-    # iout_label.add_label(text="IOUT", layer=pdk.get_glayer("met3_label"))
-    # move_info.append((iout_label, RegulatedCM.ports["rcm_XMB4_drain_W"], None))
+    iout_label = rectangle(layer = pdk.get_glayer("met3_pin"), size=psize, centered=True).copy()
+    iout_label.add_label(text="IOUT", layer=pdk.get_glayer("met3_label"))
+    # move_info.append((iout_label, RegulatedCM.ports["rcm_XMB4_drain_W"], None))f
+    # move_info.append((iout_label, iout_via.ports["top_met_W"], None))
+    move_info.append((iout_label, fet_XMCASC_ref.ports["drain_E"], None))
+    
 
     vdd_label = rectangle(layer = pdk.get_glayer("met3_pin"), size=psize, centered=True).copy()
     vdd_label.add_label(text="VDD", layer=pdk.get_glayer("met3_label"))
