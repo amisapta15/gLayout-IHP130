@@ -57,14 +57,14 @@ def resistor(
     else:
         pfet_references = []
         diode_connect_references = []
-        pfet_reference_0 = toplvl << pmos(pdk, width=width, length=length, with_substrate_tap=False, with_tie=False, dnwell=False, rmult=rmult, multipliers=multipliers, substrate_tap_layers=substrate_tap_layers, tie_layers=tie_layers, with_dummy=False)
+        pfet_reference_0 = toplvl << pmos(pdk, width=width, length=length, with_substrate_tap=False, with_tie=False, dnwell=False, rmult=rmult, multipliers=multipliers, substrate_tap_layers=substrate_tap_layers, tie_layers=tie_layers, with_dummy=with_dummy)
         diode_connect_0 = toplvl << c_route(pdk, pfet_reference_0.ports['multiplier_0_gate_W'], pfet_reference_0.ports['multiplier_0_drain_W'])
         diode_connect_references.append(diode_connect_0)
         
         toplvl.add_ports(pfet_reference_0.ports, prefix='pfet_0_')
         pfet_references.append(pfet_reference_0)
         for i in range(1, num_series):
-            pfet_reference = (toplvl << pmos(pdk, width=width, length=length, with_substrate_tap=False, with_tie=False, dnwell=False, rmult=rmult,multipliers=multipliers, substrate_tap_layers=substrate_tap_layers, tie_layers=tie_layers, with_dummy=False)).movey(i * (evaluate_bbox(pfet_reference_0)[1] + max_sep))
+            pfet_reference = (toplvl << pmos(pdk, width=width, length=length, with_substrate_tap=False, with_tie=False, dnwell=False, rmult=rmult,multipliers=multipliers, substrate_tap_layers=substrate_tap_layers, tie_layers=tie_layers, with_dummy=with_dummy)).movey(i * (evaluate_bbox(pfet_reference_0)[1] + max_sep))
             
             pfet_references.append(pfet_reference)
             if i < num_series - 1:

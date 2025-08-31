@@ -59,8 +59,7 @@ def trimmer(
     top_level = Component(name="trimmer")
     viam2m3 = via_stack(pdk, "met2", "met3", centered=True) #met2 is the bottom layer. met3 is the top layer.
 
-    mp1_2=resistor(pdk,width=0.28,length=8.0,num_series=2)
-    mp1_2_ref=prec_ref_center(mp1_2)
+    
     
     pfet_2 = pmos(pdk, length=2.0,width=2.0, fingers=1, multipliers=2, with_dummy=True, dnwell=False,  with_substrate_tap=False)
     pfet_1 = pmos(pdk, length=2.0,width=2.0, fingers=1, multipliers=1, with_dummy=True, dnwell=False,  with_substrate_tap=False)
@@ -68,98 +67,227 @@ def trimmer(
     pfet_4 = pmos(pdk, length=0.28,width=2.0, fingers=1, multipliers=1, with_dummy=True, dnwell=False,  with_substrate_tap=False)
     pfet_5 = pmos(pdk, length=8.0,width=0.28, fingers=1, multipliers=1, with_dummy=True, dnwell=False,  with_substrate_tap=False)
 
-
+    ##################################################################
     mp19_ref = prec_ref_center(pfet_4)
     top_level.add(mp19_ref)
+    mp1_2=resistor(pdk,width=0.28,length=8.0,num_series=2,with_tie=True,with_dummy=True)
+    mp1_2_ref=prec_ref_center(mp1_2)
+    mp1_2_ref.movey(top_level.ymin - (evaluate_bbox(mp1_2)[1]/2) - pdk.util_max_metal_seperation())
     top_level.add(mp1_2_ref)
+    ncm12 = current_mirror(pdk,numcols=1,width=0.28,length=8.0,device='nfet',with_tie=True)
+    ncm12_ref= prec_ref_center(ncm12)
+    ncm12_ref.movey(top_level.ymin - (evaluate_bbox(ncm12)[1]/2) - pdk.util_max_metal_seperation())
+    ncm12_ref.movex(top_level.xmin + (evaluate_bbox(ncm12)[0]/2) + pdk.util_max_metal_seperation())
+    top_level.add(ncm12_ref)
+    nfet_1 = nmos(pdk, length=0.28,width=2.0, fingers=1, multipliers=1, with_dummy=True, with_dnwell=False,  with_substrate_tap=False)
+    mn5_ref = prec_ref_center(nfet_1)
+    mn5_ref.movey(top_level.ymin - (evaluate_bbox(nfet_1)[1]/2) + pdk.util_max_metal_seperation())
+    mn5_ref.movex(top_level.xmin + (evaluate_bbox(nfet_1)[0]/2) - pdk.util_max_metal_seperation())
+    top_level.add(mn5_ref)
+    
 
+    vdd_via1 = top_level << viam2m3
+    vdd_via1.move(mp19_ref.ports["source_N"].center).movey(10)
+    top_level << straight_route(pdk, vdd_via1.ports["top_met_S"],mp19_ref.ports["source_N"], glayer1="met3",fullbottom=True )
+    top_level << straight_route(pdk, vdd_via1.ports["bottom_met_S"],mp19_ref.ports["tie_N_top_met_N"],glayer1=tie_layers2[0], fullbottom=True )
+    
+    en_via = top_level << viam2m3
+    en_via.move(mp19_ref.ports["gate_W"].center).movex(-5)
+    top_level << straight_route(pdk, en_via.ports["bottom_met_E"],mp19_ref.ports["gate_W"],glayer1=tie_layers2[0], fullbottom=True )
+
+    top_level << c_route(pdk, mp19_ref.ports["drain_E"],mp1_2_ref.ports["port2_source_E"], fullbottom=True,extension=pdk.util_max_metal_seperation())
+
+    top_level << c_route(pdk, mp1_2_ref.ports["pfet_0_drain_W"],ncm12_ref.ports["fet_A_drain_W"], fullbottom=True )
+
+    
+    top_level << c_route(pdk, ncm12_ref.ports["fet_A_gate_W"], mn5_ref.ports["drain_W"],fullbottom=True )
+    top_level << c_route(pdk, en_via.ports["bottom_met_W"], mn5_ref.ports["gate_W"],fullbottom=True,extension= pdk.util_max_metal_seperation())
+
+    vss_via1 = top_level << viam2m3
+    vss_via1.move(mn5_ref.ports["source_N"].center).movey(-10)
+    top_level << c_route(pdk, vss_via1.ports["bottom_met_E"],mn5_ref.ports["source_E"], fullbottom=True )
+    top_level << c_route(pdk, vss_via1.ports["bottom_met_S"],ncm12_ref.ports["welltie_S_top_met_S"], fullbottom=True )
+    ##################################################################
+    mp20_ref = prec_ref_center(pfet_4)
+    mp20_ref.movex(top_level.xmax - (evaluate_bbox(pfet_4)[0]/2) -  pdk.util_max_metal_seperation()+2)
     
     
     mp3_ref = prec_ref_center(pfet_1)
-    mp5_ref = prec_ref_center(pfet_2) 
-    mp7_ref = prec_ref_center(pfet_2)
-    mp10_ref = prec_ref_center(pfet_2)
-
     mp4_ref = prec_ref_center(pfet_3)
-    mp6_ref = prec_ref_center(pfet_3) 
-    mp8_ref = prec_ref_center(pfet_3)
-    mp11_ref = prec_ref_center(pfet_3)
-
+    mp3_ref.movex(top_level.xmax - (evaluate_bbox(pfet_1)[0]/2) - pdk.util_max_metal_seperation()+2)
+    mp3_ref.movey(- 2* (evaluate_bbox(pfet_1)[1]/2) - 2* pdk.util_max_metal_seperation())
     
-    mp3_ref.movex(top_level.xmin - (evaluate_bbox(pfet_1)[0]/2) - pdk.util_max_metal_seperation())
-    mp5_ref.movex(top_level.xmax + (evaluate_bbox(pfet_1)[0]/2) + pdk.util_max_metal_seperation())
-    mp7_ref.movex(top_level.xmax + (3*evaluate_bbox(pfet_1)[0]/2) + 3 *pdk.util_max_metal_seperation())
-    mp10_ref.movex(top_level.xmin + (5*evaluate_bbox(pfet_1)[0]/2) + 5*pdk.util_max_metal_seperation())
+    mp4_ref.movex(top_level.xmax - (evaluate_bbox(pfet_3)[0]/2) - pdk.util_max_metal_seperation())
+    mp4_ref.movey(- 4.1* (evaluate_bbox(pfet_3)[1]/2) - 4.1* pdk.util_max_metal_seperation())
+    
 
-
-    mp4_ref.movex(top_level.xmin - (evaluate_bbox(pfet_2)[0]/2) - pdk.util_max_metal_seperation())
-    mp4_ref.movey(top_level.ymin - (2*evaluate_bbox(pfet_2)[1]/2) - 2*pdk.util_max_metal_seperation())
-    mp6_ref.movex(top_level.xmax + (evaluate_bbox(pfet_2)[0]/2) + pdk.util_max_metal_seperation())
-    mp6_ref.movey(top_level.ymin - (2*evaluate_bbox(pfet_2)[1]/2) - 2*pdk.util_max_metal_seperation())
-    mp8_ref.movex(top_level.xmax + ( 3* evaluate_bbox(pfet_2)[0]/2) + 2* pdk.util_max_metal_seperation())
-    mp8_ref.movey(top_level.ymin - (2*evaluate_bbox(pfet_2)[1]/2) - 2*pdk.util_max_metal_seperation())
-    mp11_ref.movex(top_level.xmax + (5*evaluate_bbox(pfet_2)[0]/2) + 4*pdk.util_max_metal_seperation())
-    mp11_ref.movey(top_level.ymin - (2*evaluate_bbox(pfet_2)[1]/2) - 2*pdk.util_max_metal_seperation())
-
-    mp1_2_ref.movex(top_level.xmin - (3*evaluate_bbox(pfet_1)[0]/2) - 2* pdk.util_max_metal_seperation())
-
+    top_level.add(mp20_ref)
     top_level.add(mp3_ref)
-    top_level.add(mp5_ref)
-    top_level.add(mp7_ref)
-    top_level.add(mp10_ref)
     top_level.add(mp4_ref)
+    
+
+    vdd_via2 = top_level << viam2m3
+    vdd_via2.move(mp20_ref.ports["source_N"].center).movey(10)
+    top_level << straight_route(pdk, vdd_via2.ports["top_met_S"],mp20_ref.ports["source_N"], glayer1="met3",fullbottom=True )
+    top_level << straight_route(pdk, vdd_via2.ports["bottom_met_S"],mp20_ref.ports["tie_N_top_met_N"],glayer1=tie_layers2[0], fullbottom=True )
+    
+    top_level << straight_route(pdk, en_via.ports["top_met_E"],mp20_ref.ports["gate_W"] ,glayer1=tie_layers2[0],fullbottom=True )
+
+    top_level << c_route(pdk, mp20_ref.ports["drain_E"],mp3_ref.ports["source_E"],fullbottom=True,extension=pdk.util_max_metal_seperation())
+    
+    top_level << c_route(pdk, mp3_ref.ports["drain_E"],mp4_ref.ports["source_E"], fullbottom=True,extension= 3* pdk.util_max_metal_seperation())
+    top_level << c_route(pdk, mp4_ref.ports["multiplier_1_drain_E"], ncm12_ref.ports["fet_B_drain_E"],fullbottom=True )
+
+    #top_level << c_route(pdk, vdd_via2.ports["bottom_met_E"],mp3_ref.ports["tie_W_top_met_E"],fullbottom=True )
+    #top_level << c_route(pdk, vdd_via2.ports["bottom_met_E"],mp4_ref.ports["tie_W_top_met_E"],fullbottom=True )
+
+    ##################################################################
+    mp9_ref=prec_ref_center(pfet_5)
+    mp9_ref.movey(top_level.center[1] - (2*evaluate_bbox(pfet_5)[1]/2) - 2* pdk.util_max_metal_seperation())
+    mp9_ref.movex(top_level.xmax + (evaluate_bbox(pfet_5)[0]/2) + pdk.util_max_metal_seperation())
+    top_level.add(mp9_ref)
+
+    vdd_via3 = top_level << viam2m3
+    vdd_via3.move(mp9_ref.ports["source_N"].center).movey(20)
+    top_level << straight_route(pdk, vdd_via3.ports["top_met_S"],mp9_ref.ports["source_N"], glayer1="met3",fullbottom=True )
+    top_level << straight_route(pdk, vdd_via3.ports["bottom_met_S"],mp19_ref.ports["tie_N_top_met_N"], glayer1= tie_layers2[0],fullbottom=True )
+    top_level << c_route(pdk, mp9_ref.ports["gate_E"], ncm12_ref.ports["fet_B_drain_E"],fullbottom=True )
+    ##################################################################################
+    mp18_ref = prec_ref_center(pfet_3)
+    mp18_ref.movex(top_level.xmax - (4*evaluate_bbox(pfet_3)[0]/2) - 4* pdk.util_max_metal_seperation()+2)
+    mp18_ref.movey(top_level.ymax - (evaluate_bbox(pfet_3)[1]/2) - pdk.util_max_metal_seperation()+2)
+    
+    mp5_ref = prec_ref_center(pfet_2) 
+    mp6_ref = prec_ref_center(pfet_3) 
+    
+    mp5_ref.movey(top_level.center[1] + (evaluate_bbox(pfet_2)[1]/2) + pdk.util_max_metal_seperation())
+    mp5_ref.movex(top_level.xmax - (evaluate_bbox(pfet_2)[0]/2) - pdk.util_max_metal_seperation())
+
+    mp6_ref.movey(+ 4.1* (evaluate_bbox(pfet_3)[1]/2) + 4.1* pdk.util_max_metal_seperation())
+
+    
+    top_level.add(mp18_ref)
+    top_level.add(mp5_ref)
     top_level.add(mp6_ref)
-    top_level.add(mp8_ref)
-    top_level.add(mp11_ref)
-    
 
-    
-
-    
-    
-    ncm12 = current_mirror(pdk,numcols=1,width=0.28,length=8.0,device='nfet',with_tie=True)
-    ncm12_ref= prec_ref_center(ncm12)
     ncm34 = current_mirror(pdk,numcols=1,width=0.28,length=8.0,device='nfet',with_tie=True)
     ncm34_ref= prec_ref_center(ncm34)
     
-
-    mp9_ref=prec_ref_center(pfet_5)
-    mp9_ref.movey(top_level.ymin - (evaluate_bbox(pfet_2)[1]/2) + 2*pdk.util_max_metal_seperation())
-    #ncm34_ref.movex(top_level.xmin + evaluate_bbox(ncm34)[0]/2 + pdk.util_max_metal_seperation()+1)
-    ncm12_ref.movey(top_level.ymin - (2*evaluate_bbox(pfet_2)[1]/2) + 2*pdk.util_max_metal_seperation())
-    ncm34_ref.movey(top_level.ymin - (2*evaluate_bbox(pfet_2)[1]/2) + 2*pdk.util_max_metal_seperation())
-    ncm34_ref.movex(top_level.xmin - (3*evaluate_bbox(pfet_2)[0]/2) - 2*pdk.util_max_metal_seperation())
-    mp9_ref.movex(top_level.xmin + (3*evaluate_bbox(pfet_2)[0]/2) + 2*pdk.util_max_metal_seperation())
-    
-    top_level.add(mp9_ref)
-    top_level.add(ncm12_ref)
-    top_level.add(ncm34_ref)
     
 
+    # vdd_via2 = top_level << viam2m3
+    # vdd_via2.move(mp20_ref.ports["source_N"].center).movey(5)
+    # top_level << c_route(pdk, vdd_via2.ports["bottom_met_E"],mp20_ref.ports["source_E"], fullbottom=True )
+
+    # vdd_via3 = top_level << viam2m3
+    # vdd_via3.move(mp9_ref.ports["source_N"].center).movey(40)
+    # top_level << c_route(pdk, vdd_via3.ports["bottom_met_E"],mp9_ref.ports["source_E"], fullbottom=True )
+
+    # vdd_via4 = top_level << viam2m3
+    # vdd_via4.move(mp18_ref.ports["source_N"].center).movey(40)
+    # top_level << c_route(pdk, vdd_via4.ports["bottom_met_E"],mp18_ref.ports["source_E"], fullbottom=True )
+
+    # 
+
     
-    mp20_ref = prec_ref_center(pfet_4)
-    mp18_ref = prec_ref_center(pfet_3)
-    mp17_ref = prec_ref_center(pfet_3)
-    mp16_ref = prec_ref_center(pfet_4)
-    mp12_ref = prec_ref_center(pfet_3)
 
-    mp19_ref.movex(top_level.xmin + (evaluate_bbox(pfet_4)[1]/2) + 2* pdk.util_max_metal_seperation())
-    mp19_ref.movey(top_level.ymax + (2* evaluate_bbox(pfet_4)[1]/2) - 2* pdk.util_max_metal_seperation())
 
-    mp20_ref.movex(top_level.xmin + (5* evaluate_bbox(pfet_4)[1]/2) + 5* pdk.util_max_metal_seperation())
-    mp20_ref.movey(top_level.ymax + ( evaluate_bbox(pfet_4)[1]/2) +  pdk.util_max_metal_seperation())
+    # top_level << c_route(pdk, mp20_ref.ports["drain_E"],mp3_ref.ports["source_E"], fullbottom=True)
+    # top_level << c_route(pdk, mp4_ref.ports["source_W"],mp3_ref.ports["drain_W"], extension=2*pdk.util_max_metal_seperation(),fullbottom=True)
+    # top_level << c_route(pdk, mp4_ref.ports["drain_E"],ncm12_ref.ports["fet_B_drain_E"], fullbottom=True )
+    # top_level << c_route(pdk, mp9_ref.ports["gate_E"],ncm12_ref.ports["fet_B_drain_E"], fullbottom=True )
+    
 
-    mp18_ref.movex(top_level.xmin + (8* evaluate_bbox(pfet_3)[1]/2) + 4*pdk.util_max_metal_seperation())
-    mp18_ref.movey(top_level.ymax + (2* evaluate_bbox(pfet_3)[1]/2) -  pdk.util_max_metal_seperation())
+    
 
-    mp17_ref.movex(top_level.xmin + (9* evaluate_bbox(pfet_3)[1]/2) + 6* pdk.util_max_metal_seperation())
-    mp17_ref.movey(top_level.ymax + (2* evaluate_bbox(pfet_3)[1]/2) -  pdk.util_max_metal_seperation())
 
-    mp16_ref.movex(top_level.xmin + (11* evaluate_bbox(pfet_3)[1]/2) + 8* pdk.util_max_metal_seperation())
-    mp16_ref.movey(top_level.ymax + (2* evaluate_bbox(pfet_3)[1]/2) -  pdk.util_max_metal_seperation())
+    
+    
+    # mp3_ref = prec_ref_center(pfet_1)
+    # mp5_ref = prec_ref_center(pfet_2) 
+    # mp7_ref = prec_ref_center(pfet_2)
+    # mp10_ref = prec_ref_center(pfet_2)
 
-    mp12_ref.movex(top_level.xmin + (12* evaluate_bbox(pfet_3)[1]/2) + 10* pdk.util_max_metal_seperation())
-    mp12_ref.movey(top_level.ymax + (2* evaluate_bbox(pfet_3)[1]/2) -  pdk.util_max_metal_seperation())
+    # mp4_ref = prec_ref_center(pfet_3)
+    # mp6_ref = prec_ref_center(pfet_3) 
+    # mp8_ref = prec_ref_center(pfet_3)
+    # mp11_ref = prec_ref_center(pfet_3)
+
+    
+    # mp3_ref.movex(top_level.xmin - (evaluate_bbox(pfet_1)[0]/2) - pdk.util_max_metal_seperation())
+    # mp5_ref.movex(top_level.xmax + (evaluate_bbox(pfet_1)[0]/2) + pdk.util_max_metal_seperation())
+    # mp7_ref.movex(top_level.xmax + (3*evaluate_bbox(pfet_1)[0]/2) + 3 *pdk.util_max_metal_seperation())
+    # mp10_ref.movex(top_level.xmin + (5*evaluate_bbox(pfet_1)[0]/2) + 5*pdk.util_max_metal_seperation())
+
+
+    # mp4_ref.movex(top_level.xmin - (evaluate_bbox(pfet_2)[0]/2) - pdk.util_max_metal_seperation())
+    # mp4_ref.movey(top_level.ymin - (2*evaluate_bbox(pfet_2)[1]/2) - 2*pdk.util_max_metal_seperation())
+    # mp6_ref.movex(top_level.xmax + (evaluate_bbox(pfet_2)[0]/2) + pdk.util_max_metal_seperation())
+    # mp6_ref.movey(top_level.ymin - (2*evaluate_bbox(pfet_2)[1]/2) - 2*pdk.util_max_metal_seperation())
+    # mp8_ref.movex(top_level.xmax + ( 3* evaluate_bbox(pfet_2)[0]/2) + 2* pdk.util_max_metal_seperation())
+    # mp8_ref.movey(top_level.ymin - (2*evaluate_bbox(pfet_2)[1]/2) - 2*pdk.util_max_metal_seperation())
+    # mp11_ref.movex(top_level.xmax + (5*evaluate_bbox(pfet_2)[0]/2) + 4*pdk.util_max_metal_seperation())
+    # mp11_ref.movey(top_level.ymin - (2*evaluate_bbox(pfet_2)[1]/2) - 2*pdk.util_max_metal_seperation())
+
+    # mp1_2_ref.movex(top_level.xmin - (3*evaluate_bbox(pfet_1)[0]/2) - 2* pdk.util_max_metal_seperation())
+
+    # top_level.add(mp3_ref)
+    # top_level.add(mp5_ref)
+    # top_level.add(mp7_ref)
+    # top_level.add(mp10_ref)
+    # top_level.add(mp4_ref)
+    # top_level.add(mp6_ref)
+    # top_level.add(mp8_ref)
+    # top_level.add(mp11_ref)
+    
+
+    
+
+    
+    
+    # ncm12 = current_mirror(pdk,numcols=1,width=0.28,length=8.0,device='nfet',with_tie=True)
+    # ncm12_ref= prec_ref_center(ncm12)
+    # ncm34 = current_mirror(pdk,numcols=1,width=0.28,length=8.0,device='nfet',with_tie=True)
+    # ncm34_ref= prec_ref_center(ncm34)
+    
+
+    # mp9_ref=prec_ref_center(pfet_5)
+    # mp9_ref.movey(top_level.ymin - (evaluate_bbox(pfet_2)[1]/2) + 2*pdk.util_max_metal_seperation())
+    # #ncm34_ref.movex(top_level.xmin + evaluate_bbox(ncm34)[0]/2 + pdk.util_max_metal_seperation()+1)
+    # ncm12_ref.movey(top_level.ymin - (2*evaluate_bbox(pfet_2)[1]/2) + 2*pdk.util_max_metal_seperation())
+    # ncm34_ref.movey(top_level.ymin - (2*evaluate_bbox(pfet_2)[1]/2) + 2*pdk.util_max_metal_seperation())
+    # ncm34_ref.movex(top_level.xmin - (3*evaluate_bbox(pfet_2)[0]/2) - 2*pdk.util_max_metal_seperation())
+    # mp9_ref.movex(top_level.xmin + (3*evaluate_bbox(pfet_2)[0]/2) + 2*pdk.util_max_metal_seperation())
+    
+    # top_level.add(mp9_ref)
+    # top_level.add(ncm12_ref)
+    # top_level.add(ncm34_ref)
+    
+
+    
+    # 
+    # mp18_ref = prec_ref_center(pfet_3)
+    # mp17_ref = prec_ref_center(pfet_3)
+    # mp16_ref = prec_ref_center(pfet_4)
+    # mp12_ref = prec_ref_center(pfet_3)
+
+    # mp19_ref.movex(top_level.xmin + (evaluate_bbox(pfet_4)[1]/2) + 2* pdk.util_max_metal_seperation())
+    # mp19_ref.movey(top_level.ymax + (2* evaluate_bbox(pfet_4)[1]/2) - 2* pdk.util_max_metal_seperation())
+
+    # mp20_ref.movex(top_level.xmin + (5* evaluate_bbox(pfet_4)[1]/2) + 5* pdk.util_max_metal_seperation())
+    # mp20_ref.movey(top_level.ymax + ( evaluate_bbox(pfet_4)[1]/2) +  pdk.util_max_metal_seperation())
+
+    # mp18_ref.movex(top_level.xmin + (8* evaluate_bbox(pfet_3)[1]/2) + 4*pdk.util_max_metal_seperation())
+    # mp18_ref.movey(top_level.ymax + (2* evaluate_bbox(pfet_3)[1]/2) -  pdk.util_max_metal_seperation())
+
+    # mp17_ref.movex(top_level.xmin + (9* evaluate_bbox(pfet_3)[1]/2) + 6* pdk.util_max_metal_seperation())
+    # mp17_ref.movey(top_level.ymax + (2* evaluate_bbox(pfet_3)[1]/2) -  pdk.util_max_metal_seperation())
+
+    # mp16_ref.movex(top_level.xmin + (11* evaluate_bbox(pfet_3)[1]/2) + 8* pdk.util_max_metal_seperation())
+    # mp16_ref.movey(top_level.ymax + (2* evaluate_bbox(pfet_3)[1]/2) -  pdk.util_max_metal_seperation())
+
+    # mp12_ref.movex(top_level.xmin + (12* evaluate_bbox(pfet_3)[1]/2) + 10* pdk.util_max_metal_seperation())
+    # mp12_ref.movey(top_level.ymax + (2* evaluate_bbox(pfet_3)[1]/2) -  pdk.util_max_metal_seperation())
 
 
     # ############################
@@ -222,70 +350,70 @@ def trimmer(
     # top_level.add(mp26_ref)
     # top_level.add(mp25_ref)
     # ############################
-    top_level.add(mp19_ref)
-    top_level.add(mp20_ref)
-    top_level.add(mp18_ref)
-    top_level.add(mp17_ref)
-    top_level.add(mp16_ref)
-    top_level.add(mp12_ref)
+    # top_level.add(mp19_ref)
+    # top_level.add(mp20_ref)
+    # top_level.add(mp18_ref)
+    # top_level.add(mp17_ref)
+    # top_level.add(mp16_ref)
+    # top_level.add(mp12_ref)
 
     ############################
 
-    nfet_1 = nmos(pdk, length=0.28,width=2.0, fingers=1, multipliers=1, with_dummy=True, with_dnwell=False,  with_substrate_tap=False)
-    mn5_ref = prec_ref_center(nfet_1)
-    mn6_ref = prec_ref_center(nfet_1)
+    # nfet_1 = nmos(pdk, length=0.28,width=2.0, fingers=1, multipliers=1, with_dummy=True, with_dnwell=False,  with_substrate_tap=False)
+    # mn5_ref = prec_ref_center(nfet_1)
+    # mn6_ref = prec_ref_center(nfet_1)
 
-    mn5_ref.movex(top_level.xmin + (4* evaluate_bbox(nfet_1)[1]/2) + 4* pdk.util_max_metal_seperation())
-    mn5_ref.movey(top_level.ymin - (evaluate_bbox(pfet_2)[1]/2) + 2*pdk.util_max_metal_seperation())
+    # mn5_ref.movex(top_level.xmin + (4* evaluate_bbox(nfet_1)[1]/2) + 4* pdk.util_max_metal_seperation())
+    # mn5_ref.movey(top_level.ymin - (evaluate_bbox(pfet_2)[1]/2) + 2*pdk.util_max_metal_seperation())
 
-    mn6_ref.movex(top_level.xmin + (8* evaluate_bbox(nfet_1)[1]/2) + 8*pdk.util_max_metal_seperation())
-    mn6_ref.movey(top_level.ymin - (evaluate_bbox(pfet_2)[1]/2) + 2*pdk.util_max_metal_seperation())
+    # mn6_ref.movex(top_level.xmin + (8* evaluate_bbox(nfet_1)[1]/2) + 8*pdk.util_max_metal_seperation())
+    # mn6_ref.movey(top_level.ymin - (evaluate_bbox(pfet_2)[1]/2) + 2*pdk.util_max_metal_seperation())
 
-    top_level.add(mn5_ref)
-    top_level.add(mn6_ref)
+    # top_level.add(mn5_ref)
+    # top_level.add(mn6_ref)
 
 
         #############################
 
-    en_via = top_level << viam2m3
-    en_via.move(mp19_ref.ports["gate_W"].center).movex(-5)
-    top_level << straight_route(pdk, en_via.ports["bottom_met_E"],mp19_ref.ports["gate_W"],glayer1=tie_layers2[1], fullbottom=True )
-    top_level << c_route(pdk, en_via.ports["bottom_met_S"],mp20_ref.ports["gate_S"], e2glayer="met1", cglayer="met1",fullbottom=True )
-    top_level << c_route(pdk, en_via.ports["bottom_met_S"],mp18_ref.ports["gate_S"], e2glayer="met1", cglayer="met1",fullbottom=True )
+    # en_via = top_level << viam2m3
+    # en_via.move(mp19_ref.ports["gate_W"].center).movex(-5)
+    # top_level << straight_route(pdk, en_via.ports["bottom_met_E"],mp19_ref.ports["gate_W"],glayer1=tie_layers2[1], fullbottom=True )
+    # top_level << c_route(pdk, en_via.ports["bottom_met_S"],mp20_ref.ports["gate_S"], e2glayer="met1", cglayer="met1",fullbottom=True )
+    # top_level << c_route(pdk, en_via.ports["bottom_met_S"],mp18_ref.ports["gate_S"], e2glayer="met1", cglayer="met1",fullbottom=True )
     
-    vdd_via1 = top_level << viam2m3
-    vdd_via1.move(mp19_ref.ports["source_N"].center).movey(10)
-    top_level << c_route(pdk, vdd_via1.ports["bottom_met_E"],mp19_ref.ports["source_E"], fullbottom=True )
+    # vdd_via1 = top_level << viam2m3
+    # vdd_via1.move(mp19_ref.ports["source_N"].center).movey(10)
+    # top_level << c_route(pdk, vdd_via1.ports["bottom_met_E"],mp19_ref.ports["source_E"], fullbottom=True )
 
-    vdd_via2 = top_level << viam2m3
-    vdd_via2.move(mp20_ref.ports["source_N"].center).movey(5)
-    top_level << c_route(pdk, vdd_via2.ports["bottom_met_E"],mp20_ref.ports["source_E"], fullbottom=True )
+    # vdd_via2 = top_level << viam2m3
+    # vdd_via2.move(mp20_ref.ports["source_N"].center).movey(5)
+    # top_level << c_route(pdk, vdd_via2.ports["bottom_met_E"],mp20_ref.ports["source_E"], fullbottom=True )
 
-    vdd_via3 = top_level << viam2m3
-    vdd_via3.move(mp9_ref.ports["source_N"].center).movey(40)
-    top_level << c_route(pdk, vdd_via3.ports["bottom_met_E"],mp9_ref.ports["source_E"], fullbottom=True )
+    # vdd_via3 = top_level << viam2m3
+    # vdd_via3.move(mp9_ref.ports["source_N"].center).movey(40)
+    # top_level << c_route(pdk, vdd_via3.ports["bottom_met_E"],mp9_ref.ports["source_E"], fullbottom=True )
 
-    vdd_via4 = top_level << viam2m3
-    vdd_via4.move(mp18_ref.ports["source_N"].center).movey(40)
-    top_level << c_route(pdk, vdd_via4.ports["bottom_met_E"],mp18_ref.ports["source_E"], fullbottom=True )
+    # vdd_via4 = top_level << viam2m3
+    # vdd_via4.move(mp18_ref.ports["source_N"].center).movey(40)
+    # top_level << c_route(pdk, vdd_via4.ports["bottom_met_E"],mp18_ref.ports["source_E"], fullbottom=True )
 
-    top_level << c_route(pdk, mp19_ref.ports["drain_E"],mp1_2_ref.ports["port2_source_E"], fullbottom=True, extension=2*pdk.util_max_metal_seperation())
-    top_level << c_route(pdk, mp1_2_ref.ports["pfet_0_drain_W"],ncm12_ref.ports["fet_A_drain_W"], fullbottom=True )
+    # top_level << c_route(pdk, mp19_ref.ports["drain_E"],mp1_2_ref.ports["port2_source_E"], fullbottom=True, extension=2*pdk.util_max_metal_seperation())
+    # top_level << c_route(pdk, mp1_2_ref.ports["pfet_0_drain_W"],ncm12_ref.ports["fet_A_drain_W"], fullbottom=True )
 
-    top_level << c_route(pdk, ncm12_ref.ports["fet_A_gate_W"], mn5_ref.ports["drain_W"],fullbottom=True )
-    top_level << c_route(pdk, en_via.ports["bottom_met_W"], mn5_ref.ports["gate_W"],fullbottom=True )
+    # top_level << c_route(pdk, ncm12_ref.ports["fet_A_gate_W"], mn5_ref.ports["drain_W"],fullbottom=True )
+    # top_level << c_route(pdk, en_via.ports["bottom_met_W"], mn5_ref.ports["gate_W"],fullbottom=True )
 
 
-    top_level << c_route(pdk, mp20_ref.ports["drain_E"],mp3_ref.ports["source_E"], fullbottom=True)
-    top_level << c_route(pdk, mp4_ref.ports["source_W"],mp3_ref.ports["drain_W"], extension=2*pdk.util_max_metal_seperation(),fullbottom=True)
-    top_level << c_route(pdk, mp4_ref.ports["drain_E"],ncm12_ref.ports["fet_B_drain_E"], fullbottom=True )
-    top_level << c_route(pdk, mp9_ref.ports["gate_E"],ncm12_ref.ports["fet_B_drain_E"], fullbottom=True )
+    # top_level << c_route(pdk, mp20_ref.ports["drain_E"],mp3_ref.ports["source_E"], fullbottom=True)
+    # top_level << c_route(pdk, mp4_ref.ports["source_W"],mp3_ref.ports["drain_W"], extension=2*pdk.util_max_metal_seperation(),fullbottom=True)
+    # top_level << c_route(pdk, mp4_ref.ports["drain_E"],ncm12_ref.ports["fet_B_drain_E"], fullbottom=True )
+    # top_level << c_route(pdk, mp9_ref.ports["gate_E"],ncm12_ref.ports["fet_B_drain_E"], fullbottom=True )
     
 
     
 
    
-    return top_level
+    return component_snap_to_grid(rename_ports_by_orientation(top_level))
                      
 
     
