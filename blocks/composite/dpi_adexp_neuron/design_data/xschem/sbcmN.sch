@@ -1,82 +1,68 @@
-v {xschem version=3.4.7 file_version=1.2}
+v {xschem version=3.4.8RC file_version=1.2}
 G {}
 K {}
 V {}
 S {}
 E {}
-N 110 -200 110 -170 {lab=VDD}
-N -30 -200 -30 -170 {lab=VDD}
-N -30 -200 110 -200 {lab=VDD}
-N 30 -140 70 -140 {lab=#net1}
-N -30 30 -30 70 {lab=#net1}
-N 110 -110 110 -30 {lab=#net2}
-N 10 -140 30 -140 {lab=#net1}
-N 50 0 70 0 {lab=IREF}
-N -30 -110 -30 -30 {lab=#net3}
-N 30 -140 30 70 {lab=#net1}
-N -90 160 -90 190 {lab=IREF}
-N -90 70 -90 90 {lab=#net1}
-N -90 70 -30 70 {lab=#net1}
-N -130 -200 -130 120 {lab=VDD}
-N -130 -200 -30 -200 {lab=VDD}
-N -30 70 30 70 {lab=#net1}
-N -90 150 -90 160 {lab=IREF}
-N 50 0 50 160 {lab=IREF}
-N 10 0 50 0 {lab=IREF}
-N -90 160 50 160 {lab=IREF}
-N 110 30 110 180 {lab=ICOPY}
-N -180 -200 -130 -200 {lab=VDD}
-N -320 -190 -310 -190 {lab=VDD}
-N -320 -160 -310 -160 {lab=GND}
-C {sg13g2_pr/sg13_lv_pmos.sym} 90 -140 0 0 {name=M6
+N -370 -210 -360 -210 {lab=GND}
+N -20 -160 60 -160 {lab=#net1}
+N -20 -10 70 -10 {lab=#net2}
+N -130 -130 -130 -60 {lab=#net2}
+N -130 -60 -110 -60 {lab=#net2}
+N -110 -60 -110 -40 {lab=#net2}
+N -110 20 -110 110 {lab=GND}
+N -110 110 110 110 {lab=GND}
+N 110 20 110 110 {lab=GND}
+N 100 -130 100 -80 {lab=#net3}
+N 110 -80 110 -40 {lab=#net3}
+N 100 -80 110 -80 {lab=#net3}
+N -130 -200 -130 -190 {lab=#net1}
+N 100 -260 100 -190 {lab=ICOPY}
+N -130 -200 -20 -200 {lab=#net1}
+N -130 -220 -130 -200 {lab=#net1}
+N -20 -200 -20 -160 {lab=#net1}
+N -90 -160 -20 -160 {lab=#net1}
+N -110 -60 -20 -60 {lab=#net2}
+N -20 -60 -20 -10 {lab=#net2}
+N -70 -10 -20 -10 {lab=#net2}
+C {lab_pin.sym} -360 -210 0 1 {name=p7 sig_type=std_logic lab=GND}
+C {iopin.sym} -370 -210 2 0 {name=p10 lab=GND}
+C {sg13g2_pr/sg13_lv_nmos.sym} -110 -160 0 1 {name=M3
 l=0.5u
-w=15.0u
-ng=5
-m=1
-model=sg13_lv_pmos
-spiceprefix=X
-}
-C {lab_pin.sym} -30 -140 0 0 {name=p8 sig_type=std_logic lab=VDD}
-C {lab_pin.sym} 110 -140 0 1 {name=p9 sig_type=std_logic lab=VDD}
-C {sg13g2_pr/sg13_lv_pmos.sym} -10 -140 0 1 {name=M9
-l=0.5u
-w=15.0u
-ng=5
-m=10
-model=sg13_lv_pmos
-spiceprefix=X
-}
-C {sg13g2_pr/sg13_lv_pmos.sym} 90 0 0 0 {name=M1
-l=0.5u
-w=15.0u
-ng=5
-m=1
-model=sg13_lv_pmos
-spiceprefix=X
-}
-C {lab_pin.sym} -30 0 0 0 {name=p1 sig_type=std_logic lab=VDD}
-C {lab_pin.sym} 110 0 0 1 {name=p2 sig_type=std_logic lab=VDD}
-C {sg13g2_pr/sg13_lv_pmos.sym} -10 0 0 1 {name=M2
-l=0.5u
-w=15.0u
-ng=5
-m=10
-model=sg13_lv_pmos
-spiceprefix=X
-}
-C {sg13g2_pr/sg13_lv_nmos.sym} -110 120 0 0 {name=M23
-l=0.5u
-w=21.0u
-ng=7
+w=8.0u
+ng=1
 m=10
 model=sg13_lv_nmos
 spiceprefix=X
 }
-C {lab_pin.sym} -90 120 0 1 {name=p4 sig_type=std_logic lab=GND}
-C {iopin.sym} -320 -190 2 0 {name=p3 lab=VDD}
-C {lab_pin.sym} -310 -190 2 0 {name=p5 sig_type=std_logic lab=VDD}
-C {lab_pin.sym} -180 -200 0 0 {name=p6 sig_type=std_logic lab=VDD}
-C {lab_pin.sym} -310 -160 0 1 {name=p7 sig_type=std_logic lab=GND}
-C {iopin.sym} -320 -160 2 0 {name=p10 lab=GND}
-C {iopin.sym} -90 190 2 0 {name=p11 lab=IREF}
-C {iopin.sym} 110 180 2 0 {name=p12 lab=ICOPY}
+C {sg13g2_pr/sg13_lv_nmos.sym} 80 -160 0 0 {name=M4
+l=0.5u
+w=8.0u
+ng=1
+m=1
+model=sg13_lv_nmos
+spiceprefix=X
+}
+C {sg13g2_pr/sg13_lv_nmos.sym} -90 -10 0 1 {name=M5
+l=0.5u
+w=8.0u
+ng=1
+m=10
+model=sg13_lv_nmos
+spiceprefix=X
+}
+C {sg13g2_pr/sg13_lv_nmos.sym} 90 -10 0 0 {name=M7
+l=0.5u
+w=8.0u
+ng=1
+m=1
+model=sg13_lv_nmos
+spiceprefix=X
+}
+C {lab_pin.sym} -10 110 1 1 {name=p13 sig_type=std_logic lab=GND}
+C {lab_pin.sym} -110 -10 2 1 {name=p14 sig_type=std_logic lab=GND}
+C {lab_pin.sym} -130 -160 2 1 {name=p15 sig_type=std_logic lab=GND}
+C {lab_pin.sym} 100 -160 0 1 {name=p16 sig_type=std_logic lab=GND}
+C {lab_pin.sym} 110 -10 0 1 {name=p17 sig_type=std_logic lab=GND}
+C {iopin.sym} -130 -220 2 0 {name=p11 lab=IREF}
+C {iopin.sym} 100 -260 0 0 {name=p12 lab=ICOPY}
