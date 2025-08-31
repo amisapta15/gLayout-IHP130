@@ -103,15 +103,15 @@ def neuron(
 
 
     cap_via = top_level << viam2m3
-    cap_via.move(mp17_ref.ports["multiplier_9_gate_N"].center).movey(20)
+    cap_via.move(mp17_ref.ports["multiplier_9_gate_N"].center).movey(10)
     for i in range(0,10):
         top_level << L_route(pdk,cap_via.ports["top_met_S"],mp17_ref.ports[f"multiplier_{i}_gate_E"],fullbottom=True)
 
-    top_level << L_route(pdk,cap_via.ports["bottom_met_S"],vmem_via.ports["bottom_met_E"],fullbottom=True)
+    top_level << L_route(pdk,cap_via.ports["bottom_met_N"],vmem_via.ports["bottom_met_E"],fullbottom=True)
     
     
     vss_via2=cap_via = top_level << viam2m3
-    vss_via2.move(mp17_ref.ports["multiplier_0_gate_S"].center).movey(-20)
+    vss_via2.move(mp17_ref.ports["multiplier_0_gate_S"].center).movey(-10)
     top_level << straight_route(pdk, vss_via2.ports["top_met_N"],mp17_ref.ports["tie_S_top_met_S"], fullbottom=True)
     top_level << c_route(pdk, vss_via2.ports["bottom_met_S"],mp17_ref.ports["tie_br_top_met_S"], fullbottom=True)
     top_level << c_route(pdk, vss_via2.ports["bottom_met_S"],mp17_ref.ports["tie_bl_top_met_S"], fullbottom=True)
