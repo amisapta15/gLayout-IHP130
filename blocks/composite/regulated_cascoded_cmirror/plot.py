@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-path = "/headless/.xschem/simulations"
+path = "xschem/simulation/"
 
 # Load the saved sweeps
 v1, i1 = np.loadtxt(path + '/vanilla.txt', unpack=True)

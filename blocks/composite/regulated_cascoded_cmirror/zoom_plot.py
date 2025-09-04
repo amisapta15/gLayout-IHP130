@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle, ConnectionPatch
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-path = "/headless/.xschem/simulations"
+path = "xschem/simulation/"
 
 # Load the saved sweeps
 v1, i1 = np.loadtxt(path + '/vanilla.txt', unpack=True)
