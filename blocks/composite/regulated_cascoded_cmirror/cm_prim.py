@@ -328,7 +328,7 @@ def add_cm_labels(cm_in: Component,
 
 if __name__ == "__main__":
     selected_pdk=gf180
-    comp = current_mirror_base(selected_pdk, num_cols=2, Length=5*selected_pdk.get_grule('poly')['min_width'],Width=3.2, device='nfet',show_netlist=False)
+    comp = current_mirror_base(selected_pdk, num_cols=1, Length=5,Width=1, device='nfet',show_netlist=False)
     #comp.pprint_ports()
     comp = add_cm_labels(comp, pdk=selected_pdk)
     comp.name = "CM"

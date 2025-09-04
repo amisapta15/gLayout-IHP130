@@ -30,49 +30,49 @@ for line in result.stdout.splitlines():
 # Now, update os.environ with these
 os.environ.update(env_vars)
 
-def generate_self_biased_current_mirror_netlist(
-    names: str = "SelfBiasedCurrentMirror",
-    regulator: Component = None,
-    base: Component = None,
-    show_netlist : Optional[bool] = False,
-    ) -> Netlist:
-    """Generate a netlist for a current mirror."""
+# def generate_self_biased_current_mirror_netlist(
+#     names: str = "SelfBiasedCurrentMirror",
+#     regulator: Component = None,
+#     base: Component = None,
+#     show_netlist : Optional[bool] = False,
+#     ) -> Netlist:
+#     """Generate a netlist for a current mirror."""
     
-    topnet = Netlist(
-        circuit_name=names,
-        nodes=['IREF', 'ICOPY', 'VSS'],
-    )
+#     topnet = Netlist(
+#         circuit_name=names,
+#         nodes=['IREF', 'ICOPY', 'VSS'],
+#     )
     
-    base_ref = topnet.connect_netlist(
-        base.info['netlist'],
-        [('VSS', 'VSS') ]
-    )
+#     base_ref = topnet.connect_netlist(
+#         base.info['netlist'],
+#         [('VSS', 'VSS') ]
+#     )
 
-    regulator_ref = topnet.connect_netlist(
-        regulator.info['netlist'],
-        [('IREF', 'IREF'), ('ICOPY', 'ICOPY'), ('VSS', 'VSS')]
-    )
+#     regulator_ref = topnet.connect_netlist(
+#         regulator.info['netlist'],
+#         [('IREF', 'IREF'), ('ICOPY', 'ICOPY'), ('VSS', 'VSS')]
+#     )
     
-    topnet.connect_subnets(
-        base_ref,
-        regulator_ref,
-        [('IREF', 'INTA'), (('ICOPY', 'INTB')),('VSS', 'VSS')]
-    )
+#     topnet.connect_subnets(
+#         base_ref,
+#         regulator_ref,
+#         [('IREF', 'INTA'), (('ICOPY', 'INTB')),('VSS', 'VSS')]
+#     )
     
-    if show_netlist:
-        generated_netlist_for_lvs = topnet.generate_netlist()
-        print(f"Generated netlist :\n", generated_netlist_for_lvs)
+#     if show_netlist:
+#         generated_netlist_for_lvs = topnet.generate_netlist()
+#         print(f"Generated netlist :\n", generated_netlist_for_lvs)
 
-        file_path_local_storage = "./gen_netlist.txt"
-        try:
-            with open(file_path_local_storage, 'w') as file:
-                file.write(generated_netlist_for_lvs)
-        except:
-            print(f"Verify the file availability and type: ", generated_netlist_for_lvs, type(generated_netlist_for_lvs))
-    return topnet
+#         file_path_local_storage = "./gen_netlist.txt"
+#         try:
+#             with open(file_path_local_storage, 'w') as file:
+#                 file.write(generated_netlist_for_lvs)
+#         except:
+#             print(f"Verify the file availability and type: ", generated_netlist_for_lvs, type(generated_netlist_for_lvs))
+#     return topnet
 
 # @validate_arguments
-def self_biased_cascode_current_mirror(
+def regulated_cascode_current_mirror(
         pdk: MappedPDK,
         Width: float = 1,
         Length: Optional[float] = None,
@@ -290,7 +290,7 @@ def self_biased_cascode_current_mirror(
 
     return rename_ports_by_orientation(component_snap_to_grid(SBCurrentMirror))
 
-def add_self_biased_cascode_cm_labels(
+def add_regulated_cascode_current_mirror_cm_labels(
     CMS: Component, 
     transistor_type: str = "nfet",
     pdk: MappedPDK =sky130
@@ -359,9 +359,9 @@ def add_self_biased_cascode_cm_labels(
 if __name__ == "__main__":
 	# Main function to generate the current mirror layout
     # mappedpdk, Width, Length, num_cols, fingers, transistor type
-    comp = self_biased_cascode_current_mirror(gf180, num_cols=2, Width=3, device='nfet',show_netlist=False)
+    comp = regulated_cascode_current_mirror(gf180, num_cols=2, Width=3, device='nfet',show_netlist=False)
     #comp.pprint_ports()
-    comp = add_self_biased_cascode_cm_labels(comp, transistor_type='nfet', pdk=gf180)
+    #comp = add_self_biased_cascode_cm_labels(comp, transistor_type='nfet', pdk=gf180)
  
 
     
