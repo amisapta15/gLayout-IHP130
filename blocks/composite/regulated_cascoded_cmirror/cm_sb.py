@@ -271,7 +271,7 @@ def add_sbcm_labels(cm_in: Component,
 
 if __name__ == "__main__":
     selected_pdk=gf180
-    comp = self_biased_cascode_current_mirror(selected_pdk, num_cols=2, Length=5*selected_pdk.get_grule('poly')['min_width'],Width=3.2, device='nfet',show_netlist=False)
+    comp = self_biased_cascode_current_mirror(selected_pdk, num_cols=1, Length=5*selected_pdk.get_grule('poly')['min_width'],Width=3.2, device='nfet',show_netlist=False)
     #comp.pprint_ports()
     #comp = add_sbcm_labels(comp, pdk=selected_pdk)
     comp.name = "CM"
