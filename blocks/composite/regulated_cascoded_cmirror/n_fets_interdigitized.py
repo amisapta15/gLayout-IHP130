@@ -424,8 +424,6 @@ def macro_n_transistor_interdigitized(
 
     
     for i, r in enumerate(refs):
-        top_name  = f"row0_col0_gate_N"
-        bottom_name = f"row0_col0_gate_S"
 
         gl = "poly"
         up = straight_route(pdk, r.ports["row0_col0_gate_N"], refs[-1].ports["gate_E"], glayer1=gl, glayer2=gl)
@@ -465,6 +463,129 @@ def macro_n_transistor_interdigitized(
     idplace.unlock()
     
     return idplace
+
+
+@validate_arguments
+def n_nfet_interdigitized(
+    pdk: MappedPDK,
+    numcols: int,
+    n_devices: int,                               # NEW: number of devices per row (A..)
+    dummy: Union[bool, tuple[bool, bool]] = True,
+    with_substrate_tap: bool = True,
+    with_tie: bool = True,
+    tie_layers: tuple[str, str] = ("met2", "met1"),
+    **kwargs,
+) -> Component:
+    """
+    N-NFET interdigitized row: places N identical NFETs repeated across `numcols`.
+    - Preserves dummy-at-edges behavior (bool or (left,right) tuple).
+    - Adds optional well-tie ring (with_tie) and outer substrate ring (with_substrate_tap).
+    - Exposes perimeter well ports and attaches an N-device netlist.
+    """
+
+    base_multiplier = macro_n_transistor_interdigitized(
+        pdk=pdk,
+        numcols=numcols,
+        devices="nfet",
+        n_devices=n_devices,
+        dummy=dummy,
+        **kwargs,
+    )
+
+    # ---- Well tie ring (like your 2T flow) ----
+    if with_tie:
+        tap_separation = max(
+            pdk.util_max_metal_seperation(),
+            pdk.get_grule("active_diff", "active_tap")["min_separation"],
+        )
+        tap_separation += pdk.get_grule("p+s/d", "active_tap")["min_enclosure"]  # PFET tie uses n+ in nwell
+
+        tap_encloses = (
+            2 * (tap_separation + base_multiplier.xmax),
+            2 * (tap_separation + base_multiplier.ymax),
+        )
+        tiering_ref = base_multiplier << tapring(
+            pdk,
+            enclosed_rectangle=tap_encloses,
+            sdlayer="p+s/d",                   # NFET well tie ring
+            horizontal_glayer=tie_layers[0],
+            vertical_glayer=tie_layers[1],
+        )
+        base_multiplier.add_ports(tiering_ref.get_ports_list(), prefix="welltie_")
+
+        # Try to hook up left/right dummy gsd contacts to welltie ring if those ports exist.
+        # We don’t assume only A/B—scan for any *_dummy_L_gsdcon_top_met_W / *_dummy_R_gsdcon_top_met_E.
+        try:
+            wtW = base_multiplier.ports["welltie_W_top_met_W"]
+        except KeyError:
+            wtW = None
+        try:
+            wtE = base_multiplier.ports["welltie_E_top_met_E"]
+        except KeyError:
+            wtE = None
+
+        if wtW:
+            # Connect any left dummy contact we can find
+            left_dummy_keys = [k for k in base_multiplier.ports.keys() if k.endswith("dummy_L_gsdcon_top_met_W")]
+            for k in left_dummy_keys:
+                try:
+                    base_multiplier << straight_route(pdk, base_multiplier.ports[k], wtW, glayer2="met1")
+                    break
+                except Exception:
+                    pass
+
+        if wtE:
+            # Connect any right dummy contact we can find
+            right_dummy_keys = [k for k in base_multiplier.ports.keys() if k.endswith(f"dummy_R_gsdcon_top_met_E")]
+            for k in right_dummy_keys:
+                try:
+                    base_multiplier << straight_route(pdk, base_multiplier.ports[k], wtE, glayer2="met1")
+                    break
+                except Exception:
+                    pass
+
+    # ---- Add pwell padding + perimeter ports (same as your 2T PFET) ----
+    base_multiplier.add_padding(
+        layers=(pdk.get_glayer("pwell"),),
+        default=pdk.get_grule("pwell", "active_tap")["min_enclosure"],
+    )
+    base_multiplier = add_ports_perimeter(
+        base_multiplier, layer=pdk.get_glayer("pwell"), prefix="well_"
+    )
+
+    # ---- Optional outer substrate tap ring ----
+    if with_substrate_tap:
+        substrate_tap_separation = pdk.get_grule("dnwell", "active_tap")["min_separation"]
+        substrate_tap_encloses = (
+            2 * (substrate_tap_separation + base_multiplier.xmax),
+            2 * (substrate_tap_separation + base_multiplier.ymax),
+        )
+        ringtoadd = tapring(
+            pdk,
+            enclosed_rectangle=substrate_tap_encloses,
+            sdlayer="p+s/d",                  # outer ring using p+ taps
+            horizontal_glayer="met2",
+            vertical_glayer="met1",
+        )
+        tapring_ref = base_multiplier << ringtoadd
+        base_multiplier.add_ports(tapring_ref.get_ports_list(), prefix="substratetap_")
+
+    base_multiplier.info["route_genid"] = "n_transistor_interdigitized"
+
+    # ---- Attach N-device netlist ----
+    base_multiplier.info["netlist"] = n_tran_interdigitized_netlist(
+        pdk=pdk,
+        width=kwargs.get("width", 3),
+        length=kwargs.get("length", 0.15),
+        fingers=kwargs.get("fingers", 1),
+        multipliers=numcols,
+        with_dummy=bool(dummy) if isinstance(dummy, bool) else any(dummy),
+        n_or_p_fet="nfet",
+        subckt_only=True,
+        n_devices=n_devices,                  # NEW: pass N
+    )
+
+    return base_multiplier
 
 @validate_arguments
 def n_pfet_interdigitized(
@@ -587,11 +708,12 @@ def n_pfet_interdigitized(
     )
 
     return base_multiplier
+    
 
 
 
 
-@validate_arguments
+# @validate_arguments
 def n_transistor_interdigitized(
     pdk: MappedPDK,
     device: Literal["nfet", "pfet"],
@@ -615,10 +737,17 @@ def n_transistor_interdigitized(
         raise ValueError("n_devices must be >= 1")
 
     if device == "nfet":
-        pass
+        return n_nfet_interdigitized(
+            pdk=pdk,
+            numcols=numcols,
+            n_devices=n_devices,
+            dummy=dummy,
+            with_substrate_tap=with_substrate_tap,
+            with_tie=with_tie,
+            tie_layers=tie_layers,
+            **kwargs,
+        )
     else:  # pfet
-        if n_devices == 2:
-            pass
         # N-device PFET
         return n_pfet_interdigitized(
             pdk=pdk,

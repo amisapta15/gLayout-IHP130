@@ -2,6 +2,7 @@ from glayout import MappedPDK, sky130,gf180
 from glayout import nmos, pmos, tapring,via_stack
 
 from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized, two_pfet_interdigitized
+from n_fets_interdigitized import n_transistor_interdigitized
 from gdsfactory import cell
 from gdsfactory.component import Component
 from gdsfactory.components import text_freetype, rectangle
@@ -33,10 +34,10 @@ for line in result.stdout.splitlines():
 os.environ.update(env_vars)
 
 ####################Import the Base structure#######################
-from cm_prim import current_mirror_base
-from cm_wl import current_mirror_WL
+from cm_prim_Q import current_mirror_base
+
 from cm_sb import self_biased_cascode_current_mirror
-from cm_rc import regulated_cascode_current_mirror
+from cm_rc_Q import regulated_cascode_current_mirror
 from input_stage import input_stage
 
 
@@ -56,11 +57,12 @@ def top(
         show_netlist: Optional[bool] = False,
         **kwargs
     ) -> Component:
-    """An instantiable self biased casoded current mirror that returns a Component object."""
+    """An instantiable self biased cascoded current mirror that returns a Component object."""
     
     pdk.activate()
     maxmet_sep = pdk.util_max_metal_seperation()
     psize=(0.35,0.35)
+    snap = pdk.snap_to_2xgrid
     
     # Create the current mirror component
     top_level= Component(name="top_design")
@@ -71,19 +73,21 @@ def top(
     # CREATING THE INPUT STAGE
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    input_stage_comp = input_stage(pdk, num_cols=num_cols, Length=Length,Width=Width, fingers=fingers, multipliers=multipliers, device=type, with_substrate_tap=with_substrate_tap, with_tie=with_tie, with_dummy=with_dummy, tie_layers=tie_layers)
+    input_stage_comp = input_stage(pdk, num_cols=num_cols, Length=Length,Width=Width, fingers=fingers, multipliers=multipliers, device="pfet", with_substrate_tap=False, with_tie=with_tie, with_dummy=with_dummy, tie_layers=tie_layers)
     input_stage_ref = prec_ref_center(input_stage_comp)
-    input_stage_ref.move(top_ref.center)
+    input_stage_ref.move(snap(top_ref.center))
     top_level.add(input_stage_ref)
     top_level.add_ports(input_stage_ref.get_ports_list(), prefix="input_")
+
+    center = top_level.center
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------
     # CREATING THE VANILLA CURRENT MIRROR STAGE
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------
     
-    VCM = current_mirror_base(pdk, num_cols=1,Length=5,Width=1, device='nfet')
+    VCM = current_mirror_base(pdk, num_cols=1,Length=1,Width=4, device='nfet', with_substrate_tap=False)
     vcm_ref = prec_ref_center(VCM)
-    vcm_ref.move(top_ref.center).movex(evaluate_bbox(input_stage_comp)[0] + 4 * pdk.util_max_metal_seperation()).movey((evaluate_bbox(input_stage_comp)[1]))
+    vcm_ref.move(snap(center)).movex(snap(evaluate_bbox(input_stage_ref)[0] + 4 * pdk.util_max_metal_seperation())).movey(snap(evaluate_bbox(input_stage_ref)[1]/2))
 
     top_level.add(vcm_ref)
     top_level.add_ports(vcm_ref.get_ports_list(), prefix="vcm_")
@@ -92,10 +96,10 @@ def top(
     # CREATING THE SELF-BIASED CURRENT MIRROR STAGE
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------
     
-    SBCM = self_biased_cascode_current_mirror(pdk, num_cols=1, Length=5,Width=1, device='nfet')
+    SBCM = self_biased_cascode_current_mirror(pdk, num_cols=1, Length=1,Width=4, device='nfet')
     sbcm_ref = prec_ref_center(SBCM)
-    sbcm_ref.move(top_ref.center).movex(evaluate_bbox(input_stage_comp)[0] + 4 * pdk.util_max_metal_seperation())
-    
+    sbcm_ref.move(snap(center)).movex(snap(evaluate_bbox(input_stage_ref)[0] + 4 * pdk.util_max_metal_seperation()))
+
     top_level.add(sbcm_ref)
     top_level.add_ports(sbcm_ref.get_ports_list(), prefix="sbcm_")
 
@@ -103,10 +107,11 @@ def top(
     # CREATING THE REGULATED CASCODE CURRENT MIRROR STAGE
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------
     
-    RCCM= regulated_cascode_current_mirror(pdk, num_cols=1, Length=5,Width=1, device='nfet',show_netlist=False)
+    RCCM= regulated_cascode_current_mirror(pdk, num_cols=2, Length=1,Width=4, device='nfet',show_netlist=False)
     rccm_ref = prec_ref_center(RCCM)
-    rccm_ref.move(top_ref.center).movex(evaluate_bbox(input_stage_comp)[0] + 4 * pdk.util_max_metal_seperation()).movey(-(evaluate_bbox(input_stage_comp)[1]))
-    
+    # rccm_ref.move(top_ref.center).movex(snap(evaluate_bbox(input_stage_comp)[0] + 4 * pdk.util_max_metal_seperation())).movey(snap(-(evaluate_bbox(input_stage_comp)[1])))
+    rccm_ref.move(snap(center)).movex(snap(evaluate_bbox(input_stage_ref)[0] + 4 * pdk.util_max_metal_seperation())).movey(-snap((evaluate_bbox(input_stage_ref)[1])))
+
     top_level.add(rccm_ref)
     top_level.add_ports(rccm_ref.get_ports_list(), prefix="rccm_")
 

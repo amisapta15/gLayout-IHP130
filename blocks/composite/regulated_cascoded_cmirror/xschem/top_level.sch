@@ -68,7 +68,7 @@ N 340 -200 380 -200 {lab=V_AUX_CCM}
 N 330 -220 380 -220 {lab=EN}
 N 330 -880 330 -220 {lab=EN}
 N -10 -200 340 -200 {lab=V_AUX_CCM}
-N 500 -260 500 -230 {lab=#net9}
+N 500 -260 500 -230 {lab=VDD}
 C {iopin.sym} -30 -50 2 0 {name=p1 lab=VSS
 }
 C {ipin.sym} -10 -200 0 0 {name=p3 lab=V_AUX_CCM
@@ -82,9 +82,9 @@ C {ipin.sym} -20 -520 0 0 {name=p9 lab=V_IN
 }
 C {symbols/pfet_03v3.sym} 530 -710 0 1 {name=M1
 L=2.0u
-W=40.0u
-nf=10
-m=10
+W=10.0u
+nf=1
+m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -96,9 +96,9 @@ spiceprefix=X
 }
 C {symbols/pfet_03v3.sym} 530 -590 0 1 {name=M2
 L=2.0u
-W=60.0u
-nf=15
-m=10
+W=10.0u
+nf=1
+m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
 as="'int((nf+2)/2) * W/nf * 0.18u'"
@@ -110,8 +110,8 @@ spiceprefix=X
 }
 C {symbols/pfet_03v3.sym} 720 -710 0 0 {name=M3
 L=2.0u
-W=40.0u
-nf=10
+W=10.0u
+nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
@@ -124,8 +124,8 @@ spiceprefix=X
 }
 C {symbols/pfet_03v3.sym} 720 -590 0 0 {name=M4
 L=2.0u
-W=60.0u
-nf=15
+W=10.0u
+nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
@@ -138,8 +138,8 @@ spiceprefix=X
 }
 C {symbols/pfet_03v3.sym} 990 -710 0 0 {name=M5
 L=2.0u
-W=40.0u
-nf=10
+W=10.0u
+nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
@@ -152,8 +152,8 @@ spiceprefix=X
 }
 C {symbols/pfet_03v3.sym} 990 -590 0 0 {name=M6
 L=2.0u
-W=60.0u
-nf=15
+W=10.0u
+nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
@@ -166,8 +166,8 @@ spiceprefix=X
 }
 C {symbols/pfet_03v3.sym} 1330 -710 0 0 {name=M7
 L=2.0u
-W=40.0u
-nf=10
+W=10.0u
+nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
@@ -180,8 +180,8 @@ spiceprefix=X
 }
 C {symbols/pfet_03v3.sym} 1330 -590 0 0 {name=M8
 L=2.0u
-W=60.0u
-nf=15
+W=10.0u
+nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
@@ -194,8 +194,8 @@ spiceprefix=X
 }
 C {symbols/pfet_03v3.sym} 850 -820 0 0 {name=M14
 L=2.0u
-W=40.0u
-nf=10
+W=10.0u
+nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
@@ -208,8 +208,8 @@ spiceprefix=X
 }
 C {symbols/pfet_03v3.sym} 610 -820 0 0 {name=M18
 L=2.0u
-W=40.0u
-nf=10
+W=10.0u
+nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
@@ -226,8 +226,8 @@ C {ipin.sym} -20 -880 0 0 {name=p12 lab=EN
 }
 C {symbols/pfet_03v3.sym} 1100 -820 0 0 {name=M15
 L=2.0u
-W=40.0u
-nf=10
+W=10.0u
+nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
 pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
