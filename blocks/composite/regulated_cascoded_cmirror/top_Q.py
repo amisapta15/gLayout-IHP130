@@ -36,7 +36,7 @@ os.environ.update(env_vars)
 ####################Import the Base structure#######################
 from cm_prim_Q import current_mirror_base
 
-from cm_sb import self_biased_cascode_current_mirror
+from cm_sb_Q import self_biased_cascode_current_mirror
 from cm_rc_Q import regulated_cascode_current_mirror
 from input_stage import input_stage
 
@@ -73,9 +73,9 @@ def top(
     # CREATING THE INPUT STAGE
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    input_stage_comp = input_stage(pdk, num_cols=num_cols, Length=Length,Width=Width, fingers=fingers, multipliers=multipliers, device="pfet", with_substrate_tap=False, with_tie=with_tie, with_dummy=with_dummy, tie_layers=tie_layers)
+    input_stage_comp = input_stage(pdk, num_cols=num_cols, Length=2,Width=10, device="pfet", with_substrate_tap=False, with_tie=with_tie, with_dummy=with_dummy, tie_layers=tie_layers)
     input_stage_ref = prec_ref_center(input_stage_comp)
-    input_stage_ref.move(snap(top_ref.center))
+    input_stage_ref.move(top_ref.center)
     top_level.add(input_stage_ref)
     top_level.add_ports(input_stage_ref.get_ports_list(), prefix="input_")
 
@@ -87,10 +87,12 @@ def top(
     
     VCM = current_mirror_base(pdk, num_cols=1,Length=1,Width=4, device='nfet', with_substrate_tap=False)
     vcm_ref = prec_ref_center(VCM)
-    vcm_ref.move(snap(center)).movex(snap(evaluate_bbox(input_stage_ref)[0] + 4 * pdk.util_max_metal_seperation())).movey(snap(evaluate_bbox(input_stage_ref)[1]/2))
+    vcm_ref.move(center).movex(evaluate_bbox(input_stage_ref)[0] + 4 * pdk.util_max_metal_seperation()).movey(-evaluate_bbox(input_stage_ref)[1]/2)
 
     top_level.add(vcm_ref)
     top_level.add_ports(vcm_ref.get_ports_list(), prefix="vcm_")
+
+    top_level << L_route(pdk, vcm_ref.ports["IN_top_met_N"], input_stage_ref.ports["OUT_B_top_met_E"])
     
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------
     # CREATING THE SELF-BIASED CURRENT MIRROR STAGE
@@ -98,10 +100,12 @@ def top(
     
     SBCM = self_biased_cascode_current_mirror(pdk, num_cols=1, Length=1,Width=4, device='nfet')
     sbcm_ref = prec_ref_center(SBCM)
-    sbcm_ref.move(snap(center)).movex(snap(evaluate_bbox(input_stage_ref)[0] + 4 * pdk.util_max_metal_seperation()))
+    sbcm_ref.move(center).movex(evaluate_bbox(input_stage_ref)[0] + 4 * pdk.util_max_metal_seperation())
 
     top_level.add(sbcm_ref)
     top_level.add_ports(sbcm_ref.get_ports_list(), prefix="sbcm_")
+
+    top_level << L_route(pdk, sbcm_ref.ports["IN_top_met_N"], input_stage_ref.ports["OUT_C_top_met_E"])
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------
     # CREATING THE REGULATED CASCODE CURRENT MIRROR STAGE
@@ -110,10 +114,12 @@ def top(
     RCCM= regulated_cascode_current_mirror(pdk, num_cols=2, Length=1,Width=4, device='nfet',show_netlist=False)
     rccm_ref = prec_ref_center(RCCM)
     # rccm_ref.move(top_ref.center).movex(snap(evaluate_bbox(input_stage_comp)[0] + 4 * pdk.util_max_metal_seperation())).movey(snap(-(evaluate_bbox(input_stage_comp)[1])))
-    rccm_ref.move(snap(center)).movex(snap(evaluate_bbox(input_stage_ref)[0] + 4 * pdk.util_max_metal_seperation())).movey(-snap((evaluate_bbox(input_stage_ref)[1])))
+    rccm_ref.move(center).movex(evaluate_bbox(input_stage_ref)[0] + 4 * pdk.util_max_metal_seperation()).movey(+(evaluate_bbox(input_stage_ref)[1]/2))
 
     top_level.add(rccm_ref)
     top_level.add_ports(rccm_ref.get_ports_list(), prefix="rccm_")
+
+    top_level << L_route(pdk, rccm_ref.ports["IN_top_met_W"], input_stage_ref.ports["OUT_D_top_met_N"])
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------
     # CREATING THE OUTPUT STAGE
@@ -136,7 +142,26 @@ def top(
     # top_level.add(fet_2_ref)
     # top_level.add(fet_3_ref)
     # top_level.add(fet_4_ref)
+
+    # ------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # CONNECTING INPUTS AND EN
+    # ------------------------------------------------------------------------------------------------------------------------------------------------------------
     
+    top_level << straight_route(pdk, top_level.ports[f"input_IN_A_top_met_N"], top_level.ports[f"input_IN_B_top_met_S"],glayer2="met1")
+    top_level << straight_route(pdk, top_level.ports[f"input_IN_B_top_met_N"], top_level.ports[f"input_IN_C_top_met_S"],glayer2="met1")
+    top_level << straight_route(pdk, top_level.ports[f"input_IN_C_top_met_N"], top_level.ports[f"input_IN_D_top_met_S"],glayer2="met1")
+
+    top_level << straight_route(pdk, top_level.ports[f"input_EN_A_top_met_N"], top_level.ports[f"input_EN_B_top_met_S"],glayer2="met1")
+    top_level << straight_route(pdk, top_level.ports[f"input_EN_B_top_met_N"], top_level.ports[f"input_EN_C_top_met_S"],glayer2="met1")
+
+    viam1m2 = via_stack(pdk, "met1", "met2", centered=True)
+
+    rccm_aux_via  = top_level << viam1m2   
+
+    rccm_aux_via.move((top_level.ports[f"input_EN_A_top_met_N"].center[0], rccm_ref.ports["AUX_A_top_met_W"].center[1]))
+    
+    top_level << straight_route(pdk, rccm_aux_via.ports[f"top_met_E"], rccm_ref.ports["AUX_A_top_met_W"],glayer1="met1", glayer2="met1")
+
     
     return rename_ports_by_orientation(component_snap_to_grid(top_level))
 

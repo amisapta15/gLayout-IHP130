@@ -258,13 +258,29 @@ def current_mirror_base(
 
     bottomA_drain_via = top_level << viam1m2
     bottomA_drain_via.move((top_level.ports["welltie_W_top_met_W"].center[0], top_level.ports[f"currm_A_0_drain_W"].center[1])).movex(-dist_ring - 2*dist_DS)
+    top_level.add_ports(bottomA_drain_via.get_ports_list(), prefix="IN_")
 
     top_level << straight_route(pdk, top_level.ports[f"currm_A_0_drain_W"],bottomA_drain_via.ports["top_met_W"],glayer2="met2")
 
-    bottomB_source_via = top_level << viam1m2
-    bottomB_source_via.move((top_level.ports["welltie_E_top_met_E"].center[0], top_level.ports[f"currm_B_0_source_E"].center[1])).movex(-dist_ring + 2*dist_DS)
+    bottomB_drain_via = top_level << viam1m2
+    bottomB_drain_via.move((top_level.ports["welltie_E_top_met_E"].center[0], top_level.ports[f"currm_B_0_drain_E"].center[1])).movex(-dist_ring + 2*dist_DS)
+    top_level.add_ports(bottomB_drain_via.get_ports_list(), prefix="OUT_")
 
-    top_level << straight_route(pdk, top_level.ports[f"currm_B_0_source_E"],bottomB_source_via.ports["top_met_E"],glayer2="met2")
+    top_level << straight_route(pdk, top_level.ports[f"currm_B_0_drain_E"],bottomB_drain_via.ports["top_met_E"],glayer2="met2")
+
+    # ------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # CONNECT SOURCES TO GND
+    # ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    bottomA_source_via = top_level << viam1m2
+    bottomA_source_via.move((top_level.ports["welltie_W_top_met_E"].center[0], top_level.ports[f"currm_A_0_source_W"].center[1])).movex(-dist_ring)
+
+    top_level << straight_route(pdk, top_level.ports[f"currm_A_0_source_W"], bottomA_source_via.ports["top_met_W"], glayer2="met2")
+
+    bottomB_source_via = top_level << viam1m2
+    bottomB_source_via.move((top_level.ports["welltie_E_top_met_E"].center[0], top_level.ports[f"currm_B_0_source_W"].center[1])).movex(-dist_ring)
+
+    top_level << straight_route(pdk, top_level.ports[f"currm_B_0_source_W"], bottomB_source_via.ports["top_met_W"], glayer2="met2")
 
 
     top_level = component_snap_to_grid(rename_ports_by_orientation(top_level))

@@ -217,8 +217,11 @@ def regulated_cascode_current_mirror(
     core_w = xmax - xmin
     core_h = ymax - ymin
 
-    cx = snap((xmin + xmax) / 2)
-    cy = snap((ymin + ymax) / 2)
+    # cx = snap((xmin + xmax) / 2)
+    # cy = snap((ymin + ymax) / 2)
+
+    cx = (xmin + xmax) / 2
+    cy = (ymin + ymax) / 2
 
     # Adding tapring
     if with_tie:
@@ -227,8 +230,10 @@ def regulated_cascode_current_mirror(
             pdk.get_grule("active_diff", "active_tap")["min_separation"])
         tap_separation += pdk.get_grule(sdglayer, "active_tap")["min_enclosure"]
         tap_encloses = (
-            (snap(4*tap_separation + core_w)),
-            (snap(4*tap_separation + core_h)),
+            # (snap(4*tap_separation + core_w)),
+            # (snap(4*tap_separation + core_h)),
+            (4*tap_separation + core_w),
+            (4*tap_separation + core_h),
         )
         tie_ref = top_level << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = sdglayer, horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
         tie_ref.move((cx, cy))
@@ -242,8 +247,10 @@ def regulated_cascode_current_mirror(
     if with_substrate_tap:
         substrate_tap_separation = pdk.get_grule("dnwell", "active_tap")["min_separation"]
         substrate_tap_enclosure = (
-            (snap(4*substrate_tap_separation + core_w)),
-            (snap(4*substrate_tap_separation + core_h)),
+            # (snap(4*substrate_tap_separation + core_w)),
+            # (snap(4*substrate_tap_separation + core_h)),
+            (4*substrate_tap_separation + core_w),
+            (4*substrate_tap_separation + core_h),
         )
         ringtoadd = tapring(pdk, enclosed_rectangle = substrate_tap_enclosure, sdlayer = "p+s/d", horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
         substrate_tap_ring_ref = top_level << ringtoadd
@@ -276,23 +283,29 @@ def regulated_cascode_current_mirror(
 
     topA_drain_aux_via = top_level << viam1m2   
     topA_drain_aux_via.move((top_level.ports["welltie_W_top_met_E"].center[0], top_level.ports[f"currm_top_A_0_drain_E"].center[1])).movex(-dist_ring - 2*dist_DS)
+    top_level.add_ports(topA_drain_aux_via.get_ports_list(), prefix="AUX_A_")
 
     top_level << straight_route(pdk, top_level.ports[f"currm_top_A_0_drain_W"], topA_drain_aux_via.ports["top_met_W"], glayer2="met2")
 
     topB_drain_in_via = top_level << viam1m2
     topB_drain_in_via.move((top_level.ports["welltie_W_top_met_E"].center[0], top_level.ports[f"currm_top_B_0_drain_E"].center[1])).movex(-dist_ring - 2*dist_DS)
+    top_level.add_ports(topB_drain_in_via.get_ports_list(), prefix="IN_")
 
     top_level << straight_route(pdk, top_level.ports[f"currm_top_B_0_drain_W"], topB_drain_in_via.ports["top_met_W"], glayer2="met2")
 
     bottomB_drain_aux_via = top_level << viam1m2
-    bottomB_drain_aux_via.move((top_level.ports["welltie_W_top_met_E"].center[0], top_level.ports[f"currm_bottom_B_0_drain_W"].center[1])).movex(dist_ring - 2*dist_DS)
+    bottomB_drain_aux_via.move((top_level.ports["welltie_W_top_met_E"].center[0], top_level.ports[f"currm_bottom_B_0_drain_W"].center[1])).movex(-dist_ring - 2*dist_DS)
+    top_level.add_ports(bottomB_drain_aux_via.get_ports_list(), prefix="AUX_B_")
 
     top_level << straight_route(pdk, top_level.ports[f"currm_bottom_B_0_drain_W"], bottomB_drain_aux_via.ports["top_met_W"], glayer2="met2")
 
     bottomA_drain_out_via = top_level << viam1m2
     bottomA_drain_out_via.move((top_level.ports["welltie_E_top_met_W"].center[0], top_level.ports[f"currm_bottom_A_0_drain_E"].center[1])).movex(dist_ring + 2*dist_DS)
+    top_level.add_ports(bottomA_drain_out_via.get_ports_list(), prefix="OUT_")
 
     top_level << straight_route(pdk, top_level.ports[f"currm_bottom_A_0_drain_E"], bottomA_drain_out_via.ports["top_met_E"], glayer2="met2")
+
+    top_level << straight_route(pdk, topA_drain_aux_via.ports[f"top_met_S"], bottomB_drain_aux_via.ports["top_met_N"], glayer2="met1")
 
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------
     # CONNECT SOURCES TO GND
@@ -390,7 +403,7 @@ if __name__ == "__main__":
 	# Main function to generate the current mirror layout
     # mappedpdk, Width, Length, num_cols, fingers, transistor type
     selected_pdk=gf180
-    comp = regulated_cascode_current_mirror(selected_pdk, num_cols=2, Width=4, Length=1, device='nfet',show_netlist=False)
+    comp = regulated_cascode_current_mirror(selected_pdk, num_cols=2, Width=4, Length=1, device='nfet',show_netlist=False, with_substrate_tap=True)
     #comp.pprint_ports()
     #comp = add_self_biased_cascode_cm_labels(comp, transistor_type='nfet', pdk=gf180)
  

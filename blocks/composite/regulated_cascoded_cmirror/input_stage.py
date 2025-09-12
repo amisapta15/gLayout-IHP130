@@ -285,6 +285,7 @@ def input_stage(
         
         bottomL_gate_input_via = top_level << viam1m2
         bottomL_gate_input_via.move((top_level.ports["welltie_W_top_met_W"].center[0], top_level.ports[f"currm_bottom_{letter}_0_gate_W"].center[1])).movex(dist_ring - 2*dist_DS)
+        top_level.add_ports(bottomL_gate_input_via.get_ports_list(), prefix=f"IN_{letter}_")
 
         top_level << straight_route(pdk, top_level.ports[f"currm_bottom_{letter}_0_gate_W"],bottomL_gate_input_via.ports["top_met_W"],glayer2="met2")
 
@@ -292,6 +293,7 @@ def input_stage(
 
             topL_gate_enable_via = top_level << viam1m2
             topL_gate_enable_via.move((top_level.ports["welltie_W_top_met_W"].center[0], top_level.ports[f"currm_top_{letter}_0_gate_W"].center[1])).movex(dist_ring - 2*dist_DS)
+            top_level.add_ports(topL_gate_enable_via.get_ports_list(), prefix=f"EN_{letter}_")
 
             top_level << straight_route(pdk, top_level.ports[f"currm_top_{letter}_0_gate_W"],topL_gate_enable_via.ports["top_met_W"],glayer2="met2")
     
@@ -305,6 +307,7 @@ def input_stage(
 
             bottomL_drain_via = top_level << viam1m2
             bottomL_drain_via.move((top_level.ports["welltie_E_top_met_E"].center[0], top_level.ports[f"currm_bottom_{letter}_0_drain_E"].center[1])).movex(-dist_ring + 2*dist_DS)
+            top_level.add_ports(bottomL_drain_via.get_ports_list(), prefix=f"OUT_{letter}_")
 
             top_level << straight_route(pdk, top_level.ports[f"currm_bottom_{letter}_0_drain_E"],bottomL_drain_via.ports["top_met_W"],glayer2="met2")
 
@@ -313,7 +316,7 @@ def input_stage(
     
 if __name__ == "__main__":
     selected_pdk=gf180 
-    comp = input_stage(selected_pdk, num_cols=1, Width=10, Length=2,with_substrate_tap=True,show_netlist=False)
+    comp = input_stage(selected_pdk, num_cols=1, Width=10, Length=2,with_substrate_tap=False,show_netlist=False)
     #comp.pprint_ports()
     #comp = add_cm_labels(comp, pdk=selected_pdk)
     comp.name = "INPUT_STAGE"

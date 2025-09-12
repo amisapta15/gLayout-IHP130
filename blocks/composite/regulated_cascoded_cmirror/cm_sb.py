@@ -89,6 +89,8 @@ def self_biased_cascode_current_mirror(
     pdk.activate()
     maxmet_sep = pdk.util_max_metal_seperation()
     psize=(0.35,0.35)
+
+    snap = pdk.snap_to_2xgrid
     
     # Create the current mirror component
     SBCurrentMirror = Component(name="SBCurrentMirror")
@@ -113,15 +115,15 @@ def self_biased_cascode_current_mirror(
     viam2m3 = via_stack(pdk, "met2", "met3", centered=True)
     
     topA_drain_via  = SBCurrentMirror << viam2m3
-    topA_drain_via.move(SBCurrentMirror.ports[f"top_currm_A_0_drain_W"].center).movex(-3*maxmet_sep)
+    topA_drain_via.move(SBCurrentMirror.ports[f"top_currm_A_0_drain_W"].center).movex(-snap(3*maxmet_sep))
     topA_source_via  = SBCurrentMirror << viam2m3
-    topA_source_via.move(SBCurrentMirror.ports[f"top_currm_A_0_source_W"].center).movex(-2*maxmet_sep)
+    topA_source_via.move(SBCurrentMirror.ports[f"top_currm_A_0_source_W"].center).movex(-snap(2*maxmet_sep))
 
     topB_drain_via  = SBCurrentMirror << viam2m3
-    topB_drain_via.move(SBCurrentMirror.ports[f"top_currm_B_{num_cols - 1}_drain_E"].center).movex(+3*maxmet_sep)
+    topB_drain_via.move(SBCurrentMirror.ports[f"top_currm_B_{num_cols - 1}_drain_E"].center).movex(+snap(3*maxmet_sep))
     
     topB_source_via  = SBCurrentMirror << viam2m3
-    topB_source_via.move(SBCurrentMirror.ports[f"top_currm_B_{num_cols - 1}_source_E"].center).movex(+2*maxmet_sep)
+    topB_source_via.move(SBCurrentMirror.ports[f"top_currm_B_{num_cols - 1}_source_E"].center).movex(+snap(2*maxmet_sep))
     
     #####################
     SBCurrentMirror << straight_route(pdk,top_currm_ref.ports["A_0_drain_W"], topA_drain_via.ports["bottom_met_E"])
@@ -177,7 +179,7 @@ def self_biased_cascode_current_mirror(
             )
             subtap_ring_ref = SBCurrentMirror << tapring(pdk, enclosed_rectangle = subtap_enclosure, sdlayer = "p+s/d", horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
             subtap_ring_ref.movey(-5.1);
-            SBCurrentMirror.add_ports(subtap_ring.get_ports_list(), prefix="substrate_tap_")
+            SBCurrentMirror.add_ports(subtap_ring_ref.get_ports_list(), prefix="substrate_tap_")
             
         # add well
         SBCurrentMirror.add_padding(default=pdk.get_grule(well, "active_tap")["min_enclosure"],layers=[pdk.get_glayer(well)])
@@ -277,13 +279,13 @@ if __name__ == "__main__":
     comp.name = "CM"
     comp.show()
     ##Write the current mirror layout to a GDS file
-    # comp.write_gds("./CM.gds")
+    comp.write_gds("./CM_SB.gds")
     
     # # #Generate the netlist for the current mirror
     # print("\n...Generating Netlist...")
     #print(comp.info["netlist"].generate_netlist())
     # # #DRC Checks
-    #drc_result = selected_pdk.drc_magic(comp, comp.name,output_file=Path("DRC/"))
+    drc_result = selected_pdk.drc_magic(comp, comp.name,output_file=Path("DRC/"))
     # # #LVS Checks
     # #print("\n...Running LVS...")
     #netgen_lvs_result = selected_pdk.lvs_netgen(comp, comp.name,output_file_path=Path("LVS/"),copy_intermediate_files=True)        
