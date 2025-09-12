@@ -1,3 +1,4 @@
+from pathlib import Path
 from glayout.pdk.mappedpdk import MappedPDK
 from pydantic import validate_arguments
 from gdsfactory.component import Component
@@ -19,6 +20,66 @@ from gdsfactory.components import text_freetype, rectangle
 from glayout.primitives.via_gen import via_stack
 import re
 
+from glayout import MappedPDK, sky130,gf180
+
+from glayout.util.snap_to_grid import component_snap_to_grid
+from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized, two_pfet_interdigitized
+
+###### Only Required for IIC-OSIC Docker
+import os
+import subprocess
+
+# Run a shell, source .bashrc, then printenv
+cmd = 'bash -c "source ~/.bashrc && printenv"'
+result = subprocess.run(cmd, shell=True, text=True, capture_output=True)
+env_vars = {}
+for line in result.stdout.splitlines():
+    if '=' in line:
+        key, value = line.split('=', 1)
+        env_vars[key] = value
+
+# Now, update os.environ with these
+os.environ.update(env_vars)
+
+# @validate_arguments
+def input_stage(
+        pdk: MappedPDK,
+        Width: float = 1,
+        Length: Optional[float] = 1,
+        num_cols: int = 1,
+        fingers: int = 1,
+        multipliers: int = 1,
+        type: Optional[str] = 'nfet',
+        with_substrate_tap: Optional[bool] = False,
+        with_tie: Optional[bool] = True,
+        with_dummy: Optional[bool] = False,
+        tie_layers: tuple[str,str]=("met2","met1"),
+        show_netlist: Optional[bool] = False,
+        **kwargs
+    ) -> Component:
+    """An instantiable self biased casoded current mirror that returns a Component object."""
+    
+    pdk.activate()
+    maxmet_sep = pdk.util_max_metal_seperation()
+    n_well_sep = maxmet_sep
+    psize=(0.35,0.35)
+    
+    # Create the current mirror component
+    top_level = Component(name="input_stage")
+    top_level.name="input_stage"
+    Length = Length if Length is not None else pdk.get_grule('poly')['min_width']
+    top_ref = prec_ref_center(top_level)
+
+    currm_bottom = n_transistor_interdigitized(pdk, device="pfet", numcols=1, n_devices=4, with_substrate_tap=with_substrate_tap, with_tie=with_tie, width=Width, length=Length)
+
+    currm_bottom = top_level<< currm_bottom
+    currm_bottom.name="currm_bottom"
+
+    currm_bottom_ref = prec_ref_center(currm_bottom)
+    currm_bottom_ref.move(top_ref.center)
+    top_level.add(currm_bottom_ref)
+
+    return rename_ports_by_orientation(component_snap_to_grid(top_level))
 
 
 #from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized; from glayout.pdk.sky130_mapped import sky130_mapped_pdk as pdk; biasParams=[6,2,4]; rmult=2
@@ -569,3 +630,20 @@ def n_transistor_interdigitized(
             tie_layers=tie_layers,
             **kwargs,
         )
+    
+
+if __name__ == "__main__":
+    selected_pdk=gf180 
+    comp = input_stage(selected_pdk, num_cols=1, Width=10, Length=2,with_substrate_tap=True,show_netlist=False)
+    #comp.pprint_ports()
+    #comp = add_cm_labels(comp, pdk=selected_pdk)
+    comp.name = "TEST"
+    comp.show()
+    ##Write the current mirror layout to a GDS file
+    comp.write_gds("GDS/test.gds")
+    
+    # # #Generate the netlist for the current mirror
+    # print("\n...Generating Netlist...")
+    #print(comp.info["netlist"].generate_netlist())
+    # # #DRC Checks
+    drc_result = selected_pdk.drc_magic(comp, comp.name,output_file=Path("DRC/"))
