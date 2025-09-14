@@ -41,6 +41,7 @@ os.environ.update(env_vars)
 # @validate_arguments
 def generate_input_stage_netlist(
     pdk: MappedPDK,
+    prefix: str,
     instance_name: str,
     CM_size: tuple[float, float, int],  # (width, length, multipliers)
     source_net_in: str,
@@ -70,11 +71,9 @@ def generate_input_stage_netlist(
 
     model_name = pdk.models[transistor_type.lower()]
 
-    circuit_name = instance_name
+    circuit_name = prefix
     # Take only unique NET names
-    nodes = list(
-        set(
-            [
+    nodes =[
                 source_net_in,
                 gate_net_en,
                 drain_net_out_vcm,
@@ -82,9 +81,6 @@ def generate_input_stage_netlist(
                 drain_net_out_ccm,
                 bulk_net,
             ]
-        )
-    )
-
     source_netlist = f".subckt {circuit_name} {' '.join(nodes)}\n"
 
     # Proposed ground connection (commented)
@@ -97,63 +93,63 @@ def generate_input_stage_netlist(
     middleD_bottomD = "VMBD"
 
     source_netlist += (
-        f"XTA {middle_gate} {gate_net_en} {bulk_net} {bulk_net} "
+        f"X{prefix}_TA {middle_gate} {gate_net_en} {bulk_net} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
     source_netlist += (
-        f"XTB {middle_gate} {gate_net_en} {bulk_net} {bulk_net} "
+        f"X{prefix}_TB {middle_gate} {gate_net_en} {bulk_net} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
     source_netlist += (
-        f"XTC {middle_gate} {gate_net_en} {bulk_net} {bulk_net} "
+        f"X{prefix}_TC {middle_gate} {gate_net_en} {bulk_net} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
     source_netlist += (
-        f"XMA {middle_gate} {middle_gate} {bulk_net} {bulk_net} "
+        f"X{prefix}_MA {middle_gate} {middle_gate} {bulk_net} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
     source_netlist += (
-        f"XMB {middleB_bottomB} {middle_gate} {bulk_net} {bulk_net} "
+        f"X{prefix}_MB {middleB_bottomB} {middle_gate} {bulk_net} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
     source_netlist += (
-        f"XMC {middleC_bottomC} {middle_gate} {bulk_net} {bulk_net} "
+        f"X{prefix}_MC {middleC_bottomC} {middle_gate} {bulk_net} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
     source_netlist += (
-        f"XMD {middleD_bottomD} {middle_gate} {bulk_net} {bulk_net} "
+        f"X{prefix}_MD {middleD_bottomD} {middle_gate} {bulk_net} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
     source_netlist += (
-        f"XBA {source_net_in} {source_net_in} {middle_gate} {bulk_net} "
+        f"X{prefix}_BA {source_net_in} {source_net_in} {middle_gate} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
     source_netlist += (
-        f"XBB {drain_net_out_vcm} {source_net_in} {middleB_bottomB} {bulk_net} "
+        f"X{prefix}_BB {drain_net_out_vcm} {source_net_in} {middleB_bottomB} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
     source_netlist += (
-        f"XBC {drain_net_out_bcm} {source_net_in} {middleC_bottomC} {bulk_net} "
+        f"X{prefix}_BC {drain_net_out_bcm} {source_net_in} {middleC_bottomC} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
     source_netlist += (
-        f"XBD {drain_net_out_ccm} {source_net_in} {middleD_bottomD} {bulk_net} "
+        f"X{prefix}_BD {drain_net_out_ccm} {source_net_in} {middleD_bottomD} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
     if dummy:
         source_netlist += (
-            f"XDUMMY {bulk_net} {bulk_net} {bulk_net} {bulk_net} "
+            f"X{prefix}_DUMMY {bulk_net} {bulk_net} {bulk_net} {bulk_net} "
             f"{model_name} l={length} w={width} m={6}\n"
         )
 
@@ -206,6 +202,7 @@ def input_stage(
     with_dummy: Optional[bool] = False,
     tie_layers: tuple[str, str] = ("met2", "met1"),
     show_netlist: Optional[bool] = False,
+    add_labels = True,
     **kwargs,
 ) -> Component:
     """An instantiable self biased casoded current mirror that returns a Component object."""
@@ -744,6 +741,7 @@ def input_stage(
 
     top_level.info["netlist"] = generate_input_stage_netlist(
         pdk=pdk,
+        prefix="INPUT",
         instance_name=top_level.name,
         CM_size=(Width, Length, num_cols, fingers),  # (width, length, multipliers, fingers)
         transistor_type=type,
@@ -757,7 +755,10 @@ def input_stage(
         show_netlist=show_netlist,
     )
 
-    return top_level
+    if add_labels:
+        return add_cm_labels(top_level, pdk)
+    else:
+        return top_level
 
 
 def add_cm_labels(cm_in: Component, pdk: MappedPDK) -> Component:
@@ -810,7 +811,6 @@ if __name__ == "__main__":
         selected_pdk, num_cols=1, Width=10, Length=2, with_substrate_tap=False, show_netlist=False
     )
     
-    comp = add_cm_labels(comp, pdk=selected_pdk)
     comp.name = "INPUT_STAGE"
     comp.show()
     # Write the current mirror layout to a GDS file

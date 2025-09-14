@@ -1,0 +1,128 @@
+* NGSPICE file created from TOP.ext - technology: gf180mcuD
+
+.subckt TOP VIN VSS VDD VOUT_RCCM VOUT_SBCM VOUT_VCM VAUX EN
+X0 VAUX a_5777_8307# VSS VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X1 VAUX a_5777_8307# VSS VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X2 VAUX a_5657_4411# VSS VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X3 VSS VSS VSS VSS nfet_03v3 ad=2.32p pd=9.16u as=84.48p ps=0.33024m w=4u l=1u
+X4 VDD VDD VDD VDD pfet_03v3 ad=5.8p pd=21.16u as=0.1116n ps=0.40232m w=10u l=2u
+X5 a_n715_n5930# a_n1505_n5930# VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X6 VAUX a_5657_4411# VSS VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X7 VSS VSS VSS VSS nfet_03v3 ad=2.32p pd=9.16u as=0 ps=0 w=4u l=1u
+X8 VDD VDD VDD VDD pfet_03v3 ad=5.8p pd=21.16u as=0 ps=0 w=10u l=2u
+X9 a_n195_n5930# VIN a_n715_n5930# VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X10 VSS VSS VSS VSS nfet_03v3 ad=2.32p pd=9.16u as=0 ps=0 w=4u l=1u
+X11 a_75_n5930# a_n1505_n5930# VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X12 VDD VDD VDD VDD pfet_03v3 ad=5.8p pd=21.16u as=0 ps=0 w=10u l=2u
+X13 VDD VDD VDD VDD pfet_03v3 ad=5.8p pd=21.16u as=0 ps=0 w=10u l=2u
+X14 VSS VSS VSS VSS nfet_03v3 ad=2.32p pd=9.16u as=0 ps=0 w=4u l=1u
+X15 a_1385_n5930# VAUX a_5777_8307# VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X16 VSS VSS VSS VSS nfet_03v3 ad=2.32p pd=9.16u as=0 ps=0 w=4u l=1u
+X17 a_595_n5930# a_595_n5930# a_6293_483# VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X18 a_n1505_n5930# EN VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X19 a_595_n5930# VIN a_75_n5930# VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X20 a_1385_n5930# VAUX a_5777_8307# VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X21 VSS VSS VSS VSS nfet_03v3 ad=2.32p pd=9.16u as=0 ps=0 w=4u l=1u
+X22 a_6883_483# a_6293_483# VSS VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X23 VSS VSS VSS VSS nfet_03v3 ad=2.32p pd=9.16u as=0 ps=0 w=4u l=1u
+X24 a_5777_8307# a_1385_n5930# VSS VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X25 a_5777_8307# a_1385_n5930# VSS VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X26 VOUT_VCM a_n195_n5930# VSS VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X27 VOUT_SBCM a_595_n5930# a_6883_483# VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X28 a_5657_4411# a_1385_n5930# VSS VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X29 a_5657_4411# a_1385_n5930# VSS VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X30 a_n1505_n5930# EN VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X31 VSS VSS VSS VSS nfet_03v3 ad=2.32p pd=9.16u as=0 ps=0 w=4u l=1u
+X32 a_n1505_n5930# a_n1505_n5930# VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X33 VSS VSS VSS VSS nfet_03v3 ad=2.32p pd=9.16u as=0 ps=0 w=4u l=1u
+X34 VDD VDD VDD VDD pfet_03v3 ad=5.8p pd=21.16u as=0 ps=0 w=10u l=2u
+X35 VIN VIN a_n1505_n5930# VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X36 a_n1505_n5930# EN VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X37 a_865_n5930# a_n1505_n5930# VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X38 a_6293_483# a_6293_483# VSS VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X39 a_1385_n5930# VIN a_865_n5930# VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X40 a_n195_n5930# a_n195_n5930# VSS VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X41 VSS VSS VSS VSS nfet_03v3 ad=2.32p pd=9.16u as=0 ps=0 w=4u l=1u
+X42 VOUT_RCCM VAUX a_5657_4411# VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X43 VDD VDD VDD VDD pfet_03v3 ad=5.8p pd=21.16u as=0 ps=0 w=10u l=2u
+X44 VOUT_RCCM VAUX a_5657_4411# VSS nfet_03v3 ad=2.4p pd=9.2u as=2.4p ps=9.2u w=4u l=1u
+X45 VSS VSS VSS VSS nfet_03v3 ad=2.32p pd=9.16u as=0 ps=0 w=4u l=1u
+X46 VSS VSS VSS VSS nfet_03v3 ad=2.32p pd=9.16u as=0 ps=0 w=4u l=1u
+C0 a_n715_n5930# VDD 6.34675f
+C1 a_595_n5930# a_865_n5930# 2.02912f
+C2 VOUT_RCCM a_5777_8307# 0.0136f
+C3 a_n715_n5930# a_n195_n5930# 2.02854f
+C4 a_1385_n5930# a_n1505_n5930# 0.82034f
+C5 a_75_n5930# VIN 0.6318f
+C6 a_865_n5930# VDD 5.40929f
+C7 a_865_n5930# a_n195_n5930# 0.10043f
+C8 a_1385_n5930# a_5777_8307# 3.00275f
+C9 a_1385_n5930# a_n715_n5930# 0.13688f
+C10 a_75_n5930# a_595_n5930# 2.02098f
+C11 VAUX a_5657_4411# 3.29507f
+C12 a_n1505_n5930# EN 1.62501f
+C13 VAUX VOUT_RCCM 0.57679f
+C14 a_6293_483# VOUT_SBCM 0.0849f
+C15 a_595_n5930# a_6293_483# 1.85176f
+C16 a_75_n5930# VDD 6.35872f
+C17 a_1385_n5930# a_865_n5930# 1.98101f
+C18 a_75_n5930# a_n195_n5930# 2.03168f
+C19 a_595_n5930# VIN 0.62256f
+C20 a_n1505_n5930# a_n715_n5930# 1.68766f
+C21 a_n715_n5930# EN 0.00664f
+C22 a_1385_n5930# VAUX 1.72199f
+C23 a_595_n5930# VOUT_SBCM 0.2042f
+C24 VDD VIN 10.2566f
+C25 a_n1505_n5930# a_865_n5930# 2.19448f
+C26 a_n195_n5930# VIN 0.63325f
+C27 a_1385_n5930# a_75_n5930# 0.13665f
+C28 a_865_n5930# EN 0.21853f
+C29 a_595_n5930# VDD 0.97996f
+C30 a_595_n5930# a_n195_n5930# 0.53741f
+C31 a_n715_n5930# a_865_n5930# 0.30282f
+C32 a_1385_n5930# VIN 0.55089f
+C33 a_75_n5930# a_n1505_n5930# 1.38044f
+C34 a_75_n5930# EN 0.00866f
+C35 a_5657_4411# VOUT_RCCM 2.17202f
+C36 a_n195_n5930# VDD 1.06408f
+C37 VOUT_VCM a_n195_n5930# 0.20751f
+C38 VAUX a_5777_8307# 3.58908f
+C39 a_6293_483# a_6883_483# 0.36588f
+C40 a_1385_n5930# a_595_n5930# 0.42594f
+C41 a_75_n5930# a_n715_n5930# 0.78447f
+C42 a_n1505_n5930# VIN 2.98274f
+C43 a_1385_n5930# a_5657_4411# 0.85546f
+C44 a_6883_483# VOUT_SBCM 1.15251f
+C45 a_1385_n5930# VDD 2.57265f
+C46 a_1385_n5930# a_n195_n5930# 0.08093f
+C47 a_595_n5930# a_6883_483# 1.45997f
+C48 a_1385_n5930# VOUT_RCCM 0.00933f
+C49 a_n1505_n5930# a_595_n5930# 0.13836f
+C50 a_75_n5930# a_865_n5930# 0.74423f
+C51 a_n715_n5930# VIN 2.59448f
+C52 a_n1505_n5930# VDD 31.4897f
+C53 a_n1505_n5930# a_n195_n5930# 0.13478f
+C54 VDD EN 7.30305f
+C55 a_595_n5930# a_n715_n5930# 0.17152f
+C56 a_865_n5930# VIN 0.62292f
+C57 a_5657_4411# a_5777_8307# 0.36393f
+C58 VOUT_VCM VSS 3.01288f
+C59 VOUT_SBCM VSS 1.66471f
+C60 VOUT_RCCM VSS 3.08137f
+C61 VAUX VSS 16.1107f
+C62 VIN VSS 2.05138f
+C63 EN VSS 1.41253f
+C64 VDD VSS 0.23404p
+C65 a_6883_483# VSS 2.90137f
+C66 a_6293_483# VSS 6.39712f
+C67 a_5657_4411# VSS 8.54632f
+C68 a_5777_8307# VSS 7.65736f
+C69 a_1385_n5930# VSS 12.1715f
+C70 a_595_n5930# VSS 4.51891f
+C71 a_n195_n5930# VSS 7.79334f
+C72 a_865_n5930# VSS 0.15972f
+C73 a_75_n5930# VSS 0.03433f
+C74 a_n715_n5930# VSS 0.03454f
+C75 a_n1505_n5930# VSS 2.68739f
+.ends
+

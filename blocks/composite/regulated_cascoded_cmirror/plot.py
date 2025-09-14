@@ -18,3 +18,4 @@ plt.title("I-V Curves of Different Current Mirrors")
 plt.legend()
 plt.grid(True)
 plt.show()
+

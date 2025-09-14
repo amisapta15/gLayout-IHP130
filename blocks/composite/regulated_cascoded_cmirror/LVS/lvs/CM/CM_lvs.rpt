@@ -14,22 +14,21 @@ Circuit 1: nfet_03v3                       |Circuit 2: nfet_03v3
 Cell pin lists are equivalent.
 Device classes nfet_03v3 and nfet_03v3 are equivalent.
 
-Class CM (0):  Merged 3 parallel devices.
-Class CM (1):  Merged 3 parallel devices.
+Class CM (0):  Merged 1 parallel devices.
 Subcircuit summary:
 Circuit 1: CM                              |Circuit 2: CM                              
 -------------------------------------------|-------------------------------------------
-nfet_03v3 (8->5)                           |nfet_03v3 (8->5)                           
-Number of devices: 5                       |Number of devices: 5                       
-Number of nets: 5                          |Number of nets: 5                          
+nfet_03v3 (4->3)                           |nfet_03v3 (4->3)                           
+Number of devices: 3                       |Number of devices: 3                       
+Number of nets: 3                          |Number of nets: 3                          
 ---------------------------------------------------------------------------------------
 Netlists match uniquely.
 
 Subcircuit pins:
 Circuit 1: CM                              |Circuit 2: CM                              
 -------------------------------------------|-------------------------------------------
-VIN                                        |VIN                                        
 VOUT                                       |VOUT                                       
+VIN                                        |VIN                                        
 VSS                                        |VSS                                        
 ---------------------------------------------------------------------------------------
 Cell pin lists are equivalent.

@@ -42,6 +42,7 @@ os.environ.update(env_vars)
 # @validate_arguments
 def generate_current_mirror_netlist(
     pdk: MappedPDK,
+    prefix : str,
     instance_name: str,
     CM_size: tuple[float, float, int],  # (width, length, multipliers)
     drain_net_in: str,
@@ -71,12 +72,10 @@ def generate_current_mirror_netlist(
 
     model_name = pdk.models[transistor_type.lower()]
 
-    circuit_name = instance_name
+    circuit_name = prefix
     # Take only unique NET names
-    nodes = list(
-        set([drain_net_in, gate_net, drain_net_out, source_net_in, source_net_out, bulk_net])
-    )
-
+    nodes = [drain_net_in, drain_net_out, bulk_net]
+    
     source_netlist = f".subckt {circuit_name} {' '.join(nodes)}\n"
 
     # Proposed ground connection (commented)
@@ -84,23 +83,18 @@ def generate_current_mirror_netlist(
 
     # Generating only two transistors (one on each side):
     source_netlist += (
-        f"XA {drain_net_in} {gate_net} {bulk_net} {bulk_net} "
+        f"X{prefix}_A {drain_net_in} {gate_net} {bulk_net} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
     source_netlist += (
-        f"XB {drain_net_out} {gate_net} {bulk_net} {bulk_net} "
+        f"X{prefix}_B {drain_net_out} {gate_net} {bulk_net} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
     if dummy:
         source_netlist += (
-            f"XADUMMY {bulk_net} {bulk_net} {bulk_net} {bulk_net} "
-            f"{model_name} l={length} w={width} m={mtop}\n"
-        )
-
-        source_netlist += (
-            f"XBDUMMY {bulk_net} {bulk_net} {bulk_net} {bulk_net} "
-            f"{model_name} l={length} w={width} m={mtop}\n"
+            f"X{prefix}_DUMMY {bulk_net} {bulk_net} {bulk_net} {bulk_net} "
+            f"{model_name} l={length} w={width} m={2}\n"
         )
         
     source_netlist += ".ends " + circuit_name
@@ -151,6 +145,7 @@ def current_mirror_base(
     tie_layers: tuple[str, str] = ("met2", "met1"),
     with_dummy: Optional[bool] = True,
     show_netlist: Optional[bool] = False,
+    add_labels = True,
     **kwargs,
 ) -> Component:
     """
@@ -378,6 +373,7 @@ def current_mirror_base(
 
     top_level.info["netlist"] = generate_current_mirror_netlist(
         pdk=pdk,
+        prefix="VCM",
         instance_name=top_level.name,
         CM_size=(Width, Length, num_cols, fingers),  # (width, length, multipliers, fingers)
         transistor_type=type,
@@ -391,7 +387,10 @@ def current_mirror_base(
         show_netlist=show_netlist,
     )
 
-    return top_level
+    if add_labels:
+        return add_cm_labels(top_level, pdk)
+    else:
+        return top_level
 
 
 def add_cm_labels(cm_in: Component, pdk: MappedPDK) -> Component:
@@ -401,14 +400,14 @@ def add_cm_labels(cm_in: Component, pdk: MappedPDK) -> Component:
     move_info = []
 
     # VIN
-    vreflabel = rectangle(layer=pdk.get_glayer("met2_pin"), size=psize, centered=True).copy()
-    vreflabel.add_label(text="VIN", layer=pdk.get_glayer("met2_label"))
-    move_info.append((vreflabel, cm_in.ports["IN_top_met_N"], None))
+    vinlabel = rectangle(layer=pdk.get_glayer("met2_pin"), size=psize, centered=True).copy()
+    vinlabel.add_label(text="VIN", layer=pdk.get_glayer("met2_label"))
+    move_info.append((vinlabel, cm_in.ports["IN_top_met_N"], None))
 
     # VOUT
-    vcopylabel = rectangle(layer=pdk.get_glayer("met2_pin"), size=psize, centered=True).copy()
-    vcopylabel.add_label(text="VOUT", layer=pdk.get_glayer("met2_label"))
-    move_info.append((vcopylabel, cm_in.ports["OUT_top_met_N"], None))
+    voutlabel = rectangle(layer=pdk.get_glayer("met2_pin"), size=psize, centered=True).copy()
+    voutlabel.add_label(text="VOUT", layer=pdk.get_glayer("met2_label"))
+    move_info.append((voutlabel, cm_in.ports["OUT_top_met_N"], None))
 
     # VSS (well tie)
     vsslabel = rectangle(layer=pdk.get_glayer("met1_pin"), size=psize, centered=True).copy()
@@ -426,7 +425,7 @@ def add_cm_labels(cm_in: Component, pdk: MappedPDK) -> Component:
 if __name__ == "__main__":
     selected_pdk = gf180
     comp = current_mirror_base(selected_pdk, num_cols=1, Length=1, Width=4, device="nfet", show_netlist=False)
-    comp = add_cm_labels(comp, pdk=selected_pdk)
+    # comp = add_cm_labels(comp, pdk=selected_pdk)
     comp.name = "CM"
     comp.show()
 

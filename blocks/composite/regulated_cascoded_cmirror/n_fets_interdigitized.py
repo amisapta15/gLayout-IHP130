@@ -331,8 +331,6 @@ def macro_n_transistor_interdigitized(
     # Device letters: A, B, C, ...
     letters = _letters(n_devices)
 
-    print(letters)
-
     # ---- Create a "center" baseline device for reference (letter A) ----
     # leftmost variant (with left dummy if requested)
     kwargs["dummy"] = (True, False) if dummy[0] else False
