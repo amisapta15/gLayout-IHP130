@@ -343,4 +343,4 @@ if __name__ == "__main__":
     drc_result = selected_pdk.drc_magic(comp, comp.name,output_file=Path("DRC/"))
     # # #LVS Checks
     # #print("\n...Running LVS...")
-    #netgen_lvs_result = selected_pdk.lvs_netgen(comp, comp.name,output_file_path=Path("LVS/"),copy_intermediate_files=True)        
+    netgen_lvs_result = selected_pdk.lvs_netgen(comp, comp.name,output_file_path=Path("LVS/"),copy_intermediate_files=True)        

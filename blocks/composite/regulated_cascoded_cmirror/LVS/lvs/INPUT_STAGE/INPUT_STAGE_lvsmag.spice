@@ -1,0 +1,22 @@
+* NGSPICE file created from INPUT_STAGE.ext - technology: gf180mcuD
+
+.subckt INPUT_STAGE VIN VDD VOUT_CCM VOUT_BCM VOUT_VCM EN
+X0 a_n1505_n1396# a_n1505_n1396# VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X1 a_n1505_n1396# EN VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X2 VIN VIN a_n1505_n1396# VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X3 VOUT_CCM VIN a_865_n1396# VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X4 a_75_n1396# a_n1505_n1396# VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X5 a_n1505_n1396# EN VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X6 a_n1505_n1396# EN VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X7 VDD VDD VDD VDD pfet_03v3 ad=5.8p pd=21.16u as=0.1116n ps=0.40232m w=10u l=2u
+X8 a_n715_n1396# a_n1505_n1396# VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X9 VDD VDD VDD VDD pfet_03v3 ad=5.8p pd=21.16u as=0 ps=0 w=10u l=2u
+X10 VDD VDD VDD VDD pfet_03v3 ad=5.8p pd=21.16u as=0 ps=0 w=10u l=2u
+X11 VOUT_VCM VIN a_n715_n1396# VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X12 VDD VDD VDD VDD pfet_03v3 ad=5.8p pd=21.16u as=0 ps=0 w=10u l=2u
+X13 VOUT_BCM VIN a_75_n1396# VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X14 VDD VDD VDD VDD pfet_03v3 ad=5.8p pd=21.16u as=0 ps=0 w=10u l=2u
+X15 a_865_n1396# a_n1505_n1396# VDD VDD pfet_03v3 ad=6p pd=21.2u as=6p ps=21.2u w=10u l=2u
+X16 VDD VDD VDD VDD pfet_03v3 ad=5.8p pd=21.16u as=0 ps=0 w=10u l=2u
+.ends
+
