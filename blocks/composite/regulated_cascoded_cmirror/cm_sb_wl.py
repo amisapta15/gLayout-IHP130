@@ -4,6 +4,12 @@ from glayout import nmos, pmos, tapring,via_stack
 from glayout.spice.netlist import Netlist
 from glayout.routing import c_route,L_route,straight_route
 
+from gdsfactory.cell import cell
+from gdsfactory.component import Component, copy
+from gdsfactory.components.rectangle import rectangle
+from gdsfactory.routing.route_quad import route_quad
+from gdsfactory.routing.route_sharp import route_sharp
+
 from gdsfactory.component import Component
 from gdsfactory.component_reference import ComponentReference
 from gdsfactory.cell import cell
@@ -12,7 +18,7 @@ from gdsfactory.components import text_freetype, rectangle
 
 from glayout.util.comp_utils import evaluate_bbox, prec_center, align_comp_to_port, prec_ref_center,movex,movey
 from glayout.util.snap_to_grid import component_snap_to_grid
-from glayout.util.port_utils import set_port_orientation, rename_ports_by_orientation, create_private_ports, add_ports_perimeter
+from glayout.util.port_utils import set_port_orientation, rename_ports_by_orientation, create_private_ports, add_ports_perimeter, get_orientation
 from itertools import product
 
 ###### Only Required for IIC-OSIC Docker
@@ -102,6 +108,7 @@ def self_biased_cascode_current_mirror_base(
         fingers: tuple[int,int] = (2,2),
         multipliers: tuple[int,int] = (1,1),
         device: Optional[str] = 'nfet',
+        plus_minus_seperation: float = 0,
         with_substrate_tap: Optional[bool] = False,
         with_tie: Optional[bool] = True,
         with_dummy: Union[bool, tuple[bool, bool]] = True,
@@ -147,15 +154,15 @@ def self_biased_cascode_current_mirror_base(
     
     # place and flip top transistors such that the drains of bottom and top point towards eachother
     a_topl = SBCurrentMirror << fetL
-    a_topl = rename_ports_by_orientation(a_topl.mirror_y())
+    #a_topl = rename_ports_by_orientation(a_topl.mirror_y())
     
     b_topr = SBCurrentMirror << fetR
-    b_topr = rename_ports_by_orientation(b_topr.mirror_y())
+    #b_topr = rename_ports_by_orientation(b_topr.mirror_y())
     
-    a_botr = SBCurrentMirror << fetL
-    a_botr = rename_ports_by_orientation(a_botr.mirror_x())
-    b_botl = SBCurrentMirror << fetR
-    b_botl = rename_ports_by_orientation(b_botl.mirror_x())
+    a_botr = SBCurrentMirror << fetR
+    # a_botr = rename_ports_by_orientation(a_botr.mirror_x())
+    b_botl = SBCurrentMirror << fetL
+    #b_botl = rename_ports_by_orientation(b_botl.mirror_x())
     
     prec_ref_center(a_topl, snapmov2grid=True)
     prec_ref_center(b_topr, snapmov2grid=True)
@@ -184,13 +191,74 @@ def self_biased_cascode_current_mirror_base(
     a_botr.movex(fetLdims[0]/2+min_spacing_x/2).movey(pdk.snap_to_2xgrid(-fetLdims[1]/2-min_spacing_y/2))
     b_botl.movex(0-fetLdims[0]/2-min_spacing_x/2).movey(pdk.snap_to_2xgrid(-fetLdims[1]/2-min_spacing_y/2))
     
-    SBCurrentMirror.add_padding(default=0,layers=[pdk.get_glayer(well)])
+    viam2m3 = via_stack(pdk,"met2","met3",centered=True)
+    metal_min_dim = max(pdk.get_grule("met2")["min_width"],pdk.get_grule("met3")["min_width"])
+    metal_space = max(pdk.get_grule("met2")["min_separation"],pdk.get_grule("met3")["min_separation"],metal_min_dim)
 
-  
-
-    # if substrate tap place substrate tap, and route dummy to substrate tap
+    
+    # route sources (short sources)
+    SBCurrentMirror << route_quad(a_topl.ports["multiplier_0_source_E"], b_topr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))
+    SBCurrentMirror << route_quad(b_botl.ports["multiplier_0_source_E"], a_botr.ports["multiplier_0_source_W"], layer=pdk.get_glayer("met2"))
+    
+    
+    sextension = b_topr.ports["well_E"].center[0] - b_topr.ports["multiplier_0_source_E"].center[0]
+    source_routeE = SBCurrentMirror << c_route(pdk, b_topr.ports["multiplier_0_source_E"], a_botr.ports["multiplier_0_source_E"],extension=sextension, viaoffset=False)
+    source_routeW = SBCurrentMirror << c_route(pdk, a_topl.ports["multiplier_0_source_W"], b_botl.ports["multiplier_0_source_W"],extension=sextension, viaoffset=False)
+    # route drains
+    # place via at the drain
+    drain_br_via = SBCurrentMirror << viam2m3
+    drain_bl_via = SBCurrentMirror << viam2m3
+    drain_br_via.move(a_botr.ports["multiplier_0_drain_N"].center).movey(viam2m3.ymin)
+    drain_bl_via.move(b_botl.ports["multiplier_0_drain_N"].center).movey(viam2m3.ymin)
+    drain_br_viatm = SBCurrentMirror << viam2m3
+    drain_bl_viatm = SBCurrentMirror << viam2m3
+    drain_br_viatm.move(a_botr.ports["multiplier_0_drain_N"].center).movey(viam2m3.ymin)
+    drain_bl_viatm.move(b_botl.ports["multiplier_0_drain_N"].center).movey(-1.5 * evaluate_bbox(viam2m3)[1] - metal_space)
+    # create route to drain via
+    width_drain_route = b_topr.ports["multiplier_0_drain_E"].width
+    dextension = source_routeE.xmax - b_topr.ports["multiplier_0_drain_E"].center[0] + metal_space
+    bottom_extension = viam2m3.ymax + width_drain_route/2 + 2*metal_space
+    drain_br_viatm.movey(0-bottom_extension - metal_space - width_drain_route/2 - viam2m3.ymax)
+    SBCurrentMirror << route_quad(drain_br_viatm.ports["top_met_N"], drain_br_via.ports["top_met_S"], layer=pdk.get_glayer("met3"))
+    SBCurrentMirror << route_quad(drain_bl_viatm.ports["top_met_N"], drain_bl_via.ports["top_met_S"], layer=pdk.get_glayer("met3"))
+    floating_port_drain_bottom_L = set_port_orientation(movey(drain_bl_via.ports["bottom_met_W"],0-bottom_extension), get_orientation("E"))
+    floating_port_drain_bottom_R = set_port_orientation(movey(drain_br_via.ports["bottom_met_E"],0-bottom_extension - metal_space - width_drain_route), get_orientation("W"))
+    drain_routeTR_BL = SBCurrentMirror << c_route(pdk, floating_port_drain_bottom_L, b_topr.ports["multiplier_0_drain_E"],extension=dextension, width1=width_drain_route,width2=width_drain_route)
+    drain_routeTL_BR = SBCurrentMirror << c_route(pdk, floating_port_drain_bottom_R, a_topl.ports["multiplier_0_drain_W"],extension=dextension, width1=width_drain_route,width2=width_drain_route)
+    # cross gate route top with c_route. bar_minus ABOVE bar_plus
+    get_left_extension = lambda bar, a_topl=a_topl, SBCurrentMirror=SBCurrentMirror, pdk=pdk : (abs(SBCurrentMirror.xmin-min(a_topl.ports["multiplier_0_gate_W"].center[0],bar.ports["e1"].center[0])) + pdk.get_grule("met2")["min_separation"])
+    get_right_extension = lambda bar, b_topr=b_topr, SBCurrentMirror=SBCurrentMirror, pdk=pdk : (abs(SBCurrentMirror.xmax-max(b_topr.ports["multiplier_0_gate_E"].center[0],bar.ports["e3"].center[0])) + pdk.get_grule("met2")["min_separation"])
+    # lay bar plus and PLUSgate_routeW
+    bar_comp = rectangle(centered=True,size=(abs(b_topr.xmax-a_topl.xmin), b_topr.ports["multiplier_0_gate_E"].width),layer=pdk.get_glayer("met2"))
+    bar_plus = (SBCurrentMirror << bar_comp).movey(SBCurrentMirror.ymax + bar_comp.ymax + pdk.get_grule("met2")["min_separation"])
+    PLUSgate_routeW = SBCurrentMirror << c_route(pdk, a_topl.ports["multiplier_0_gate_W"], bar_plus.ports["e1"], extension=get_left_extension(bar_plus))
+    # lay bar minus and MINUSgate_routeE
+    plus_minus_seperation = max(pdk.get_grule("met2")["min_separation"], plus_minus_seperation)
+    bar_minus = (SBCurrentMirror << bar_comp).movey(SBCurrentMirror.ymax +bar_comp.ymax + plus_minus_seperation)
+    MINUSgate_routeE = SBCurrentMirror << c_route(pdk, b_topr.ports["multiplier_0_gate_E"], bar_minus.ports["e3"], extension=get_right_extension(bar_minus))
+    # lay MINUSgate_routeW and PLUSgate_routeE
+    MINUSgate_routeW = SBCurrentMirror << c_route(pdk, set_port_orientation(b_botl.ports["multiplier_0_gate_E"],"W"), bar_minus.ports["e1"], extension=get_left_extension(bar_minus))
+    PLUSgate_routeE = SBCurrentMirror << c_route(pdk, set_port_orientation(a_botr.ports["multiplier_0_gate_W"],"E"), bar_plus.ports["e3"], extension=get_right_extension(bar_plus))
+    
+    # correct pwell place, add ports, flatten, and return
+    SBCurrentMirror.add_ports(a_topl.get_ports_list(),prefix="tl_")
+    SBCurrentMirror.add_ports(b_topr.get_ports_list(),prefix="tr_")
+    SBCurrentMirror.add_ports(b_botl.get_ports_list(),prefix="bl_")
+    SBCurrentMirror.add_ports(a_botr.get_ports_list(),prefix="br_")
+    SBCurrentMirror.add_ports(source_routeE.get_ports_list(),prefix="source_routeE_")
+    SBCurrentMirror.add_ports(source_routeW.get_ports_list(),prefix="source_routeW_")
+    SBCurrentMirror.add_ports(drain_routeTR_BL.get_ports_list(),prefix="drain_routeTR_BL_")
+    SBCurrentMirror.add_ports(drain_routeTL_BR.get_ports_list(),prefix="drain_routeTL_BR_")
+    SBCurrentMirror.add_ports(MINUSgate_routeW.get_ports_list(),prefix="MINUSgateroute_W_")
+    SBCurrentMirror.add_ports(MINUSgate_routeE.get_ports_list(),prefix="MINUSgateroute_E_")
+    SBCurrentMirror.add_ports(PLUSgate_routeW.get_ports_list(),prefix="PLUSgateroute_W_")
+    SBCurrentMirror.add_ports(PLUSgate_routeE.get_ports_list(),prefix="PLUSgateroute_E_")
+    SBCurrentMirror.add_padding(layers=(pdk.get_glayer(well),), default=0)
+    
+    
+    # if substrate tap place substrate tap
     if with_substrate_tap:
-        tapref = SBCurrentMirror << tapring(pdk,evaluate_bbox(SBCurrentMirror,padding=1))#,horizontal_glayer="met1")
+        tapref = SBCurrentMirror << tapring(pdk,evaluate_bbox(SBCurrentMirror,padding=1),horizontal_glayer="met1")
         SBCurrentMirror.add_ports(tapref.get_ports_list(),prefix="tap_")
         try:
             SBCurrentMirror<<straight_route(pdk,a_topl.ports["multiplier_0_dummy_L_gsdcon_top_met_W"],SBCurrentMirror.ports["tap_W_top_met_W"],glayer2="met1")
@@ -208,189 +276,56 @@ def self_biased_cascode_current_mirror_base(
             SBCurrentMirror<<straight_route(pdk,a_botr.ports["multiplier_0_dummy_R_gsdcon_top_met_W"],SBCurrentMirror.ports["tap_E_top_met_E"],glayer2="met1")
         except KeyError:
             pass
-    # correct pwell place, add ports, flatten, and return
-    SBCurrentMirror.add_ports(a_topl.get_ports_list(),prefix="tl_")
-    SBCurrentMirror.add_ports(b_topr.get_ports_list(),prefix="tr_")
-    SBCurrentMirror.add_ports(b_botl.get_ports_list(),prefix="bl_")
-    SBCurrentMirror.add_ports(a_botr.get_ports_list(),prefix="br_")
-    # route asrc to asrc
-    vsrca1 = SBCurrentMirror << g1g2via
-    vsrca2 = SBCurrentMirror << g1g2via
-    align_comp_to_port(vsrca1,movey(SBCurrentMirror.ports["tl_multiplier_0_drain_W"],-extra_g1g2_spacing),alignment=("right","bottom"))
-    align_comp_to_port(vsrca2,movey(SBCurrentMirror.ports["br_multiplier_0_drain_W"],extra_g1g2_spacing),alignment=("right","top"))
-    SBCurrentMirror << L_route(pdk, movey(vsrca1.ports["top_met_W"],extra_g1g2_spacing), vsrca2.ports["top_met_N"])
-    # route bsrc to bsrc
-    vsrcb1 = SBCurrentMirror << g1g2via
-    vsrcb2 = SBCurrentMirror << g1g2via
-    align_comp_to_port(vsrcb1,SBCurrentMirror.ports["tr_multiplier_0_drain_E"],alignment=("left","bottom"))
-    align_comp_to_port(vsrcb2,SBCurrentMirror.ports["bl_multiplier_0_drain_E"],alignment=("left","top"))
-    intermediate_port = SBCurrentMirror.ports["bl_multiplier_0_source_E"].copy()
-    intermediate_port.layer = pdk.get_glayer(pdk.layer_to_glayer(vsrcb1.ports["top_met_E"].layer))
-    SBCurrentMirror << L_route(pdk, vsrcb1.ports["top_met_S"], intermediate_port)
-    SBCurrentMirror << L_route(pdk,intermediate_port, vsrcb2.ports["top_met_S"])
-    # route adrain to adrain
-    vdraina1 = SBCurrentMirror << g0g1via # first via
-    align_comp_to_port(vdraina1, SBCurrentMirror.ports[f"tl_multiplier_0_row0_col{fingers[0]-1}_rightsd_top_met_N"],alignment=("right","top"))
-    align_comp_to_port(vdraina1, SBCurrentMirror.ports["tl_multiplier_0_drain_E"],alignment=("right","none"))
-    vdraina1.movex(pdk.get_grule(glayer1)["min_separation"])
-    SBCurrentMirror << straight_route(pdk, vdraina1.ports["top_met_W"],SBCurrentMirror.ports["tr_multiplier_0_leftsd_top_met_E"],glayer2=glayer1)
-    vdraina2 = SBCurrentMirror << g0g1via # second via
-    align_comp_to_port(vdraina2, SBCurrentMirror.ports["tl_multiplier_0_drain_E"],alignment=("right","c"))
-    vdraina2.movex(pdk.get_grule(glayer1)["min_separation"])
-    vdraina2_mdprt = movex(vdraina2.ports["bottom_met_S"],pdk.get_grule("met2","via1")["min_enclosure"])
-    vdraina2_mdprt.width = vdraina2_mdprt.width + 2*pdk.get_grule("met2","via1")["min_enclosure"]
-    SBCurrentMirror << straight_route(pdk, vdraina2_mdprt, vdraina1.ports["bottom_met_N"])
-    SBCurrentMirror << L_route(pdk, vdraina2.ports["top_met_N"],SBCurrentMirror.ports["bl_multiplier_0_source_E"])
-    # route bdrain to bdrain
-    vdrainb1 = SBCurrentMirror << g0g1via # first via
-    align_comp_to_port(vdrainb1, SBCurrentMirror.ports["br_multiplier_0_leftsd_top_met_N"],alignment=("left","bottom"))
-    align_comp_to_port(vdrainb1, SBCurrentMirror.ports["br_multiplier_0_drain_W"],alignment=("left","none"))
-    vdrainb1.movex(-pdk.get_grule(glayer1)["min_separation"])
-    # TODO: fix slight overhang (both this one and the adrain->bdrain)
-    SBCurrentMirror << straight_route(pdk, vdrainb1.ports["top_met_W"],SBCurrentMirror.ports["br_multiplier_0_leftsd_top_met_E"],glayer2=glayer1)
-    vdrainb2 = SBCurrentMirror << g0g1via # second via
-    align_comp_to_port(vdrainb2, SBCurrentMirror.ports["br_multiplier_0_drain_W"],alignment=("left","c"))
-    vdrainb2.movex(-pdk.get_grule(glayer1)["min_separation"])
-    vdrainb2_mdprt = movex(vdrainb2.ports["bottom_met_N"],-pdk.get_grule("met2","via1")["min_enclosure"])
-    vdrainb2_mdprt.width = vdrainb2_mdprt.width + 2*pdk.get_grule("met2","via1")["min_enclosure"]
-    SBCurrentMirror << straight_route(pdk, vdrainb2_mdprt, vdrainb1.ports["bottom_met_S"])
-    SBCurrentMirror << L_route(pdk, vdrainb2.ports["top_met_N"],SBCurrentMirror.ports["tl_multiplier_0_source_E"])
-    # agate to agate
-    gate2rt_sep = pdk.get_grule(glayer2)["min_separation"]
-    vgatea1 = SBCurrentMirror << g1g2via# first via
-    align_comp_to_port(vgatea1,SBCurrentMirror.ports["tl_multiplier_0_gate_E"],alignment=("right","bottom"))
-    vgatea2 = SBCurrentMirror << g1g2via# second via
-    align_comp_to_port(vgatea2,SBCurrentMirror.ports["br_multiplier_0_gate_S"],alignment=("right","bottom"))
-    vgatea2.movey(-gate2rt_sep)
-    SBCurrentMirror << straight_route(pdk, vgatea2.ports["bottom_met_S"], SBCurrentMirror.ports["br_multiplier_0_gate_N"])
-    g1extension = pdk.util_max_metal_seperation()+pdk.snap_to_2xgrid(SBCurrentMirror.ports["tr_multiplier_0_plusdoped_E"].center[0] - vgatea2.ports["top_met_E"].center[0])
-    cext1 = SBCurrentMirror << c_route(pdk, vgatea2.ports["top_met_E"], vgatea1.ports["top_met_E"], cglayer=glayer2, extension=g1extension)
-    SBCurrentMirror.add_ports(ports=cext1.get_ports_list(),prefix="A_gate_route_")
-    # bgate to bgate
-    vgateb1 = SBCurrentMirror << g1g2via# first via
-    align_comp_to_port(vgateb1,SBCurrentMirror.ports["bl_multiplier_0_gate_E"],alignment=("right","top"))
-    vgateb2 = SBCurrentMirror << g1g2via# second via
-    align_comp_to_port(vgateb2,SBCurrentMirror.ports["tr_multiplier_0_gate_S"],alignment=("right","top"))
-    vgateb2.movey(gate2rt_sep)
-    SBCurrentMirror << straight_route(pdk, vgateb2.ports["bottom_met_N"], SBCurrentMirror.ports["tr_multiplier_0_gate_S"])
-    g2extension = pdk.util_max_metal_seperation()+pdk.snap_to_2xgrid(abs(SBCurrentMirror.ports["tl_multiplier_0_plusdoped_W"].center[0] - vgateb1.ports["top_met_W"].center[0]))
-    cext2 = SBCurrentMirror << c_route(pdk, vgateb2.ports["top_met_W"], vgateb1.ports["top_met_W"], cglayer=glayer2, extension=g2extension)
-    SBCurrentMirror.add_ports(ports=cext2.get_ports_list(),prefix="B_gate_route_")
-    # create better toplevel ports
-    b_drainENS = SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["tr_multiplier_0_drain_E"], movex(cext1.ports["con_N"],cext2.ports["con_N"].width/2+pdk.util_max_metal_seperation()), glayer2=glayer1)
-    a_drainENS = SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["br_multiplier_0_drain_E"], movex(cext1.ports["con_N"],cext2.ports["con_N"].width/2+pdk.util_max_metal_seperation()), glayer2=glayer1)
-    b_sourceENS = SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["tr_multiplier_0_source_E"], movex(cext1.ports["con_N"],cext2.ports["con_N"].width/2+pdk.util_max_metal_seperation()), glayer2=glayer1)
-    a_sourceENS = SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["br_multiplier_0_source_E"], movex(cext1.ports["con_N"],cext2.ports["con_N"].width/2+pdk.util_max_metal_seperation()), glayer2=glayer1)
-    b_drainW = SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["bl_multiplier_0_drain_W"], movex(cext2.ports["con_N"],-cext2.ports["con_N"].width/2-pdk.util_max_metal_seperation()), glayer2=glayer1)
-    a_drainW = SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["tl_multiplier_0_drain_W"], movex(cext2.ports["con_N"],-cext2.ports["con_N"].width/2-pdk.util_max_metal_seperation()), glayer2=glayer1)
-    b_sourceW = SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["bl_multiplier_0_source_W"], movex(cext2.ports["con_N"],-cext2.ports["con_N"].width/2-pdk.util_max_metal_seperation()), glayer2=glayer1)
-    a_sourceW = SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["tl_multiplier_0_source_W"], movex(cext2.ports["con_N"],-cext2.ports["con_N"].width/2-pdk.util_max_metal_seperation()), glayer2=glayer1)
-    # add the ports
-    def makeNorS(portin, direction: str):
-        mdprt = set_port_orientation(movex(portin.copy(),(-1 if portin.name.endswith("E") else 1)*pdk.snap_to_2xgrid(portin.width/2)),direction)
-        mdprt.name = (mdprt.name.strip("EW") + direction.strip().capitalize()).removeprefix("route_")
-        return movey(mdprt,(1 if direction.endswith("N") else -1)*pdk.snap_to_2xgrid(mdprt.width/2))
-    def addENS(topcomp: Component, straightrouteref, device: str, pin: str):
-        # device is A or B and pin is source drain or gate
-        eastport = straightrouteref.ports["route_E"].copy()
-        eastport.name = eastport.name.removeprefix("route_")
-        topcomp.add_ports(ports=[eastport,makeNorS(eastport,"N"),makeNorS(eastport,"S")],prefix=device+"_"+pin+"_")
-    addENS(SBCurrentMirror,b_drainENS,"B","drain")
-    addENS(SBCurrentMirror,a_drainENS,"A","drain")
-    addENS(SBCurrentMirror,b_sourceENS,"B","source")
-    addENS(SBCurrentMirror,a_sourceENS,"A","source")
-    def localportrename(portin):
-        portin = portin.copy()
-        portin.name = portin.name.removeprefix("route_")
-        return portin
-    SBCurrentMirror.add_ports(ports=[localportrename(b_drainW.ports["route_W"])],prefix="B_drain_")
-    SBCurrentMirror.add_ports(ports=[localportrename(a_drainW.ports["route_W"])],prefix="A_drain_")
-    SBCurrentMirror.add_ports(ports=[localportrename(b_sourceW.ports["route_W"])],prefix="B_source_")
-    SBCurrentMirror.add_ports(ports=[localportrename(a_sourceW.ports["route_W"])],prefix="A_source_")
-    # better gate routes
-    a_gateE = SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["br_multiplier_0_gate_E"], SBCurrentMirror.ports["A_drain_E"])
-    b_gateE = SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["tr_multiplier_0_gate_E"], SBCurrentMirror.ports["A_drain_E"])
-    a_gateW = SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["tl_multiplier_0_gate_W"], SBCurrentMirror.ports["A_drain_W"])
-    b_gateW = SBCurrentMirror << straight_route(pdk, SBCurrentMirror.ports["bl_multiplier_0_gate_W"], SBCurrentMirror.ports["A_drain_W"])
-    SBCurrentMirror.add_ports(ports=[localportrename(a_gateE.ports["route_E"])],prefix="A_gate_")
-    SBCurrentMirror.add_ports(ports=[localportrename(b_gateE.ports["route_E"])],prefix="B_gate_")
-    SBCurrentMirror.add_ports(ports=[localportrename(a_gateW.ports["route_W"])],prefix="A_gate_")
-    SBCurrentMirror.add_ports(ports=[localportrename(b_gateW.ports["route_W"])],prefix="B_gate_")
-    rename_north_portb = vgateb2.ports["top_met_N"].copy()# add B_gate_N
-    rename_north_portb.name = "B_gate_N"
-    SBCurrentMirror.add_ports(ports=[rename_north_portb])
-    rename_south_porta = vgatea2.ports["top_met_S"].copy()# add A_gate_S
-    rename_south_porta.name = "A_gate_S"
-    SBCurrentMirror.add_ports(ports=[rename_south_porta])
-    rename_south_portb = vgateb1.ports["top_met_S"].copy()# add B_gate_S
-    rename_south_portb.name = "B_gate_S"
-    SBCurrentMirror.add_ports(ports=[rename_south_portb])
-    # rename ports and add private ports for smart route
-    SBCurrentMirror = rename_ports_by_orientation(SBCurrentMirror)
-    SBCurrentMirror.add_ports(create_private_ports(SBCurrentMirror,["".join(prtp) for prtp in product(["A_","B_"],["drain","source","gate"])]))
-    SBCurrentMirror.info["route_genid"]="common_centroid_ab_ba"
 
-        # Adding tapring
-    if with_tie:
-        tap_sep = max(maxmet_sep,
-            pdk.get_grule("active_diff", "active_tap")["min_separation"])
-        tap_sep += pdk.get_grule(sdglayer, "active_tap")["min_enclosure"]
-        tap_encloses = (
-        2 * (tap_sep + SBCurrentMirror.xmax),
-        2 * (tap_sep + SBCurrentMirror.ymax),
-        )
-        tie_ref = SBCurrentMirror << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = sdglayer, horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
-        SBCurrentMirror.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
+    # # Adding tapring
+    # if with_tie:
+    #     tap_sep = max(maxmet_sep,
+    #         pdk.get_grule("active_diff", "active_tap")["min_separation"])
+    #     tap_sep += pdk.get_grule(sdglayer, "active_tap")["min_enclosure"]
+    #     tap_encloses = (
+    #     2 * (tap_sep + SBCurrentMirror.xmax),
+    #     2 * (tap_sep + SBCurrentMirror.ymax),
+    #     )
+    #     tie_ref = SBCurrentMirror << tapring(pdk, enclosed_rectangle = tap_encloses, sdlayer = sdglayer, horizontal_glayer = tie_layers[0], vertical_glayer = tie_layers[1])
+    #     SBCurrentMirror.add_ports(tie_ref.get_ports_list(), prefix="welltie_")
 
-    
-    
-# # create transistors
-#     well = None
-#     if isinstance(with_dummy, bool):
-#         dummy = (with_dummy, with_dummy)
+    # # if substrate tap place substrate tap, and route dummy to substrate tap
+    # if with_substrate_tap:
+    #     tapref = SBCurrentMirror << tapring(pdk,evaluate_bbox(SBCurrentMirror,padding=1))#,horizontal_glayer="met1")
+    #     SBCurrentMirror.add_ports(tapref.get_ports_list(),prefix="tap_")
+    #     try:
+    #         SBCurrentMirror<<straight_route(pdk,a_topl.ports["multiplier_0_dummy_L_gsdcon_top_met_W"],SBCurrentMirror.ports["tap_W_top_met_W"],glayer2="met1")
+    #     except KeyError:
+    #         pass
+    #     try:
+    #         SBCurrentMirror<<straight_route(pdk,b_topr.ports["multiplier_0_dummy_R_gsdcon_top_met_W"],SBCurrentMirror.ports["tap_E_top_met_E"],glayer2="met1")
+    #     except KeyError:
+    #         pass
+    #     try:
+    #         SBCurrentMirror<<straight_route(pdk,b_botl.ports["multiplier_0_dummy_L_gsdcon_top_met_W"],SBCurrentMirror.ports["tap_W_top_met_W"],glayer2="met1")
+    #     except KeyError:
+    #         pass
+    #     try:
+    #         SBCurrentMirror<<straight_route(pdk,a_botr.ports["multiplier_0_dummy_R_gsdcon_top_met_W"],SBCurrentMirror.ports["tap_E_top_met_E"],glayer2="met1")
+    #     except KeyError:
+    #         pass
         
-#     if device.lower() in ['nmos', 'nfet']:
-#         fetL = nmos(pdk, width=width[0], fingers=fingers[0],length=length,multipliers=multipliers[0],with_dummy=(dummy[0], False),with_dnwell=False,with_substrate_tap=False,with_tie=False)
-#         fetR = nmos(pdk, width=width[1], fingers=fingers[1],length=length,multipliers=multipliers[1],with_dummy=(False,dummy[1]),with_dnwell=False,with_substrate_tap=False,with_tie=False)
-#         min_spacing_x = pdk.get_grule("n+s/d")["min_separation"] - 2*(fetL.xmax - fetL.ports["multiplier_0_plusdoped_E"].center[0])
-#         well = "pwell"
-#     elif device.lower() in ['pmos', 'pfet']:
-#         fetL = pmos(pdk, width=width[0], fingers=fingers[0],length=length,multipliers=multipliers[0],with_tie=with_tie,with_dummy=(dummy[0], False),dnwell=False,with_substrate_tap=False)
-#         fetR = pmos(pdk, width=width[1], fingers=fingers[1],length=length,multipliers=multipliers[1],with_tie=with_tie,with_dummy=(False,dummy[1]),dnwell=False,with_substrate_tap=False)
-#         min_spacing_x = pdk.get_grule("p+s/    d")["min_separation"] - 2*(fetL.xmax - fetL.ports["multiplier_0_plusdoped_E"].center[0])
-#         well = "nwell"
-#     else:
-#         raise ValueError(f"device must be either 'nmos' or 'pmos', got {device}")
+    #SBCurrentMirror.add_padding(default=0,layers=[pdk.get_glayer(well)])
 
-#     # place transistors
-#     viam2m3 = via_stack(pdk,"met2","met3",centered=True)
-#     metal_min_dim = max(pdk.get_grule("met2")["min_width"],pdk.get_grule("met3")["min_width"])
-#     metal_space = max(pdk.get_grule("met2")["min_separation"],pdk.get_grule("met3")["min_separation"],metal_min_dim)
-#     gate_route_os = evaluate_bbox(viam2m3)[0] - fetL.ports["multiplier_0_gate_W"].width + metal_space
-#     min_spacing_y = metal_space + 2*gate_route_os
-#     min_spacing_y = min_spacing_y - 2*abs(fetL.ports["well_S"].center[1] - fetL.ports["multiplier_0_gate_S"].center[1])
-#     # TODO: fix spacing where you see +-0.5
-#     a_topl = (SBCurrentMirror << fetL).movey(fetL.ymax+min_spacing_y/2+0.5).movex(0-fetL.xmax-min_spacing_x/2)
-#     b_topr = (SBCurrentMirror << fetR).movey(fetR.ymax+min_spacing_y/2+0.5).movex(fetL.xmax+min_spacing_x/2)
-#     a_botr = (SBCurrentMirror << fetR)
-#     a_botr.mirror_y().movey(0-0.5-fetL.ymax-min_spacing_y/2).movex(fetL.xmax+min_spacing_x/2)
-#     b_botl = (SBCurrentMirror << fetL)
-#     b_botl.mirror_y().movey(0-0.5-fetR.ymax-min_spacing_y/2).movex(0-fetL.xmax-min_spacing_x/2)
-    
     component = component_snap_to_grid(rename_ports_by_orientation(SBCurrentMirror))
     #component.info['netlist'] = low_voltage_cmirr_netlist(bias_fvf, cascode_fvf, fet_1_ref, fet_2_ref, fet_3_ref, fet_4_ref)
     
     return component
 
 if __name__ == "__main__":
-    comp =self_biased_cascode_current_mirror_base(gf180,multipliers=(4,2),fingers=(4,2))
+    comp =self_biased_cascode_current_mirror_base(sky130,multipliers=(1,1),fingers=(1,1))
     # comp.pprint_ports()
     #comp =add_lvcm_labels(comp,sky130)
     comp.name = "CMWL"
     comp.show()
     #print(comp.info['netlist'].generate_netlist())
     #print("...Running DRC...")
-    drc_result = gf180.drc_magic(comp, comp.name)
+    #drc_result = gf180.drc_magic(comp, comp.name)
     ## Klayout DRC
     #drc_result = sky130.drc(comp)
     
