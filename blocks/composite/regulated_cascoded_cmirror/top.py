@@ -8,7 +8,7 @@ from gdsfactory import cell
 from gdsfactory.component import Component
 from gdsfactory.components import rectangle, text_freetype
 
-from glayout import MappedPDK, gf180, nmos, pmos, tapring, via_stack
+from glayout import MappedPDK, sky130, gf180, nmos, pmos, tapring, via_stack
 from glayout.placement.two_transistor_interdigitized import (
     two_nfet_interdigitized,
     two_pfet_interdigitized,
