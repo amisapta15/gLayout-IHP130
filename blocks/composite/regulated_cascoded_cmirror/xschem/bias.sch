@@ -253,7 +253,7 @@ C {lab_pin.sym} 380 -120 2 0 {name=p33 sig_type=std_logic lab=VDD}
 C {lab_pin.sym} 270 -290 2 0 {name=p34 sig_type=std_logic lab=VDD}
 C {symbols/nfet_03v3.sym} 60 350 0 0 {name=M22
 L=1u
-W=4u
+W=8u
 nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -267,7 +267,7 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} -40 350 0 1 {name=M23
 L=1u
-W=40u
+W=80u
 nf=10
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -281,7 +281,7 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} 60 110 0 0 {name=M24
 L=1u
-W=4u
+W=8u
 nf=1
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -295,7 +295,7 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} -40 110 0 1 {name=M25
 L=1u
-W=40u
+W=80u
 nf=10
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"

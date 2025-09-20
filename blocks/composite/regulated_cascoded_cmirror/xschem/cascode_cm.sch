@@ -71,7 +71,7 @@ N 660 -770 880 -770 {lab=v_out}
 N 660 -770 660 -430 {lab=v_out}
 C {symbols/nfet_03v3.sym} 190 -260 0 1 {name=M10
 L=1u
-W=4u
+W=8u
 nf=2
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -85,7 +85,7 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} 360 -360 0 0 {name=M8
 L=1u
-W=4u
+W=8u
 nf=2
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -99,7 +99,7 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} 400 -140 0 1 {name=M11
 L=1u
-W=4u
+W=8u
 nf=2
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -113,7 +113,7 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} 850 -240 0 0 {name=M12
 L=1u
-W=4u
+W=8u
 nf=2
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -127,7 +127,7 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} 640 -140 0 0 {name=M13
 L=1u
-W=4u
+W=8u
 nf=2
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"
@@ -141,7 +141,7 @@ spiceprefix=X
 }
 C {symbols/nfet_03v3.sym} 680 -360 0 1 {name=M14
 L=1u
-W=4u
+W=8u
 nf=2
 m=1
 ad="'int((nf+1)/2) * W/nf * 0.18u'"

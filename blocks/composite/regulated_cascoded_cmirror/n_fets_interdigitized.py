@@ -41,47 +41,6 @@ for line in result.stdout.splitlines():
 # Now, update os.environ with these
 os.environ.update(env_vars)
 
-# @validate_arguments
-def input_stage(
-        pdk: MappedPDK,
-        Width: float = 1,
-        Length: Optional[float] = 1,
-        num_cols: int = 1,
-        fingers: int = 1,
-        multipliers: int = 1,
-        type: Optional[str] = 'nfet',
-        with_substrate_tap: Optional[bool] = False,
-        with_tie: Optional[bool] = True,
-        with_dummy: Optional[bool] = False,
-        tie_layers: tuple[str,str]=("met2","met1"),
-        show_netlist: Optional[bool] = False,
-        **kwargs
-    ) -> Component:
-    """An instantiable self biased casoded current mirror that returns a Component object."""
-    
-    pdk.activate()
-    maxmet_sep = pdk.util_max_metal_seperation()
-    n_well_sep = maxmet_sep
-    psize=(0.35,0.35)
-    
-    # Create the current mirror component
-    top_level = Component(name="input_stage")
-    top_level.name="input_stage"
-    Length = Length if Length is not None else pdk.get_grule('poly')['min_width']
-    top_ref = prec_ref_center(top_level)
-
-    currm_bottom = n_transistor_interdigitized(pdk, device="pfet", numcols=1, n_devices=4, with_substrate_tap=with_substrate_tap, with_tie=with_tie, width=Width, length=Length)
-
-    currm_bottom = top_level<< currm_bottom
-    currm_bottom.name="currm_bottom"
-
-    currm_bottom_ref = prec_ref_center(currm_bottom)
-    currm_bottom_ref.move(top_ref.center)
-    top_level.add(currm_bottom_ref)
-
-    return rename_ports_by_orientation(component_snap_to_grid(top_level))
-
-
 #from glayout.placement.two_transistor_interdigitized import two_nfet_interdigitized; from glayout.pdk.sky130_mapped import sky130_mapped_pdk as pdk; biasParams=[6,2,4]; rmult=2
 def add_n_int_labels(
     device_int_in: Component,
@@ -403,6 +362,7 @@ def macro_n_transistor_interdigitized(
         # e.g., A_0_, B_0_, C_0_, A_1_, ...
         prefix = f"{L}_{i // n_devices}_"
         idplace.add_ports(cref.get_ports_list(), prefix=prefix)
+
 
 
     # ----- Equalize extents for each placed device (like original) -----
@@ -759,15 +719,76 @@ def n_transistor_interdigitized(
         )
     
 
+def input_stage(
+    pdk: MappedPDK,
+    Width: float = 1,
+    Length: Optional[float] = 1,
+    num_cols: int = 1,
+    fingers: int = 1,
+    multipliers: int = 1,
+    type: Optional[str] = "pfet",
+    with_substrate_tap: Optional[bool] = False,
+    with_tie: Optional[bool] = True,
+    with_dummy: Optional[bool] = False,
+    tie_layers: tuple[str, str] = ("met2", "met1"),
+    show_netlist: Optional[bool] = False,
+    add_labels = True,
+    **kwargs,
+) -> Component:
+    """An instantiable self biased casoded current mirror that returns a Component object."""
+
+    pdk.activate()
+    maxmet_sep = pdk.util_max_metal_seperation()
+    n_well_sep = maxmet_sep
+    psize = (0.35, 0.35)
+
+    # Create the current mirror component
+    top_level = Component(name="input_stage")
+    top_level.name = "input_stage"
+    Length = Length if Length is not None else pdk.get_grule("poly")["min_width"]
+    top_ref = prec_ref_center(top_level)
+
+    # ------------------------------------------------------------------------------------------------------------------------------------------------------------
+    # BOTTOM CURRENT MIRRORS
+    # ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    currm_bottom = n_transistor_interdigitized(
+        pdk,
+        device="pfet",
+        numcols=1,
+        n_devices=4,
+        with_substrate_tap=False,
+        with_tie=with_tie,
+        width=Width,
+        length=Length,
+    )
+
+    currm_bottom = top_level << currm_bottom
+    currm_bottom.name = "currm_bottom"
+
+    currm_bottom_ref = prec_ref_center(currm_bottom)
+    currm_bottom_ref.move(top_ref.center)
+    top_level.add(currm_bottom_ref)
+
+    top_level.add_ports(currm_bottom_ref.get_ports_list(), prefix="currm_bottom_")
+
+    top_level = component_snap_to_grid(rename_ports_by_orientation(top_level))
+
+    return top_level
+    
+
 if __name__ == "__main__":
     selected_pdk=gf180 
-    comp = input_stage(selected_pdk, num_cols=1, Width=10, Length=2,with_substrate_tap=True,show_netlist=False)
+    
+    comp = input_stage(
+        selected_pdk, num_cols=1, Width=10, Length=2, with_substrate_tap=False, show_netlist=False, with_tie=True
+    )
     #comp.pprint_ports()
     #comp = add_cm_labels(comp, pdk=selected_pdk)
-    comp.name = "TEST"
+    comp.name = "TEST2"
     comp.show()
     ##Write the current mirror layout to a GDS file
-    comp.write_gds("GDS/test.gds")
+    comp.write_gds("GDS/test2.gds")
     
     # # #Generate the netlist for the current mirror
     # print("\n...Generating Netlist...")

@@ -28,6 +28,7 @@ from cm_v import current_mirror_base
 from cm_sb import self_biased_cascode_current_mirror
 from cm_rc import regulated_cascode_current_mirror
 from input import input_stage
+from bias import bias_stage
 
 ###### Only Required for IIC-OSIC Docker
 # Run a shell, source .bashrc, then printenv
@@ -195,6 +196,57 @@ def generate_top_netlist(
 
     return topnet
 
+# def generate_top_netlist(
+#     prefix: str,
+#     in_net: str,
+#     aux_net: str,
+#     en_net: str,
+#     out_vcm_net: str,
+#     out_sbcm_net: str,
+#     out_rccm_net: str,
+#     nl_input: Netlist,
+#     nl_vcm: Netlist,
+#     nl_sbcm: Netlist,
+#     nl_rccm: Netlist,
+#     show_netlist: bool = False,
+# ) -> Netlist:
+#     """
+#     Build top-level .subckt that instantiates child subckts and wires them to top nets.
+#     TOP pin order must match layout header:
+#     .subckt TOP VIN VSS VDD VOUT_RCCM VOUT_SBCM VOUT_VCM VAUX EN
+#     """
+#     top_pins = [
+#         in_net,
+#         "VSS",
+#         "VDD",
+#         out_rccm_net,
+#         out_sbcm_net,
+#         out_vcm_net,
+#         aux_net,
+#         en_net,
+#     ]
+
+#     netlist = Netlist(
+#         circuit_name=prefix,
+#         nodes=top_pins,
+#     )
+
+
+#     in_comp = netlist.connect_netlist(nl_input, [('VIN',in_net),('EN',en_net), ('VDD','VDD')])
+#     vcm_comp = netlist.connect_netlist(nl_vcm, [('VOUT',out_vcm_net),('VSS','VSS')])
+#     sbcm_comp = netlist.connect_netlist(nl_sbcm, [('VOUT',out_sbcm_net),('VSS','VSS')])
+#     rccm_comp = netlist.connect_netlist(nl_rccm, [('VAUX',aux_net),('VOUT',out_rccm_net),('VSS','VSS')])
+
+#     netlist.connect_subnets(in_comp, vcm_comp, [('VOUT_VCM','VIN')])
+#     netlist.connect_subnets(in_comp, sbcm_comp, [('VOUT_BCM','VIN')])
+#     netlist.connect_subnets(in_comp, rccm_comp, [('VOUT_CCM','VIN')])
+
+#     if show_netlist:
+#         print("Generated top-level netlist:\n")
+#         print(netlist.generate_netlist())
+
+#     return netlist
+
 
 # @validate_arguments
 def top(
@@ -304,25 +356,175 @@ def top(
     )
 
     # -------------------------------------------------------------------------
+    # CREATING THE BIAS STAGE
+    # -------------------------------------------------------------------------
+    print("Creating Bias Stage ...")
+
+    bias_stage_comp = bias_stage(
+        pdk,
+        add_labels=False,
+    )
+    bias_stage_ref = prec_ref_center(bias_stage_comp)
+    # bias_stage_ref.move(center).movex(-evaluate_bbox(bias_stage_ref)[0]).movey(
+    #     evaluate_bbox(bias_stage_ref)[1] / 2
+    # )
+    bias_stage_ref.move(center).movex(
+        -3 * evaluate_bbox(input_stage_ref)[0] + 4 * pdk.util_max_metal_seperation()
+    ).movey(+evaluate_bbox(input_stage_ref)[1] / 2)
+    top_level.add(bias_stage_ref)
+    top_level.add_ports(bias_stage_ref.get_ports_list(), prefix="bias_")
+
+    # -------------------------------------------------------------------------
     # CONNECTING AUX
     # -------------------------------------------------------------------------
     viam1m2 = via_stack(pdk, "met1", "met2", centered=True)
-    rccm_aux_via = top_level << viam1m2
-    rccm_aux_via.move(
-        (
-            top_level.ports["input_EN_A_top_met_N"].center[0],
-            rccm_ref.ports["AUX_A_top_met_W"].center[1],
-        )
+    viam2m3 = via_stack(pdk, "met2", "met3", centered=True)
+    # rccm_aux_via = top_level << viam1m2
+    # rccm_aux_via.move(
+    #     (
+    #         top_level.ports["input_EN_A_top_met_N"].center[0],
+    #         rccm_ref.ports["AUX_A_top_met_W"].center[1],
+    #     )
+    # )
+    # top_level.add_ports(rccm_aux_via.get_ports_list(), prefix="AUX_")
+
+    # top_level << straight_route(
+    #     pdk,
+    #     rccm_aux_via.ports["top_met_E"],
+    #     rccm_ref.ports["AUX_A_top_met_W"],
+    #     glayer1="met1",
+    #     glayer2="met1",
+    # )
+
+    top_level << L_route(
+        pdk, bias_stage_ref.ports["base_right_OUT_top_met_N"], rccm_ref.ports["AUX_A_top_met_W"], hglayer="met1", vglayer="met1",
     )
-    top_level.add_ports(rccm_aux_via.get_ports_list(), prefix="AUX_")
+
+    en_via = top_level << viam1m2
+    en_via.move(bias_stage_ref.ports["fet_right_multiplier_0_gate_E"].center).movex(evaluate_bbox(bias_stage_ref)[0])
 
     top_level << straight_route(
         pdk,
-        rccm_aux_via.ports["top_met_E"],
-        rccm_ref.ports["AUX_A_top_met_W"],
+        bias_stage_ref.ports["fet_right_multiplier_0_gate_E"],
+        en_via.ports["top_met_W"],
+        glayer1="met2",
+        glayer2="met2",
+    )
+
+    en_input_via = top_level << viam2m3
+    en_input_via.move((input_stage_ref.ports["EN_A_top_met_N"].center[0], en_via.center[1]))
+
+    top_level << straight_route(
+        pdk,
+        en_input_via.ports["top_met_S"],
+        input_stage_ref.ports["EN_A_top_met_N"],
+        glayer1="met3",
+        glayer2="met3",
+    )
+
+    aux_via = top_level << viam1m2
+    aux_via.move(en_via.center).movey(evaluate_bbox(rccm_ref)[1])
+
+    top_level << L_route(
+        pdk,
+        bias_stage_ref.ports["base_left_IN_top_met_N"],
+        aux_via.ports["top_met_W"],
+    )
+
+    # Outputs
+
+    vcm_via = top_level << viam1m2
+    vcm_via.move((en_via.center[0], vcm_ref.ports["OUT_top_met_W"].center[1]))
+
+    top_level << straight_route(
+        pdk,
+        vcm_via.ports["top_met_W"],
+        vcm_ref.ports["OUT_top_met_E"],
+        glayer1="met2",
+        glayer2="met2",
+    )
+
+    sbcm_via = top_level << viam1m2
+    sbcm_via.move((en_via.center[0], sbcm_ref.ports["OUT_top_met_W"].center[1]))
+
+    top_level << straight_route(
+        pdk,
+        sbcm_via.ports["top_met_W"],
+        sbcm_ref.ports["OUT_top_met_E"],
+        glayer1="met2",
+        glayer2="met2",
+    )
+
+    rccm_via = top_level << viam1m2
+    rccm_via.move((en_via.center[0], rccm_ref.ports["OUT_top_met_W"].center[1]))
+
+    top_level << straight_route(
+        pdk,
+        rccm_via.ports["top_met_W"],
+        rccm_ref.ports["OUT_top_met_E"],
+        glayer1="met2",
+        glayer2="met2",
+    )
+
+    # Input
+
+    vin1_via = top_level << viam1m2
+    vin1_via.move(input_stage_ref.ports["IN_A_top_met_N"].center).movey(-evaluate_bbox(sbcm_ref)[1])
+
+    vin2_via = top_level << viam1m2
+    vin2_via.move(vin1_via.center).movex(2*evaluate_bbox(input_stage_ref)[0])
+
+    vin3_via = top_level << viam1m2
+    vin3_via.move(aux_via.center).movey(evaluate_bbox(rccm_ref)[1])
+
+    top_level << straight_route(
+        pdk,
+        input_stage_ref.ports["IN_A_top_met_S"],
+        vin1_via.ports["top_met_N"],
         glayer1="met1",
         glayer2="met1",
     )
+
+    top_level << straight_route(
+        pdk,
+        vin1_via.ports["top_met_E"],
+        vin2_via.ports["top_met_W"],
+        glayer1="met1",
+        glayer2="met1",
+    )
+
+    top_level << L_route(
+        pdk,
+        vin2_via.ports["top_met_N"],
+        vin3_via.ports["top_met_W"],
+        hglayer="met1", vglayer="met1",
+    )
+
+    # VSS
+
+    vss_via = top_level << viam1m2
+    vss_via.move(vin3_via.center).movey(evaluate_bbox(rccm_ref)[1])
+
+    top_level << L_route(
+        pdk,
+        vss_via.ports["top_met_W"],
+        rccm_ref.ports["welltie_N_top_met_N"],
+        hglayer="met1", vglayer="met1",
+        vwidth=5, hwidth=5
+    )
+
+    vdd_via = top_level << viam1m2
+    vdd_via.move(vss_via.center).movey(evaluate_bbox(rccm_ref)[1])
+
+    top_level << L_route(
+        pdk,
+        vdd_via.ports["top_met_W"],
+        bias_stage_ref.ports["fet_right_tie_N_top_met_N"],
+        hglayer="met1", vglayer="met1",
+        vwidth=5, hwidth=5
+    )
+
+
 
     # -------------------------------------------------------------------------
     # CONNECTING VSS TOGETHER
@@ -423,7 +625,7 @@ def add_cm_labels(cm_in: Component, pdk: MappedPDK) -> Component:
 if __name__ == "__main__":
     selected_pdk = gf180
 
-    comp = top(selected_pdk, show_netlist=True)
+    comp = top(selected_pdk, show_netlist=False, add_labels=False)
     # comp.pprint_ports()
     comp.name = "TOP"
     comp.show()
@@ -435,6 +637,6 @@ if __name__ == "__main__":
     drc_result = selected_pdk.drc_magic(comp, comp.name, output_file=Path("DRC/"))
 
     # LVS
-    netgen_lvs_result = selected_pdk.lvs_netgen(
-        comp, comp.name, output_file_path=Path("LVS/"), copy_intermediate_files=True
-    )
+    # netgen_lvs_result = selected_pdk.lvs_netgen(
+    #     comp, comp.name, output_file_path=Path("LVS/"), copy_intermediate_files=True
+    # )
