@@ -9,15 +9,14 @@ N 1210 -220 1210 -210 {lab=VSS}
 N 1210 -470 1210 -440 {lab=VDD}
 N 730 -370 970 -370 {lab=VIN_INT}
 N 850 -320 970 -320 {lab=VBIAS_INT}
-N 320 -1200 420 -1200 {lab=ENA}
 N 320 -1180 500 -1180 {lab=#net1}
-N 380 -1150 640 -1150 {lab=#net2}
+N 590 -1130 850 -1130 {lab=#net2}
 N 380 -1160 380 -1150 {lab=#net2}
 N 320 -1160 380 -1160 {lab=#net2}
-N 570 -1160 570 -1120 {lab=VSS}
-N 710 -1020 710 -1000 {lab=VSS}
-N 710 -1200 710 -1170 {lab=VDD}
-N 570 -1330 570 -1310 {lab=VDD}
+N 780 -1140 780 -1100 {lab=VSS}
+N 920 -1000 920 -980 {lab=VSS}
+N 920 -1180 920 -1150 {lab=VDD}
+N 780 -1310 780 -1290 {lab=VDD}
 N 1210 -210 1210 -190 {lab=VSS}
 N -110 -870 50 -870 {lab=VIN}
 N -100 -620 60 -620 {lab=VBIAS}
@@ -53,6 +52,13 @@ N 10 -340 90 -340 {lab=DVDD}
 N 10 -280 90 -280 {lab=VDD}
 N 270 -340 360 -340 {lab=DVSS}
 N 270 -280 360 -280 {lab=VSS}
+N 380 -1290 380 -1200 {lab=#net5}
+N 580 -1290 610 -1290 {lab=ENA}
+N 320 -1200 380 -1200 {lab=#net5}
+N 500 -1160 710 -1160 {lab=#net1}
+N 500 -1180 500 -1160 {lab=#net1}
+N 380 -1130 590 -1130 {lab=#net2}
+N 380 -1150 380 -1130 {lab=#net2}
 C {title.sym} 190 -90 0 0 {name=l1 author="Quentin Halbach and Sapta"}
 C {top_level.sym} 1210 -330 0 0 {name=x1}
 C {lab_pin.sym} 140 -1280 0 0 {name=p105 lab=DVDD}
@@ -60,9 +66,9 @@ C {lab_pin.sym} 140 -1120 0 0 {name=p106 lab=DVSS}
 C {lab_pin.sym} 180 -1280 0 1 {name=p109 lab=VDD}
 C {lab_pin.sym} 180 -1120 0 1 {name=p110 lab=VSS}
 C {ipin.sym} -120 -1200 0 0 {name=p120 lab=EN}
-C {lab_pin.sym} 710 -1200 2 1 {name=p108 lab=VDD}
-C {lab_pin.sym} 570 -1330 2 1 {name=p111 lab=VDD}
-C {lab_pin.sym} 710 -1000 2 1 {name=p164 lab=VSS}
+C {lab_pin.sym} 920 -1180 2 1 {name=p108 lab=VDD}
+C {lab_pin.sym} 780 -1310 2 1 {name=p111 lab=VDD}
+C {lab_pin.sym} 920 -980 2 1 {name=p164 lab=VSS}
 C {iopin.sym} 90 -280 0 0 {name=p92 lab=VDD}
 C {iopin.sym} 90 -340 0 0 {name=p181 lab=DVDD}
 C {symbols/rm3.sym} 90 -310 2 0 {name=R1
@@ -83,10 +89,10 @@ C {Chipathon2025_pads/xschem/io_in_c.sym} 60 -1120 0 0 {name=IO6
 model=gf180mcu_fd_io__in_c
 spiceprefix=X
 }
-C {Chipathon2025_pads/xschem/tieH.sym} 710 -1070 0 0 {name=x2}
-C {Chipathon2025_pads/xschem/tieL.sym} 570 -1230 0 0 {name=x3}
-C {lab_pin.sym} 420 -1200 0 1 {name=p1 lab=ENA}
-C {lab_pin.sym} 570 -1120 2 1 {name=p2 lab=VSS}
+C {Chipathon2025_pads/xschem/tieH.sym} 920 -1050 0 0 {name=x2}
+C {Chipathon2025_pads/xschem/tieL.sym} 780 -1210 0 0 {name=x3}
+C {lab_pin.sym} 610 -1290 0 1 {name=p1 lab=ENA}
+C {lab_pin.sym} 780 -1100 2 1 {name=p2 lab=VSS}
 C {lab_pin.sym} 1210 -470 2 1 {name=p3 lab=VDD}
 C {lab_pin.sym} 1210 -190 2 1 {name=p4 lab=VSS}
 C {lab_pin.sym} 640 -410 2 1 {name=p5 lab=ENA}
@@ -149,13 +155,18 @@ C {Chipathon2025_pads/xschem/io_asig_5p0.sym} 1470 -730 0 0 {name=IO5
 model=gf180mcu_fd_io__asig_5p0_extracted
 spiceprefix=X
 }
-C {Chipathon2025_pads/xschem/symbols/io_secondary_3p3/io_secondary_3p3.sym} 380 -790 0 0 {name=IO7
+C {lab_pin.sym} 500 -950 2 1 {name=p45 lab=VDD}
+C {lab_pin.sym} 500 -790 2 1 {name=p46 lab=VSS}
+C {lab_pin.sym} 490 -700 2 1 {name=p47 lab=VDD}
+C {lab_pin.sym} 490 -540 2 1 {name=p48 lab=VSS}
+C {Chipathon2025_pads/xschem/symbols/io_secondary_5p0/io_secondary_5p0.sym} 580 -790 0 1 {name=IO9
 spiceprefix=X
 }
-C {Chipathon2025_pads/xschem/symbols/io_secondary_3p3/io_secondary_3p3.sym} 370 -540 0 0 {name=IO8
+C {Chipathon2025_pads/xschem/symbols/io_secondary_5p0/io_secondary_5p0.sym} 570 -540 0 1 {name=IO7
 spiceprefix=X
 }
-C {lab_pin.sym} 460 -950 2 1 {name=p45 lab=VDD}
-C {lab_pin.sym} 460 -790 2 1 {name=p46 lab=VSS}
-C {lab_pin.sym} 450 -700 2 1 {name=p47 lab=VDD}
-C {lab_pin.sym} 450 -540 2 1 {name=p48 lab=VSS}
+C {Chipathon2025_pads/xschem/symbols/io_secondary_5p0/io_secondary_5p0.sym} 580 -1210 0 1 {name=IO8
+spiceprefix=X
+}
+C {lab_pin.sym} 500 -1370 2 1 {name=p49 lab=VDD}
+C {lab_pin.sym} 500 -1210 2 1 {name=p50 lab=VSS}
