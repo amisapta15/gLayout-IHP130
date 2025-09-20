@@ -19,6 +19,7 @@ from glayout.util.comp_utils import (
     align_comp_to_port,
 )
 from glayout.util.snap_to_grid import component_snap_to_grid
+from gdsfactory.port import Port
 from typing import Optional, Union
 
 ###### Only Required for IIC-OSIC Docker
@@ -46,6 +47,7 @@ def generate_input_stage_netlist(
     CM_size: tuple[float, float, int],  # (width, length, multipliers)
     source_net_in: str,
     gate_net_en: str,  # Auxiliary node
+    drain_net_out_vin: str,
     drain_net_out_vcm: str,
     drain_net_out_bcm: str,
     drain_net_out_ccm: str,
@@ -76,6 +78,7 @@ def generate_input_stage_netlist(
     nodes =[
                 source_net_in,
                 gate_net_en,
+                drain_net_out_vin,
                 drain_net_out_vcm,
                 drain_net_out_bcm,
                 drain_net_out_ccm,
@@ -91,6 +94,7 @@ def generate_input_stage_netlist(
     middleB_bottomB = "VMBB"
     middleC_bottomC = "VMBC"
     middleD_bottomD = "VMBD"
+    middleE_bottomE = "VMBE"
 
     source_netlist += (
         f"X{prefix}_TA {middle_gate} {gate_net_en} {bulk_net} {bulk_net} "
@@ -104,6 +108,11 @@ def generate_input_stage_netlist(
 
     source_netlist += (
         f"X{prefix}_TC {middle_gate} {gate_net_en} {bulk_net} {bulk_net} "
+        f"{model_name} l={length} w={width} m={mtop}\n"
+    )
+
+    source_netlist += (
+        f"X{prefix}_TD {middle_gate} {gate_net_en} {bulk_net} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
@@ -128,6 +137,11 @@ def generate_input_stage_netlist(
     )
 
     source_netlist += (
+        f"X{prefix}_ME {middleE_bottomE} {middle_gate} {bulk_net} {bulk_net} "
+        f"{model_name} l={length} w={width} m={mtop}\n"
+    )
+
+    source_netlist += (
         f"X{prefix}_BA {source_net_in} {source_net_in} {middle_gate} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
@@ -144,6 +158,11 @@ def generate_input_stage_netlist(
 
     source_netlist += (
         f"X{prefix}_BD {drain_net_out_ccm} {source_net_in} {middleD_bottomD} {bulk_net} "
+        f"{model_name} l={length} w={width} m={mtop}\n"
+    )
+
+    source_netlist += (
+        f"X{prefix}_BE {drain_net_out_vin} {source_net_in} {middleE_bottomE} {bulk_net} "
         f"{model_name} l={length} w={width} m={mtop}\n"
     )
 
@@ -226,7 +245,7 @@ def input_stage(
         pdk,
         device="pfet",
         numcols=1,
-        n_devices=4,
+        n_devices=5,
         with_substrate_tap=False,
         with_tie=False,
         width=Width,
@@ -289,7 +308,7 @@ def input_stage(
         pdk,
         device="pfet",
         numcols=1,
-        n_devices=4,
+        n_devices=5,
         with_substrate_tap=False,
         with_tie=False,
         width=Width,
@@ -315,7 +334,7 @@ def input_stage(
         pdk,
         device="pfet",
         numcols=1,
-        n_devices=3,
+        n_devices=4,
         with_substrate_tap=False,
         with_tie=False,
         width=Width,
@@ -387,7 +406,7 @@ def input_stage(
         glayer2="met2",
     )
 
-    letters = ["B", "C", "D"]
+    letters = ["B", "C", "D", "E"]
     for letter in letters:
         bottomL_source_via = top_level << viam2m3
         bottomL_source_via.move(
@@ -407,42 +426,42 @@ def input_stage(
             glayer2="met3",
         )
 
-    middleD_gate_via = top_level << viam2m3
-    middleD_gate_via.move(
-        top_level.ports[f"currm_middle_D_0_gate_W"].center
+    middleE_gate_via = top_level << viam2m3
+    middleE_gate_via.move(
+        top_level.ports[f"currm_middle_E_0_gate_W"].center
     ).movex(dist_GS + 1.5 * dist_DS)
 
     top_level << straight_route(
         pdk,
-        middleD_gate_via.ports["top_met_E"],
-        top_level.ports[f"currm_middle_D_0_gate_W"],
+        middleE_gate_via.ports["top_met_E"],
+        top_level.ports[f"currm_middle_E_0_gate_W"],
         glayer1="met2",
         glayer2="met2",
     )
 
-    topC_drain_via = top_level << viam2m3
-    topC_drain_via.move(
-        (middleD_gate_via.center[0], top_level.ports[f"currm_top_C_0_drain_W"].center[1])
+    topD_drain_via = top_level << viam2m3
+    topD_drain_via.move(
+        (middleE_gate_via.center[0], top_level.ports[f"currm_top_D_0_drain_W"].center[1])
     )
 
     top_level << straight_route(
         pdk,
-        topC_drain_via.ports["top_met_E"],
-        top_level.ports[f"currm_top_C_0_drain_W"],
+        topD_drain_via.ports["top_met_E"],
+        top_level.ports[f"currm_top_D_0_drain_W"],
         glayer1="met2",
         glayer2="met2",
     )
 
     middle_top_route = straight_route(
         pdk,
-        middleD_gate_via.ports["top_met_S"],
-        topC_drain_via.ports["top_met_N"],
+        middleE_gate_via.ports["top_met_S"],
+        topD_drain_via.ports["top_met_N"],
         glayer1="met3",
         glayer2="met3",
     )
 
     middle_top_ref = top_level << middle_top_route
-    middle_top_route.name = "middleDgate_to_topdrains"
+    middle_top_route.name = "middleEgate_to_topdrains"
 
     topA_drain_via = top_level << viam2m3
     topA_drain_via.move(
@@ -452,6 +471,11 @@ def input_stage(
     topB_drain_via = top_level << viam2m3
     topB_drain_via.move(
         (middle_top_ref.center[0], top_level.ports[f"currm_top_B_0_drain_W"].center[1])
+    )
+
+    topC_drain_via = top_level << viam2m3
+    topC_drain_via.move(
+        (middle_top_ref.center[0], top_level.ports[f"currm_top_C_0_drain_W"].center[1])
     )
 
     top_level << straight_route(
@@ -465,6 +489,13 @@ def input_stage(
         pdk,
         top_level.ports[f"currm_top_B_0_drain_E"],
         topB_drain_via.ports["top_met_E"],
+        glayer2="met2",
+    )
+
+    top_level << straight_route(
+        pdk,
+        top_level.ports[f"currm_top_C_0_drain_E"],
+        topC_drain_via.ports["top_met_E"],
         glayer2="met2",
     )
 
@@ -548,7 +579,7 @@ def input_stage(
         top_level << straight_route(
             pdk,
             top_level.ports[
-                f"currm_bottom_D_{num_cols - 1}_dummy_R_gsdcon_top_met_E"
+                f"currm_bottom_E_{num_cols - 1}_dummy_R_gsdcon_top_met_E"
             ],
             top_level.ports["welltie_E_top_met_E"],
             glayer2="met1",
@@ -564,7 +595,7 @@ def input_stage(
         top_level << straight_route(
             pdk,
             top_level.ports[
-                f"currm_middle_D_{num_cols - 1}_dummy_R_gsdcon_top_met_E"
+                f"currm_middle_E_{num_cols - 1}_dummy_R_gsdcon_top_met_E"
             ],
             top_level.ports["welltie_E_top_met_E"],
             glayer2="met1",
@@ -580,7 +611,7 @@ def input_stage(
         top_level << straight_route(
             pdk,
             top_level.ports[
-                f"currm_top_C_{num_cols - 1}_dummy_R_gsdcon_top_met_E"
+                f"currm_top_D_{num_cols - 1}_dummy_R_gsdcon_top_met_E"
             ],
             top_level.ports["welltie_E_top_met_E"],
             glayer2="met1",
@@ -598,7 +629,7 @@ def input_stage(
         - top_level.ports["welltie_W_top_met_E"].center[0]
     ) / 2
 
-    letters = ["A", "B", "C", "D"]
+    letters = ["A", "B", "C", "D", "E"]
     for letter in letters:
         middleL_source_via = top_level << viam1m2
         middleL_source_via.move(
@@ -615,7 +646,7 @@ def input_stage(
             glayer2="met2",
         )
 
-        if letter != "D":
+        if letter != "E":
             topL_source_via = top_level << viam1m2
             topL_source_via.move(
                 (
@@ -635,7 +666,7 @@ def input_stage(
     # CONNECT GATES TO ENABLE AND INPUT
     # ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    letters = ["A", "B", "C", "D"]
+    letters = ["A", "B", "C", "D", "E"]
     for letter in letters:
         bottomL_gate_input_via = top_level << viam1m2
         bottomL_gate_input_via.move(
@@ -653,7 +684,7 @@ def input_stage(
             glayer2="met2",
         )
 
-        if letter != "D":
+        if letter != "E":
             topL_gate_enable_via = top_level << viam1m2
             topL_gate_enable_via.move(
                 (
@@ -705,6 +736,9 @@ def input_stage(
     top_level << straight_route(
         pdk, top_level.ports[f"IN_C_top_met_N"], top_level.ports[f"IN_D_top_met_S"], glayer2="met1"
     )
+    top_level << straight_route(
+        pdk, top_level.ports[f"IN_D_top_met_N"], top_level.ports[f"IN_E_top_met_S"], glayer2="met1"
+    )
 
     top_level << straight_route(
         pdk, top_level.ports[f"EN_A_top_met_N"], top_level.ports[f"EN_B_top_met_S"], glayer2="met1"
@@ -712,9 +746,13 @@ def input_stage(
     top_level << straight_route(
         pdk, top_level.ports[f"EN_B_top_met_N"], top_level.ports[f"EN_C_top_met_S"], glayer2="met1"
     )
+    top_level << straight_route(
+        pdk, top_level.ports[f"EN_C_top_met_N"], top_level.ports[f"EN_D_top_met_S"], glayer2="met1"
+    )
+    
 
     stages = ["bottom", "middle"]
-    letters = ["A", "B", "C", "D"]
+    letters = ["A", "B", "C", "D", "E"]
 
     for stage in stages:
         for letter in letters:
@@ -747,6 +785,7 @@ def input_stage(
         transistor_type=type,
         source_net_in="VIN",  # Input drain connected to IREF
         gate_net_en="EN",  # Auxiliary node
+        drain_net_out_vin="VOUT_VIN",
         drain_net_out_vcm="VOUT_VCM",
         drain_net_out_bcm="VOUT_BCM",
         drain_net_out_ccm="VOUT_CCM",
@@ -792,6 +831,11 @@ def add_cm_labels(cm_in: Component, pdk: MappedPDK) -> Component:
     voutccmlabel.add_label(text="VOUT_CCM", layer=pdk.get_glayer("met2_label"))
     move_info.append((voutccmlabel, cm_in.ports["OUT_D_top_met_N"], None))
 
+    # VOUT VIN
+    voutvinlabel = rectangle(layer=pdk.get_glayer("met2_pin"), size=psize, centered=True).copy()
+    voutvinlabel.add_label(text="VOUT_VIN", layer=pdk.get_glayer("met2_label"))
+    move_info.append((voutvinlabel, cm_in.ports["OUT_E_top_met_N"], None))
+
     # VDD (well tie)
     vddlabel = rectangle(layer=pdk.get_glayer("met1_pin"), size=psize, centered=True).copy()
     vddlabel.add_label(text="VDD", layer=pdk.get_glayer("met1_label"))
@@ -803,6 +847,7 @@ def add_cm_labels(cm_in: Component, pdk: MappedPDK) -> Component:
         cm_in.add(compref)
 
     return cm_in.flatten()
+
 
 
 if __name__ == "__main__":

@@ -69,6 +69,18 @@ N 330 -220 380 -220 {lab=EN}
 N 330 -880 330 -220 {lab=EN}
 N -10 -200 340 -200 {lab=V_AUX_CCM}
 N 500 -260 500 -230 {lab=VDD}
+N 1610 -910 1610 -740 {lab=VDD}
+N 1610 -680 1610 -620 {lab=#net9}
+N 1570 -760 1570 -710 {lab=#net1}
+N 1570 -650 1570 -590 {lab=V_IN}
+N 1300 -760 1570 -760 {lab=#net1}
+N 1310 -650 1570 -650 {lab=V_IN}
+N 1350 -910 1610 -910 {lab=VDD}
+N 1470 -790 1470 -760 {lab=#net1}
+N 1470 -910 1470 -850 {lab=VDD}
+N 1080 -880 1430 -880 {lab=EN}
+N 1430 -880 1430 -820 {lab=EN}
+N 1610 -560 2020 -560 {lab=V_OUT_VCM}
 C {iopin.sym} -30 -50 2 0 {name=p1 lab=VSS
 }
 C {ipin.sym} -10 -200 0 0 {name=p3 lab=V_AUX_CCM
@@ -254,3 +266,49 @@ C {biased_cm.sym} 1130 -300 0 0 {name=x2}
 C {cascode_cm.sym} 1470 -200 0 0 {name=x3}
 C {bias.sym} 500 -160 0 0 {name=x4}
 C {lab_pin.sym} 500 -260 0 0 {name=p22 sig_type=std_logic lab=VDD}
+C {symbols/pfet_03v3.sym} 1590 -710 0 0 {name=M9
+L=2.0u
+W=10.0u
+nf=1
+m=1
+ad="'int((nf+1)/2) * W/nf * 0.18u'"
+pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
+as="'int((nf+2)/2) * W/nf * 0.18u'"
+ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
+nrd="'0.18u / W'" nrs="'0.18u / W'"
+sa=0 sb=0 sd=0
+model=pfet_03v3
+spiceprefix=X
+}
+C {symbols/pfet_03v3.sym} 1590 -590 0 0 {name=M10
+L=2.0u
+W=10.0u
+nf=1
+m=1
+ad="'int((nf+1)/2) * W/nf * 0.18u'"
+pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
+as="'int((nf+2)/2) * W/nf * 0.18u'"
+ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
+nrd="'0.18u / W'" nrs="'0.18u / W'"
+sa=0 sb=0 sd=0
+model=pfet_03v3
+spiceprefix=X
+}
+C {lab_pin.sym} 1610 -710 2 0 {name=p23 sig_type=std_logic lab=VDD}
+C {lab_pin.sym} 1610 -590 2 0 {name=p24 sig_type=std_logic lab=VDD}
+C {symbols/pfet_03v3.sym} 1450 -820 0 0 {name=M11
+L=2.0u
+W=10.0u
+nf=1
+m=1
+ad="'int((nf+1)/2) * W/nf * 0.18u'"
+pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
+as="'int((nf+2)/2) * W/nf * 0.18u'"
+ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
+nrd="'0.18u / W'" nrs="'0.18u / W'"
+sa=0 sb=0 sd=0
+model=pfet_03v3
+spiceprefix=X
+}
+C {opin.sym} 2020 -560 0 0 {name=p25 lab=V_OUT_VIN
+}
