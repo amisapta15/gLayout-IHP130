@@ -648,32 +648,6 @@ def top(
         return add_cm_labels(top_level, pdk)
     return top_level
 
-    # if with_dnwell:
-    #     nfet.add_padding(
-    #         layers=(pdk.get_glayer("dnwell"),),
-    #         default=pdk.get_grule("pwell", "dnwell")["min_enclosure"],
-    #     )
-    # # add substrate tap if with_substrate_tap
-    # if with_substrate_tap:
-    #     substrate_tap_separation = pdk.get_grule("dnwell", "active_tap")[
-    #         "min_separation"
-    #     ]
-    #     substrate_tap_encloses = (
-    #         2 * (substrate_tap_separation + nfet.xmax),
-    #         2 * (substrate_tap_separation + nfet.ymax),
-    #     )
-    #     ringtoadd = tapring(
-    #         pdk,
-    #         enclosed_rectangle=substrate_tap_encloses,
-    #         sdlayer="p+s/d",
-    #         horizontal_glayer=substrate_tap_layers[0],
-    #         vertical_glayer=substrate_tap_layers[1],
-    #     )
-    #     tapring_ref = nfet << ringtoadd
-    #     nfet.add_ports(tapring_ref.get_ports_list(),prefix="guardring_")
-
-
-
 def add_cm_labels(cm_in: Component, pdk: MappedPDK) -> Component:
     cm_in.unlock()
 
