@@ -345,8 +345,20 @@ def bias_stage(
     top_level << straight_route(pdk, fet_ref_left.ports["tie_S_top_met_S"], base_left_ref.ports["welltie_N_top_met_N"], width=6)
     top_level << straight_route(pdk, fet_ref_right.ports["tie_S_top_met_S"], base_right_ref.ports["welltie_N_top_met_N"], width=6)
     ######
-    
-    top_level << straight_route(pdk, fet_ref_left.ports["multiplier_0_gate_E"], fet_ref_right.ports["multiplier_0_gate_W"], glayer1="met2", glayer2="met2")
+
+    # Create two m1m2 vias to connect the gates of the pfets
+
+    gate_left_via = top_level << viam1m2
+    gate_left_via.move((base_bottom_ref.ports["welltie_W_top_met_W"].center[0], fet_ref_left.ports["multiplier_0_gate_E"].center[1]))
+
+    gate_right_via = top_level << viam1m2
+    gate_right_via.move((base_bottom_ref.ports["welltie_E_top_met_E"].center[0], fet_ref_right.ports["multiplier_0_gate_W"].center[1]))
+
+    top_level << straight_route(pdk, fet_ref_left.ports["multiplier_0_gate_E"], gate_left_via.ports["top_met_W"], glayer1="met2", glayer2="met2")
+
+    top_level << straight_route(pdk, gate_left_via.ports["top_met_E"], gate_right_via.ports["top_met_W"], glayer1="met1", glayer2="met1")
+
+    top_level << straight_route(pdk, gate_right_via.ports["top_met_E"], fet_ref_right.ports["multiplier_0_gate_W"], glayer1="met2", glayer2="met2")
 
     # Connect pfets sources to tie
 
@@ -515,7 +527,7 @@ if __name__ == "__main__":
     drc_result = selected_pdk.drc_magic(comp, comp.name, output_file=Path("DRC/"))
 
     # LVS Checks
-    # netgen_lvs_result = selected_pdk.lvs_netgen(
-    #     comp, comp.name, output_file_path=Path("LVS/"), copy_intermediate_files=True
-    # )
+    netgen_lvs_result = selected_pdk.lvs_netgen(
+        comp, comp.name, output_file_path=Path("LVS/"), copy_intermediate_files=True
+    )
     

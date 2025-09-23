@@ -617,6 +617,14 @@ def top(
         width=10,
     )
 
+    top_level << L_route(
+        pdk,
+        bias_stage_ref.ports["base_bottom_welltie_N_top_met_N"],
+        vss_via.ports["top_met_W"],
+        hglayer="met2", vglayer="met2",
+        vwidth=12, hwidth=12,
+    )
+
     top_level = component_snap_to_grid(rename_ports_by_orientation(top_level))
 
     top_level.info["netlist"] = generate_top_netlist(
