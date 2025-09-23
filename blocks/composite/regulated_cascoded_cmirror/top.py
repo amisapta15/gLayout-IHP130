@@ -873,7 +873,7 @@ if __name__ == "__main__":
     comp.show()
 
     # Write the layout to GDS
-    comp.write_gds("GDS/topv5.gds")
+    comp.write_gds("GDS/topv6.gds")
 
     # DRC
     drc_result = selected_pdk.drc_magic(comp, comp.name, output_file=Path("DRC/"))
