@@ -446,14 +446,16 @@ def top(
         glayer2="met3",
     )
 
-    aux_via = top_level << viam1m2
+    aux_via = top_level << viam2m3
     aux_via.move(en_via.center).movey(evaluate_bbox(rccm_ref)[1])
     top_level.add_ports(aux_via.get_ports_list(), prefix=f"VAUX_")
 
+    ##### This one Met 3
     top_level << L_route(
         pdk,
         bias_stage_ref.ports["base_left_IN_top_met_N"],
         aux_via.ports["top_met_W"],
+        hglayer="met3", vglayer="met2"
     )
 
     # Outputs
@@ -551,23 +553,24 @@ def top(
         vwidth=5, hwidth=5
     )
 
-    handles = place_welltie_via_row(
-    top_level, pdk, "bias_base_bottom",
-    top_layer="met3",
-    use_edges=False, offset=5.0,
-    fill_mode="auto",
-    )
+    ###### DRC_Error
+    # handles = place_welltie_via_row(
+    # top_level, pdk, "bias_base_bottom",
+    # top_layer="met3",
+    # use_edges=False, offset=5.0,
+    # fill_mode="auto",
+    # )
 
-    top_level << L_route(
-        pdk,
-        bias_stage_ref.ports["base_bottom_welltie_N_top_met_N"],
-        vss_via.ports["top_met_W"],
-        hglayer="met3", vglayer="met3",
-        vwidth=10.5, hwidth=10.5
-    )
-
+    # top_level << L_route(
+    #     pdk,
+    #     bias_stage_ref.ports["base_bottom_welltie_N_top_met_N"],
+    #     vss_via.ports["top_met_W"],
+    #     hglayer="met3", vglayer="met3",
+    #     vwidth=12, hwidth=12,
+    # )
+    #######################################################
+    
     # VDD
-
     vdd_via = top_level << viam1m2
     vdd_via.move(vss_via.center).movey(evaluate_bbox(rccm_ref)[1])
     top_level.add_ports(vdd_via.get_ports_list(), prefix=f"VDD_")
@@ -636,6 +639,31 @@ def top(
     if add_labels:
         return add_cm_labels(top_level, pdk)
     return top_level
+
+    # if with_dnwell:
+    #     nfet.add_padding(
+    #         layers=(pdk.get_glayer("dnwell"),),
+    #         default=pdk.get_grule("pwell", "dnwell")["min_enclosure"],
+    #     )
+    # # add substrate tap if with_substrate_tap
+    # if with_substrate_tap:
+    #     substrate_tap_separation = pdk.get_grule("dnwell", "active_tap")[
+    #         "min_separation"
+    #     ]
+    #     substrate_tap_encloses = (
+    #         2 * (substrate_tap_separation + nfet.xmax),
+    #         2 * (substrate_tap_separation + nfet.ymax),
+    #     )
+    #     ringtoadd = tapring(
+    #         pdk,
+    #         enclosed_rectangle=substrate_tap_encloses,
+    #         sdlayer="p+s/d",
+    #         horizontal_glayer=substrate_tap_layers[0],
+    #         vertical_glayer=substrate_tap_layers[1],
+    #     )
+    #     tapring_ref = nfet << ringtoadd
+    #     nfet.add_ports(tapring_ref.get_ports_list(),prefix="guardring_")
+
 
 
 def add_cm_labels(cm_in: Component, pdk: MappedPDK) -> Component:
@@ -829,15 +857,15 @@ def place_welltie_via_row(
 
 
 if __name__ == "__main__":
-    selected_pdk = gf180
+    selected_pdk = sky130
 
     comp = top(selected_pdk, show_netlist=False, add_labels=True)
     # comp.pprint_ports()
-    comp.name = "TOP"
+    comp.name = "M"
     comp.show()
 
     # Write the layout to GDS
-    comp.write_gds("GDS/top.gds")
+    comp.write_gds("GDS/topv5.gds")
 
     # DRC
     drc_result = selected_pdk.drc_magic(comp, comp.name, output_file=Path("DRC/"))

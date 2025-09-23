@@ -304,6 +304,7 @@ def bias_stage(
         pdk, base_right_ref.ports["IN_top_met_S"], base_bottom_ref.ports["OUT_top_met_E"]
     )
 
+    ## Adding Enable FETs
     fet = pmos(pdk, width=10, length=2, fingers=1, with_tie=True, with_substrate_tap=False)
 
     fet_ref_left = prec_ref_center(fet)
@@ -340,9 +341,11 @@ def bias_stage(
 
     top_level << straight_route(pdk, drain_gate_via.ports["top_met_S"], base_right_ref.ports["GATE_CONN_top_met_N"], glayer1="met3", glayer2="met3")
 
-    top_level << straight_route(pdk, fet_ref_left.ports["tie_S_top_met_S"], base_left_ref.ports["welltie_N_top_met_N"], glayer1="met1", glayer2="met1", width=6)
-    top_level << straight_route(pdk, fet_ref_right.ports["tie_S_top_met_S"], base_right_ref.ports["welltie_N_top_met_N"], glayer1="met1", glayer2="met1", width=6)
-
+    ## DRC Problem
+    top_level << straight_route(pdk, fet_ref_left.ports["tie_S_top_met_S"], base_left_ref.ports["welltie_N_top_met_N"], width=6)
+    top_level << straight_route(pdk, fet_ref_right.ports["tie_S_top_met_S"], base_right_ref.ports["welltie_N_top_met_N"], width=6)
+    ######
+    
     top_level << straight_route(pdk, fet_ref_left.ports["multiplier_0_gate_E"], fet_ref_right.ports["multiplier_0_gate_W"], glayer1="met2", glayer2="met2")
 
     # Connect pfets sources to tie
