@@ -857,7 +857,7 @@ def place_welltie_via_row(
 
 
 if __name__ == "__main__":
-    selected_pdk = sky130
+    selected_pdk = gf180
 
     comp = top(selected_pdk, show_netlist=False, add_labels=True)
     # comp.pprint_ports()
