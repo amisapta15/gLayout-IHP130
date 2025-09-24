@@ -59,8 +59,16 @@ N 500 -1160 710 -1160 {lab=#net1}
 N 500 -1180 500 -1160 {lab=#net1}
 N 380 -1130 590 -1130 {lab=#net2}
 N 380 -1150 380 -1130 {lab=#net2}
+N 1410 -410 1480 -410 {lab=VIN_OUT_INT}
+N 1480 -440 1480 -410 {lab=VIN_OUT_INT}
+N 1480 -440 1570 -440 {lab=VIN_OUT_INT}
+N 1360 -1450 1390 -1450 {lab=VIN_OUT_INT}
+N 1590 -1450 1710 -1450 {lab=BCM_OUT}
+N 1470 -1560 1470 -1530 {lab=VDD}
+N 1510 -1560 1510 -1530 {lab=DVDD}
+N 1510 -1370 1510 -1350 {lab=DVSS}
+N 1470 -1370 1470 -1350 {lab=VSS}
 C {title.sym} 190 -90 0 0 {name=l1 author="Quentin Halbach and Sapta"}
-C {top_level.sym} 1210 -330 0 0 {name=x1}
 C {lab_pin.sym} 140 -1280 0 0 {name=p105 lab=DVDD}
 C {lab_pin.sym} 140 -1120 0 0 {name=p106 lab=DVSS}
 C {lab_pin.sym} 180 -1280 0 1 {name=p109 lab=VDD}
@@ -170,3 +178,15 @@ spiceprefix=X
 }
 C {lab_pin.sym} 500 -1370 2 1 {name=p49 lab=VDD}
 C {lab_pin.sym} 500 -1210 2 1 {name=p50 lab=VSS}
+C {gLayout-mahowalders/blocks/composite/regulated_cascoded_cmirror/xschem/top_level.sym} 1210 -330 0 0 {name=x1}
+C {lab_pin.sym} 1570 -440 0 1 {name=p52 lab=VIN_OUT_INT}
+C {lab_pin.sym} 1360 -1450 2 1 {name=p53 lab=VIN_OUT_INT}
+C {opin.sym} 1710 -1450 0 0 {name=p54 lab=VIN_OUT}
+C {lab_pin.sym} 1470 -1560 2 1 {name=p55 lab=VDD}
+C {lab_pin.sym} 1470 -1350 2 1 {name=p56 lab=VSS}
+C {lab_pin.sym} 1510 -1560 2 0 {name=p57 lab=DVDD}
+C {lab_pin.sym} 1510 -1350 2 0 {name=p58 lab=DVSS}
+C {Chipathon2025_pads/xschem/io_asig_5p0.sym} 1390 -1370 0 0 {name=IO11
+model=gf180mcu_fd_io__asig_5p0_extracted
+spiceprefix=X
+}

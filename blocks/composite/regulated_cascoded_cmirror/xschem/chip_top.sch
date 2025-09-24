@@ -14,8 +14,8 @@ N -0 -330 0 -300 {lab=VDD}
 N -510 -190 -440 -190 {lab=GND}
 N -440 -210 -440 -190 {lab=GND}
 N -440 -410 -440 -270 {lab=ENABLE}
-N 160 -260 580 -260 {lab=#net2}
-N 160 -220 490 -220 {lab=#net3}
+N 160 -240 580 -240 {lab=#net2}
+N 160 -210 490 -210 {lab=#net3}
 N 160 -180 410 -180 {lab=#net4}
 N -440 -190 -350 -190 {lab=GND}
 N -350 -210 -350 -190 {lab=GND}
@@ -29,8 +29,10 @@ N -510 -210 -510 -190 {lab=GND}
 N -570 -290 -570 -270 {lab=VSS}
 N -570 -210 -570 -190 {lab=GND}
 N -570 -190 -510 -190 {lab=GND}
-C {vsource.sym} 580 -170 0 0 {name=v_vanilla value=1.65}
-C {gnd.sym} 580 -140 0 0 {name=l15 lab=GND
+N 240 -270 660 -270 {lab=#net5}
+N 160 -270 240 -270 {lab=#net5}
+C {vsource.sym} 580 -150 0 0 {name=v_vanilla value=1.65}
+C {gnd.sym} 580 -120 0 0 {name=l15 lab=GND
 value="
 .options savecurrents
 .param temp=27
@@ -64,8 +66,8 @@ wrdata cascode.txt i_cascode
 *write tb_ccm.raw
 .endc
 "}
-C {vsource.sym} 490 -130 0 0 {name=v_biased value=1.65}
-C {gnd.sym} 490 -100 0 0 {name=l4 lab=GND
+C {vsource.sym} 490 -120 0 0 {name=v_biased value=1.65}
+C {gnd.sym} 490 -90 0 0 {name=l4 lab=GND
 value="
 .options savecurrents
 .param temp=27
@@ -134,11 +136,11 @@ wrdata cascode.txt i_cascode
 *write tb_ccm.raw
 .endc
 "}
-C {res.sym} 580 -230 0 0 {name=R3
+C {res.sym} 580 -210 0 0 {name=R3
 footprint=1206
 device=resistor
 m=1}
-C {res.sym} 490 -190 0 0 {name=R5
+C {res.sym} 490 -180 0 0 {name=R5
 footprint=1206
 device=resistor
 m=1}
@@ -613,3 +615,42 @@ wrdata cascode.txt i_cascode
 .endc
 "}
 C {vsource.sym} -570 -240 0 0 {name=V3 value=0}
+C {vsource.sym} 660 -180 0 0 {name=v_in value=1.65}
+C {gnd.sym} 660 -150 0 0 {name=l2 lab=GND
+value="
+.options savecurrents
+.param temp=27
+.control
+set wr_singlescale
+set noaskquit
+*set appendwrite
+set hcopypscolor=1
+
+save all
+op
+*write tb_vcm.raw
+* --- Run vanilla sweep ---
+dc v_vanilla 0 3.3 0.1
+let i_vanilla = -i(v_vanilla)
+wrdata vanilla.txt i_vanilla
+*write tb_vcm.raw
+* --- Run biased sweep ---
+reset
+*write tb_bcm.raw
+dc v_biased 0 3.3 0.1
+let i_biased = -i(v_biased)
+wrdata biased.txt i_biased
+*write tb_bcm.raw
+* --- Run cascode sweep ---
+reset
+*write tb_ccm.raw
+dc v_cascode 0 3.3 0.1
+let i_cascode = -i(v_cascode)
+wrdata cascode.txt i_cascode
+*write tb_ccm.raw
+.endc
+"}
+C {res.sym} 660 -240 0 0 {name=R1
+footprint=1206
+device=resistor
+m=1}

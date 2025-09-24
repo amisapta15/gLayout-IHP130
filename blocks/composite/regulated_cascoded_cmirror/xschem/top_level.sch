@@ -80,7 +80,7 @@ N 1470 -790 1470 -760 {lab=#net1}
 N 1470 -910 1470 -850 {lab=VDD}
 N 1080 -880 1430 -880 {lab=EN}
 N 1430 -880 1430 -820 {lab=EN}
-N 1610 -560 2020 -560 {lab=V_OUT_VCM}
+N 1610 -560 2020 -560 {lab=V_OUT_VIN}
 C {iopin.sym} -30 -50 2 0 {name=p1 lab=VSS
 }
 C {ipin.sym} -10 -200 0 0 {name=p3 lab=V_AUX_CCM
@@ -312,3 +312,4 @@ spiceprefix=X
 }
 C {opin.sym} 2020 -560 0 0 {name=p25 lab=V_OUT_VIN
 }
+C {lab_pin.sym} 1470 -820 2 0 {name=p26 sig_type=std_logic lab=VDD}
