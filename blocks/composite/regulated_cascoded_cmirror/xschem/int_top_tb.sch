@@ -23,9 +23,9 @@ N -100 -620 60 -620 {lab=VBIAS}
 N 250 -870 380 -870 {lab=#net3}
 N 260 -620 370 -620 {lab=#net4}
 N -120 -1200 60 -1200 {lab=EN}
-N 1040 -1220 1080 -1220 {lab=VCM_OUT_INT}
-N 1070 -960 1110 -960 {lab=BCM_OUT_INT}
-N 1440 -810 1470 -810 {lab=CCM_OUT_INT}
+N 1180 -1080 1220 -1080 {lab=#net5}
+N 1210 -820 1250 -820 {lab=BCM_OUT_INT}
+N 1220 -600 1250 -600 {lab=CCM_OUT_INT}
 N 1410 -390 1500 -390 {lab=VCM_OUT_INT}
 N 1500 -410 1500 -390 {lab=VCM_OUT_INT}
 N 1500 -410 1570 -410 {lab=VCM_OUT_INT}
@@ -33,28 +33,28 @@ N 1410 -370 1570 -370 {lab=BCM_OUT_INT}
 N 1410 -350 1500 -350 {lab=CCM_OUT_INT}
 N 1500 -350 1500 -330 {lab=CCM_OUT_INT}
 N 1500 -330 1570 -330 {lab=CCM_OUT_INT}
-N 1280 -1220 1770 -1220 {lab=VCM_OUT}
-N 1670 -810 1790 -810 {lab=BCM_OUT}
-N 1310 -960 1770 -960 {lab=CCM_OUT}
-N 1160 -1320 1160 -1300 {lab=VDD}
-N 1200 -1320 1200 -1300 {lab=DVDD}
-N 1160 -1140 1160 -1120 {lab=VSS}
-N 1200 -1140 1200 -1120 {lab=DVSS}
-N 1190 -1070 1190 -1040 {lab=VDD}
-N 1230 -1070 1230 -1040 {lab=DVDD}
-N 1190 -880 1190 -870 {lab=VSS}
-N 1230 -880 1230 -870 {lab=DVSS}
-N 1550 -920 1550 -890 {lab=VDD}
-N 1590 -920 1590 -890 {lab=DVDD}
-N 1590 -730 1590 -710 {lab=DVSS}
-N 1550 -730 1550 -710 {lab=VSS}
+N 1420 -1080 1910 -1080 {lab=VCM_OUT}
+N 1450 -600 1570 -600 {lab=BCM_OUT}
+N 1450 -820 1910 -820 {lab=CCM_OUT}
+N 1300 -1180 1300 -1160 {lab=VDD}
+N 1340 -1180 1340 -1160 {lab=DVDD}
+N 1300 -1000 1300 -980 {lab=VSS}
+N 1340 -1000 1340 -980 {lab=DVSS}
+N 1330 -930 1330 -900 {lab=VDD}
+N 1370 -930 1370 -900 {lab=DVDD}
+N 1330 -740 1330 -730 {lab=VSS}
+N 1370 -740 1370 -730 {lab=DVSS}
+N 1330 -710 1330 -680 {lab=VDD}
+N 1370 -710 1370 -680 {lab=#net6}
+N 1370 -520 1370 -500 {lab=DVSS}
+N 1330 -520 1330 -500 {lab=VSS}
 N 10 -340 90 -340 {lab=DVDD}
 N 10 -280 90 -280 {lab=VDD}
 N 270 -340 360 -340 {lab=DVSS}
 N 270 -280 360 -280 {lab=VSS}
-N 380 -1290 380 -1200 {lab=#net5}
+N 380 -1290 380 -1200 {lab=#net7}
 N 580 -1290 610 -1290 {lab=ENA}
-N 320 -1200 380 -1200 {lab=#net5}
+N 320 -1200 380 -1200 {lab=#net7}
 N 500 -1160 710 -1160 {lab=#net1}
 N 500 -1180 500 -1160 {lab=#net1}
 N 380 -1130 590 -1130 {lab=#net2}
@@ -62,12 +62,12 @@ N 380 -1150 380 -1130 {lab=#net2}
 N 1410 -410 1480 -410 {lab=VIN_OUT_INT}
 N 1480 -440 1480 -410 {lab=VIN_OUT_INT}
 N 1480 -440 1570 -440 {lab=VIN_OUT_INT}
-N 1360 -1450 1390 -1450 {lab=VIN_OUT_INT}
-N 1590 -1450 1710 -1450 {lab=BCM_OUT}
-N 1470 -1560 1470 -1530 {lab=VDD}
-N 1510 -1560 1510 -1530 {lab=DVDD}
-N 1510 -1370 1510 -1350 {lab=DVSS}
-N 1470 -1370 1470 -1350 {lab=VSS}
+N 1200 -1340 1230 -1340 {lab=VIN_OUT_INT}
+N 1430 -1340 1550 -1340 {lab=VIN_OUT}
+N 1310 -1450 1310 -1420 {lab=VDD}
+N 1350 -1450 1350 -1420 {lab=DVDD}
+N 1350 -1260 1350 -1240 {lab=DVSS}
+N 1310 -1260 1310 -1240 {lab=VSS}
 C {title.sym} 190 -90 0 0 {name=l1 author="Quentin Halbach and Sapta"}
 C {lab_pin.sym} 140 -1280 0 0 {name=p105 lab=DVDD}
 C {lab_pin.sym} 140 -1120 0 0 {name=p106 lab=DVSS}
@@ -118,27 +118,27 @@ C {lab_pin.sym} 130 -950 0 0 {name=p16 lab=DVDD}
 C {lab_pin.sym} 140 -700 0 0 {name=p17 lab=DVDD}
 C {lab_pin.sym} 170 -950 0 1 {name=p18 lab=VDD}
 C {lab_pin.sym} 180 -700 0 1 {name=p19 lab=VDD}
-C {lab_pin.sym} 1070 -960 2 1 {name=p21 lab=BCM_OUT_INT}
+C {lab_pin.sym} 1210 -820 2 1 {name=p21 lab=BCM_OUT_INT}
 C {lab_pin.sym} 1040 -1220 2 1 {name=p22 lab=VCM_OUT_INT}
-C {lab_pin.sym} 1440 -810 2 1 {name=p23 lab=CCM_OUT_INT}
-C {opin.sym} 1770 -1220 0 0 {name=p24 lab=VCM_OUT}
+C {lab_pin.sym} 1220 -600 2 1 {name=p23 lab=CCM_OUT_INT}
+C {opin.sym} 1910 -1080 0 0 {name=p24 lab=VCM_OUT}
 C {lab_pin.sym} 1570 -370 0 1 {name=p25 lab=BCM_OUT_INT}
 C {lab_pin.sym} 1570 -410 0 1 {name=p26 lab=VCM_OUT_INT}
 C {lab_pin.sym} 1570 -330 0 1 {name=p27 lab=CCM_OUT_INT}
-C {opin.sym} 1790 -810 0 0 {name=p20 lab=BCM_OUT}
-C {opin.sym} 1770 -960 0 0 {name=p28 lab=CCM_OUT}
-C {lab_pin.sym} 1190 -1070 2 1 {name=p29 lab=VDD}
-C {lab_pin.sym} 1160 -1320 2 1 {name=p30 lab=VDD}
-C {lab_pin.sym} 1550 -920 2 1 {name=p31 lab=VDD}
-C {lab_pin.sym} 1160 -1120 2 1 {name=p32 lab=VSS}
-C {lab_pin.sym} 1190 -870 2 1 {name=p33 lab=VSS}
-C {lab_pin.sym} 1550 -710 2 1 {name=p34 lab=VSS}
-C {lab_pin.sym} 1200 -1320 2 0 {name=p35 lab=DVDD}
-C {lab_pin.sym} 1230 -1070 2 0 {name=p36 lab=DVDD}
-C {lab_pin.sym} 1590 -920 2 0 {name=p37 lab=DVDD}
-C {lab_pin.sym} 1590 -710 2 0 {name=p38 lab=DVSS}
-C {lab_pin.sym} 1230 -870 2 0 {name=p39 lab=DVSS}
-C {lab_pin.sym} 1200 -1120 2 0 {name=p40 lab=DVSS}
+C {opin.sym} 1570 -600 0 0 {name=p20 lab=BCM_OUT}
+C {opin.sym} 1910 -820 0 0 {name=p28 lab=CCM_OUT}
+C {lab_pin.sym} 1330 -930 2 1 {name=p29 lab=VDD}
+C {lab_pin.sym} 1300 -1180 2 1 {name=p30 lab=VDD}
+C {lab_pin.sym} 1330 -710 2 1 {name=p31 lab=VDD}
+C {lab_pin.sym} 1300 -980 2 1 {name=p32 lab=VSS}
+C {lab_pin.sym} 1330 -730 2 1 {name=p33 lab=VSS}
+C {lab_pin.sym} 1330 -500 2 1 {name=p34 lab=VSS}
+C {lab_pin.sym} 1340 -1180 2 0 {name=p35 lab=DVDD}
+C {lab_pin.sym} 1370 -930 2 0 {name=p36 lab=DVDD}
+C {lab_pin.sym} 1370 -710 2 0 {name=p37 lab=DVDD}
+C {lab_pin.sym} 1370 -500 2 0 {name=p38 lab=DVSS}
+C {lab_pin.sym} 1370 -730 2 0 {name=p39 lab=DVSS}
+C {lab_pin.sym} 1340 -980 2 0 {name=p40 lab=DVSS}
 C {lab_pin.sym} 10 -280 2 1 {name=p41 lab=VDD}
 C {lab_pin.sym} 10 -340 0 0 {name=p42 lab=DVDD}
 C {lab_pin.sym} 270 -280 2 1 {name=p43 lab=VSS}
@@ -151,15 +151,15 @@ C {Chipathon2025_pads/xschem/io_asig_5p0.sym} 60 -540 0 0 {name=IO2
 model=gf180mcu_fd_io__asig_5p0_extracted
 spiceprefix=X
 }
-C {Chipathon2025_pads/xschem/io_asig_5p0.sym} 1080 -1140 0 0 {name=IO3
+C {Chipathon2025_pads/xschem/io_asig_5p0.sym} 1220 -1000 0 0 {name=IO3
 model=gf180mcu_fd_io__asig_5p0_extracted
 spiceprefix=X
 }
-C {Chipathon2025_pads/xschem/io_asig_5p0.sym} 1110 -880 0 0 {name=IO4
+C {Chipathon2025_pads/xschem/io_asig_5p0.sym} 1250 -740 0 0 {name=IO4
 model=gf180mcu_fd_io__asig_5p0_extracted
 spiceprefix=X
 }
-C {Chipathon2025_pads/xschem/io_asig_5p0.sym} 1470 -730 0 0 {name=IO5
+C {Chipathon2025_pads/xschem/io_asig_5p0.sym} 1250 -520 0 0 {name=IO5
 model=gf180mcu_fd_io__asig_5p0_extracted
 spiceprefix=X
 }
@@ -178,15 +178,15 @@ spiceprefix=X
 }
 C {lab_pin.sym} 500 -1370 2 1 {name=p49 lab=VDD}
 C {lab_pin.sym} 500 -1210 2 1 {name=p50 lab=VSS}
-C {gLayout-mahowalders/blocks/composite/regulated_cascoded_cmirror/xschem/top_level.sym} 1210 -330 0 0 {name=x1}
 C {lab_pin.sym} 1570 -440 0 1 {name=p52 lab=VIN_OUT_INT}
-C {lab_pin.sym} 1360 -1450 2 1 {name=p53 lab=VIN_OUT_INT}
-C {opin.sym} 1710 -1450 0 0 {name=p54 lab=VIN_OUT}
-C {lab_pin.sym} 1470 -1560 2 1 {name=p55 lab=VDD}
-C {lab_pin.sym} 1470 -1350 2 1 {name=p56 lab=VSS}
-C {lab_pin.sym} 1510 -1560 2 0 {name=p57 lab=DVDD}
-C {lab_pin.sym} 1510 -1350 2 0 {name=p58 lab=DVSS}
-C {Chipathon2025_pads/xschem/io_asig_5p0.sym} 1390 -1370 0 0 {name=IO11
+C {lab_pin.sym} 1200 -1340 2 1 {name=p53 lab=VIN_OUT_INT}
+C {opin.sym} 1550 -1340 0 0 {name=p54 lab=VIN_OUT}
+C {lab_pin.sym} 1310 -1450 2 1 {name=p55 lab=VDD}
+C {lab_pin.sym} 1310 -1240 2 1 {name=p56 lab=VSS}
+C {lab_pin.sym} 1350 -1450 2 0 {name=p57 lab=DVDD}
+C {lab_pin.sym} 1350 -1240 2 0 {name=p58 lab=DVSS}
+C {Chipathon2025_pads/xschem/io_asig_5p0.sym} 1230 -1260 0 0 {name=IO11
 model=gf180mcu_fd_io__asig_5p0_extracted
 spiceprefix=X
 }
+C {top_level.sym} 1210 -330 0 0 {name=x4}

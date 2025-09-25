@@ -1,9 +1,7 @@
 ** sch_path: /foss/designs/gLayout-mahowalders/blocks/composite/regulated_cascoded_cmirror/xschem/int_top_lvs.sch
-**.subckt int_top_lvs EN VDD DVDD DVSS VSS VIN VBIAS VCM_OUT BCM_OUT CCM_OUT VIN_OUT
+**.subckt int_top_lvs EN VDD VSS VIN VBIAS VCM_OUT BCM_OUT CCM_OUT VIN_OUT PU PD IE
 *.ipin EN
 *.iopin VDD
-*.iopin DVDD
-*.iopin DVSS
 *.iopin VSS
 *.ipin VIN
 *.ipin VBIAS
@@ -11,15 +9,15 @@
 *.opin BCM_OUT
 *.opin CCM_OUT
 *.opin VIN_OUT
-XR1 DVDD VDD rm3 r_width=1e-6 r_length=1e-6 m=1
-XR2 DVSS VSS rm3 r_width=1e-6 r_length=1e-6 m=1
-XIO6 DVDD DVSS EN net2 net1 VDD VSS net3 gf180mcu_fd_io__in_c
-x2 net2 VDD VSS tieH
-x3 VDD net1 VSS tieL
-XIO9 VDD VIN_INT VIN VSS io_secondary_5p0
-XIO7 VDD VBIAS_INT VBIAS VSS io_secondary_5p0
-XIO8 VDD ENA net3 VSS io_secondary_5p0
+*.ipin PU
+*.ipin PD
+*.ipin IE
+x2 PD VDD VSS tieH
+x3 VDD PU VSS tieL
+XIO8 VDD ENA EN VSS io_secondary_5p0
 x1 VDD ENA VIN_INT VCM_OUT BCM_OUT CCM_OUT VBIAS_INT VSS VIN_OUT top_level
+XIO1 VDD VIN_INT VIN VSS io_secondary_5p0
+XIO2 VDD VBIAS_INT VBIAS VSS io_secondary_5p0
 **.ends
 
 * expanding   symbol:  Chipathon2025_pads/xschem/tieH.sym # of pins=3
@@ -66,7 +64,7 @@ D2 VSS to_gate diode_nd2ps_06v0 area='10u * 10u ' pj='2*10u + 2*10u ' m=4
 .ends
 
 
-* expanding   symbol:  gLayout-mahowalders/blocks/composite/regulated_cascoded_cmirror/xschem/top_level.sym # of pins=9
+* expanding   symbol:  top_level.sym # of pins=9
 ** sym_path: /foss/designs/gLayout-mahowalders/blocks/composite/regulated_cascoded_cmirror/xschem/top_level.sym
 ** sch_path: /foss/designs/gLayout-mahowalders/blocks/composite/regulated_cascoded_cmirror/xschem/top_level.sch
 .subckt top_level VDD EN V_IN V_OUT_VCM V_OUT_BCM V_OUT_CCM V_AUX_CCM VSS V_OUT_VIN
