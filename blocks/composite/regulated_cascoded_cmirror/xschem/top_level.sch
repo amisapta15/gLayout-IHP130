@@ -81,6 +81,13 @@ N 1470 -910 1470 -850 {lab=VDD}
 N 1080 -880 1430 -880 {lab=EN}
 N 1430 -880 1430 -820 {lab=EN}
 N 1610 -560 2020 -560 {lab=V_OUT_VIN}
+N 1610 -910 1710 -910 {lab=VDD}
+N 1710 -910 1710 -870 {lab=VDD}
+N 1670 -910 1670 -840 {lab=VDD}
+N 1710 -810 1730 -810 {lab=VDD}
+N 1730 -910 1730 -810 {lab=VDD}
+N 1710 -910 1730 -910 {lab=VDD}
+N 1710 -840 1730 -840 {lab=VDD}
 C {iopin.sym} -30 -50 2 0 {name=p1 lab=VSS
 }
 C {ipin.sym} -10 -200 0 0 {name=p3 lab=V_AUX_CCM
@@ -313,3 +320,17 @@ spiceprefix=X
 C {opin.sym} 2020 -560 0 0 {name=p25 lab=V_OUT_VIN
 }
 C {lab_pin.sym} 1470 -820 2 0 {name=p26 sig_type=std_logic lab=VDD}
+C {symbols/pfet_03v3.sym} 1690 -840 0 0 {name=M12
+L=2.0u
+W=10.0u
+nf=1
+m=6
+ad="'int((nf+1)/2) * W/nf * 0.18u'"
+pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
+as="'int((nf+2)/2) * W/nf * 0.18u'"
+ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
+nrd="'0.18u / W'" nrs="'0.18u / W'"
+sa=0 sb=0 sd=0
+model=pfet_03v3
+spiceprefix=X
+}

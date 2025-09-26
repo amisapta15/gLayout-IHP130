@@ -18,7 +18,7 @@ N 0 80 10 80 {lab=VSS}
 N 10 80 10 130 {lab=VSS}
 N 0 130 10 130 {lab=VSS}
 N 0 110 0 130 {lab=VSS}
-C {symbols/pfet_06v0.sym} 20 -50 0 0 {name=M1
+C {symbols/pfet_05v0.sym} 20 -50 0 0 {name=M1
 L=0.55u
 W=2u
 nf=1
@@ -29,10 +29,10 @@ as="'int((nf+2)/2) * W/nf * 0.18u'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
 nrd="'0.18u / W'" nrs="'0.18u / W'"
 sa=0 sb=0 sd=0
-model=pfet_06v0
+model=pfet_05v0
 spiceprefix=X
 }
-C {symbols/nfet_06v0.sym} -20 80 0 0 {name=M2
+C {symbols/nfet_05v0.sym} -20 80 0 0 {name=M2
 L=0.70u
 W=1u
 nf=1
@@ -43,7 +43,7 @@ as="'int((nf+2)/2) * W/nf * 0.18u'"
 ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
 nrd="'0.18u / W'" nrs="'0.18u / W'"
 sa=0 sb=0 sd=0
-model=nfet_06v0
+model=nfet_05v0
 spiceprefix=X
 }
 C {iopin.sym} 0 130 2 0 {name=p1 lab=VSS}

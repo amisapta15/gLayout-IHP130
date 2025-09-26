@@ -69,6 +69,13 @@ N 380 -740 380 -710 {lab=v_in}
 N 340 -740 380 -740 {lab=v_in}
 N 660 -770 880 -770 {lab=v_out}
 N 660 -770 660 -430 {lab=v_out}
+N 1040 -90 1040 -70 {lab=vss}
+N 930 -70 1040 -70 {lab=vss}
+N 1000 -120 1000 -70 {lab=vss}
+N 1040 -150 1070 -150 {lab=vss}
+N 1070 -150 1070 -70 {lab=vss}
+N 1040 -70 1070 -70 {lab=vss}
+N 1040 -120 1070 -120 {lab=vss}
 C {symbols/nfet_03v3.sym} 190 -260 0 1 {name=M10
 L=1u
 W=8u
@@ -160,3 +167,17 @@ C {iopin.sym} 510 -70 1 0 {name=p3 lab=vss
 C {ipin.sym} 110 -740 0 0 {name=p4 lab=v_aux
 }
 C {opin.sym} 880 -770 0 0 {name=p5 lab=v_out}
+C {symbols/nfet_03v3.sym} 1020 -120 0 0 {name=M1
+L=1u
+W=4u
+nf=1
+m=6
+ad="'int((nf+1)/2) * W/nf * 0.18u'"
+pd="'2*int((nf+1)/2) * (W/nf + 0.18u)'"
+as="'int((nf+2)/2) * W/nf * 0.18u'"
+ps="'2*int((nf+2)/2) * (W/nf + 0.18u)'"
+nrd="'0.18u / W'" nrs="'0.18u / W'"
+sa=0 sb=0 sd=0
+model=nfet_03v3
+spiceprefix=X
+}
