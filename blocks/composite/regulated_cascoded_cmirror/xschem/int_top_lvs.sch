@@ -48,8 +48,6 @@ N 380 -870 420 -870 {lab=VIN}
 N 370 -620 420 -620 {lab=VBIAS}
 N 620 -870 660 -870 {lab=VIN_INT}
 N 620 -620 730 -620 {lab=VBIAS_INT}
-N 330 -1070 430 -1070 {lab=PD}
-N 430 -1130 430 -1070 {lab=PD}
 C {title.sym} 190 -90 0 0 {name=l1 author="Quentin Halbach and Sapta"}
 C {ipin.sym} 140 -1200 0 0 {name=p120 lab=EN}
 C {lab_pin.sym} 920 -1180 2 1 {name=p108 lab=VDD}
@@ -94,4 +92,3 @@ C {lab_pin.sym} 540 -700 2 1 {name=p14 lab=VDD}
 C {lab_pin.sym} 540 -540 2 1 {name=p15 lab=VSS}
 C {ipin.sym} 320 -1180 0 0 {name=p16 lab=PU}
 C {ipin.sym} 320 -1160 0 0 {name=p17 lab=PD}
-C {ipin.sym} 330 -1070 0 0 {name=p18 lab=IE}
